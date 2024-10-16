@@ -29,7 +29,6 @@ text-align: center;
 h1{
     text-align: center;
 }
-#alinear{
-  background-image: 
-  url("img\fondologin.png");
+body{
+  background-color: green;
 }
