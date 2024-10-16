@@ -32,27 +32,34 @@
 
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="login.css">
 </head>
 <body>
-    <form id="form">
-        <div class="row">
-          <div class="col-md-4">
-            <input type="email" class="form-control" placeholder="Email">
-          </div>
-        </div>  
-        <br>
-        <div class="row">
-          <div class="col-md-4">
-            <input type="password" class="form-control" placeholder="Password">
-          </div>
-        </div>
-      <br>
-      <div class="row">
+  <div id="alinear">
+    <form class="form" style="text-align: center;">
+      <h1 class="text-primary mb-0">Farm-to-table</h1>  
+      <div style="align-items: center; margin-top: 170px;">
         <div class="col-md-4">
-          <button type="submit" class="btn btn-primary"><a href="index.html" id="text-hip">Log in</a></button>
+          <input type="text" class="form-control" placeholder="Username" style="margin-left: 425px;">
+        </div>
+      </div>  
+      <br>
+      <div>
+        <div class="col-md-4">
+          <input type="password" class="form-control" placeholder="Password" style="margin-left: 425px;">
         </div>
       </div>
-      </form>
-      <a href="signin.html">Don't have an account, click here & create one.</a>
+    <br>
+    <div>
+      <div class="col-md-12">
+        <button type="submit" class="btn btn-primary"><a href="index.html" id="text-hip">Log in</a></button>
+      </div>
+    </div>
+    <br>
+    <a href="signin.html">Don't have an account, click here & create one.</a>
+    </form>
+</div>
+    
+      
 </body>
 </html>
