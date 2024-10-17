@@ -12,6 +12,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
+    <meta name="google-signin-client_id" content="293860019099-hn8qqiuee0ar7s9b04ppf8eh3a2plvh6.apps.googleusercontent.com">
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,7 +37,7 @@
     <link rel="icon" href="img/LOGO.png" type="image/x-icon">
 
 </head>
-<body>
+<body style="background-color: #b4ff9a;">
   
   <div class="container min-vh-100 d-flex justify-content-center align-items-center">
   <div id="alinear">
@@ -59,7 +60,8 @@
       <div class="col-md-12">
         <button type="submit" class="btn btn-primary"><a href="index.html" id="text-hip">Log in</a></button>
       </div>
-    </div>
+      <div class="g-signin2" data-onsuccess="onSignIn"></div>
+  </div>
     <br>
     <a href="signin.html">Don't have an account, click here & create one.</a>
     </form>
@@ -67,4 +69,6 @@
   </div>
       
 </body>
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+
 </html>
