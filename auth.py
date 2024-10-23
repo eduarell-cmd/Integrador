@@ -9,7 +9,7 @@ import logging
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)
-gmaps = googlemaps.Client(key='AIzaSyD7CFCehn95fEwY_NvsjADekfUaXDmBE4Y')
+gmaps = googlemaps.Client(key='AIzaSyAjSN96XTz_okE3SwueGbWlk0w4is1TwiM')
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -36,14 +36,14 @@ def register_user(Nombre, PrimerApellido, SegundoApellido, Email, Password,):
         return False
     finally:
         conn.close()
-def verify_user(Email, contraseña):
+def verify_user(Email, password):
     conn = get_db_connection()
     cursor = conn.cursor()
     query = "SELECT Contraseña FROM Usuario WHERE Email = ?"
     cursor.execute(query, (Email,))
     result = cursor.fetchone()
 
-    if result and  check_password_hash(result[0], contraseña):
+    if result and  check_password_hash(result[0], password):
         return True
     conn.close()
     return False
@@ -57,7 +57,7 @@ def is_human(captcha_response):
     return response_text['success']
 
 
-  #A PARTIR DE AQUI COMIENZAN LAS RUTAS 
+#A PARTIR DE AQUI COMIENZAN LAS RUTAS 
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -69,18 +69,13 @@ def signup():
     estadosearch = cursor.fetchall()
 
     if request.method == 'POST':
-        Nombre      = request.form['Nombre']
-        ApellidoP   = request.form['ApellidoP']
-        ApellidoM   = request.form['ApellidoM']
+        Name      = request.form['Name']
+        PrimerApellido   = request.form['PrimerApellido']
+        SegundoApellido   = request.form['SegundoApellido']
         Email       = request.form['Email']
-        Contraseña  = request.form['Contraseña']
-        Estado_ID_Estado = request.form['Estado_ID_Estado']
-        Ciudad      = request.form['Ciudad']
-        Latitud     = request.form['Latitude']
-        Longitud    = request.form['Longitude']
-    
-        print(f"Registrando: {Nombre}, {ApellidoP}, {ApellidoM}, {Email}, {Ciudad}, {Latitud}, {Longitud}")
-        if register_user(Nombre, ApellidoP, ApellidoM, Email, Contraseña, Estado_ID_Estado, Ciudad, Latitud, Longitud):
+        Password  = request.form['Password']
+        print(f"Registrando: {Name}, {PrimerApellido}, {SegundoApellido}, {Email},")
+        if register_user(Name, PrimerApellido, SegundoApellido, Email, Password,):
             flash("¡Se ha registrado exitosamente! Ahora puede iniciar sesion.", "success")
             return redirect(url_for('login'))
         else:
