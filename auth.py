@@ -14,53 +14,23 @@ gmaps = googlemaps.Client(key='AIzaSyD7CFCehn95fEwY_NvsjADekfUaXDmBE4Y')
 
 logging.basicConfig(level=logging.DEBUG)
 
-def register_user(Nombre, ApellidoP, ApellidoM, Email, contraseña, Estado_ID_Estado, Ciudad, Latitud, Longitud):
+def register_user(Nombre, PrimerApellido, SegundoApellido, Email, Password,):
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    respuesta = requests.get(f"https://maps.googleapis.com/maps/api/geocode/json?latlng={Latitud},{Longitud}&key=AIzaSyD7CFCehn95fEwY_NvsjADekfUaXDmBE4Y")
-    direccion = None
-    if respuesta.status_code == 200:
-        datos = respuesta.json()
-        if len(datos['results']) > 0:
-            direccion = datos['results'][0]['formatted_address']
-            logging.debug(f"Dirección obtenida: {direccion}")
-        else:
-            logging.warning("No se encontró dirección para las coordenadas.")
-    else:
-        logging.error(f"Error en la solicitud: {respuesta.status_code}")
-
-
+    password_hash = generate_password_hash(Password)
+    register_user = "EXEC Registrar_Usuario ?, ?, ?, ?, ?, ?" 
+    Fecha_Registro = datetime.now()
     try:
-        query = "SELECT Email FROM Usuario WHERE Email = ?"
-        cursor.execute(query, (Email,))
-        if cursor.fetchone():
-            logging.info(f"El correo {Email} ya existe.")
-            return False
-    except Exception as e:
-        logging.error(f"Error al verificar el correo: {e}")
-        return False
-
-    password_hash = generate_password_hash(contraseña)
-
-
-    insert_queryUbicacion = "INSERT INTO Ubicacion (Ciudad, Estado_ID_Estado, Latitud, Longitud, Direccion) OUTPUT INSERTED.ID_Ubicacion VALUES (?, ?, ?, ?, ?)"
-    try:
-        cursor.execute(insert_queryUbicacion, (Ciudad, Estado_ID_Estado, Latitud, Longitud, direccion))
-        ubicacion_id = cursor.fetchone()[0]
-        logging.debug(f"ID de ubicación obtenido: {ubicacion_id}")
-    except Exception as e:
-        logging.error(f"Error durante la inserción de ubicación: {e}")
-        return False
-
-
-    insert_queryUsuario = "INSERT INTO Usuario (Nombre, ApellidoP, ApellidoM, Email, Contraseña, Ubicacion_ID_Ubicacion, Fecha_Registro) VALUES (?, ?, ?, ?, ?, ?, ?)"
-    try:
-        Fecha_Registro = datetime.now()
-        cursor.execute(insert_queryUsuario, (Nombre, ApellidoP, ApellidoM, Email, password_hash, ubicacion_id, Fecha_Registro))
-        conn.commit()
-        logging.info("Usuario registrado con éxito.")
-        return True
+        cursor.execute(register_user, (Nombre, PrimerApellido, SegundoApellido, Email, password_hash, Fecha_Registro))
+        result = cursor.fetchone()
+        if  result == 0:
+            conn.commit()
+            logging.info("Usuario registrado con éxito.")
+            return True
+        if result == -1:
+            conn.rollback()
+            print(f"El correo ya existe.")
     except Exception as e:
         logging.error(f"Error durante la inserción de usuario: {e}")
         return False
