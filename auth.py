@@ -145,5 +145,12 @@ def contacto():
 @app.route('/checkout')
 def checkout():
     return render_template('chackout.html')
+
+@app.route('/cart')
+def carro():
+    return render_template('cart.html')
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
