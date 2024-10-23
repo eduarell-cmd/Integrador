@@ -38,7 +38,16 @@
 
 </head>
 <body style="background-color: #b4ff9a;">
-  
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+      <ul class="alert alert-warning">
+          {% for category, message in messages %}
+              <li class="{{ category }}">{{ message }}</li>
+          {% endfor %}
+      </ul>
+  {% endif %}
+{% endwith %}
+      <form action="{{ url_for('login') }}" method="POST">
   <div class="container min-vh-100 d-flex justify-content-center align-items-center">
   <div id="alinear">
     <form class="form" style="text-align: center;">
@@ -67,7 +76,7 @@
     </form>
   </div>
   </div>
-      
+</form>   
 </body>
 <script src="https://apis.google.com/js/platform.js" async defer></script>
 
