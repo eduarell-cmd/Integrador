@@ -120,6 +120,11 @@ def checkout():
 def carro():
     return render_template('cart.html')
 
+@app.route('/shop')
+def shop():
+    return render_template('shop.html')
+
+
 
 
 if __name__ == '__main__':
