@@ -2,10 +2,10 @@
 __pycache__/
 *.pyc
 
-# Ignorar configuraciones de VSCode
+# Ignorar la carpeta de configuración de VSCode
 .vscode/
 
-# Ignorar entornos virtuales
+# Ignorar la carpeta de entornos virtuales
 venv/
 
 # Ignorar archivos de logs
