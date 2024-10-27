@@ -56,25 +56,25 @@
             </div>
             <div class="container px-0">
                 <nav class="navbar navbar-light bg-white navbar-expand-xl">
-                    <a href="{{url_for('index.html')}}" class="navbar-brand"><h1 class="text-primary display-6">Fruitables</h1></a>
+                    <a href="{{url_for('index')}}" class="navbar-brand"><h1 class="text-primary display-6">Fruitables</h1></a>
                     <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                         <span class="fa fa-bars text-primary"></span>
                     </button>
                     <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
                         <div class="navbar-nav mx-auto">
-                            <a href="{{url_for('index.html')}}" class="nav-item nav-link">Home</a>
-                            <a href="{{url_for('shop.html')}}" class="nav-item nav-link">Shop</a>
-                            <a href="{{url_for('shop-detail.html')}}" class="nav-item nav-link">Shop Detail</a>
+                            <a href="{{url_for('index')}}" class="nav-item nav-link">Home</a>
+                            <a href="{{url_for('shop')}}" class="nav-item nav-link">Shop</a>
+                            <a href="{{url_for('shop-detail')}}" class="nav-item nav-link">Shop Detail</a>
                             <div class="nav-item dropdown">
                                 <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown">Pages</a>
                                 <div class="dropdown-menu m-0 bg-secondary rounded-0">
-                                    <a href="{{url_for('cart.html')}}" class="dropdown-item">Cart</a>
-                                    <a href="{{url_for('chackout.html')}}" class="dropdown-item active">Chackout</a>
-                                    <a href="{{url_for('testimonial.html')}}" class="dropdown-item">Testimonial</a>
-                                    <a href="{{url_for('404.html')}}" class="dropdown-item">404 Page</a>
+                                    <a href="{{url_for('cart')}}" class="dropdown-item">Cart</a>
+                                    <a href="{{url_for('checkout')}}" class="dropdown-item active">Chackout</a>
+                                    <a href="{{url_for('testimonial')}}" class="dropdown-item">Testimonial</a>
+                                    <a href="{{url_for('404')}}" class="dropdown-item">404 Page</a>
                                 </div>
                             </div>
-                            <a href="{{url_for('contact.html')}}" class="nav-item nav-link">Contact</a>
+                            <a href="{{url_for('contact')}}" class="nav-item nav-link">Contact</a>
                         </div>
                         <div class="d-flex m-3 me-0">
                             <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search text-primary"></i></button>
@@ -82,7 +82,7 @@
                                 <i class="fa fa-shopping-bag fa-2x"></i>
                                 <span class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style="top: -5px; left: 15px; height: 20px; min-width: 20px;">3</span>
                             </a>
-                            <a href="{{url_for('login.html')}}" class="my-auto">
+                            <a href="{{url_for('login')}}" class="my-auto">
                                 <i class="fas fa-user fa-2x"></i>
                             </a>
                         </div>

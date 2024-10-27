@@ -23,8 +23,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- Libraries Stylesheet -->
-    <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
-    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="{{url_for('static',filename='lib/lightbox/css/lightbox.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='lib/owlcarousel/assets/owl.carousel.min.css')}}" rel="stylesheet">
 
 
     <!-- Customized Bootstrap Stylesheet -->
@@ -33,7 +33,7 @@
     <!-- Template Stylesheet -->
     <link href="{{ url_for('static', filename='css/style.css')}}" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='login.css')}}">
-    <link rel="icon" href="{{ url_for('static', filename='img/LOGO.png')}}"" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename='img/LOGO.png')}}" type="image/x-icon">
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <meta name="google-signin-client_id" content="293860019099-hn8qqiuee0ar7s9b04ppf8eh3a2plvh6.apps.googleusercontent.com">
   </head>
