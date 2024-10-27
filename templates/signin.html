@@ -12,7 +12,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
-
+<!---->
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,32 +28,34 @@
 
 
     <!-- Customized Bootstrap Stylesheet -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
 
     <!-- Template Stylesheet -->
-    <link href="css/style.css" rel="stylesheet">
-    <link rel="stylesheet" href="login.css">
-    <link rel="icon" href="img/LOGO.png" type="image/x-icon">
-</head>
+    <link href="{{ url_for('static', filename='css/style.css')}}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css')}}">
+    <link rel="icon" href="{{ url_for('static', filename='img/LOGO.png')}}"" type="image/x-icon">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <meta name="google-signin-client_id" content="293860019099-hn8qqiuee0ar7s9b04ppf8eh3a2plvh6.apps.googleusercontent.com">
+  </head>
 <body style="background-color: #b4ff9a;">
 <form action="{{ url_for('signup') }}" method="POST">
   <div class="container mt-5">
     <h1 class="text-primary mb-0" style="text-align: center;">Farm-to-table</h1> 
-  <div id="divsignin">
+  <div id="divsignup">
     
     <form class="row g-3">
       
         <div class="col-md-6">
           <label for="inputEmail4" class="form-label">Email</label>
-          <input type="email" class="form-control" id="Email">
+          <input type="email" class="form-control" id="Email" name="Email">
         </div>
         <div class="col-md-6">
           <label for="inputPassword4" class="form-label">Password</label>
-          <input type="password" class="form-control" id="Password">
+          <input type="password" class="form-control" id="Password" name="Password">
         </div>
         <div class="col-6">
           <label for="Name" class="form-label">Name</label>
-          <input type="Name" class="form-control" id="Name" placeholder="Name">
+          <input type="text" class="form-control" id="Name" placeholder="Name">
         </div>
         <div class="col-6">
           <label for="inputAddress2" class="form-label">First Lastname*</label>
@@ -64,13 +66,22 @@
           <input type="text" class="form-control" id="SegundoApellido" placeholder="LastName">
         </div>
         </div>
+        <br>
+        <div class="col-md-4">
+          <div class="g-recaptcha" data-sitekey="6LdSIWwqAAAAAI4hs5hE33Y_-vH_aRy79pbX6xzo"></div>
+        </div>
+      </form>
+      <form action="{{ url_for('callback_google')}}" method="post">
+        <div class = "col.md-4">
+          <a href="{{ url_for('signup_google') }}" class="g-signin2"></a>
+      </form>
         <div class="col-lg-12" style="text-align: center;">
-          <button type="submit" class="btn btn-primary"><a href="index.html" id="text-hip">Sign in</a></button>
+          <button type="submit" class="btn btn-primary">Sign Up</a></button>
         </div>
       
   </div>
 </div>
-</form>
+
 </form>
 </body>
 <script src="https://apis.google.com/js/platform.js" async defer></script>

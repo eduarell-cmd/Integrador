@@ -13,7 +13,7 @@
     <meta content="" name="keywords">
     <meta content="" name="description">
     <meta name="google-signin-client_id" content="293860019099-hn8qqiuee0ar7s9b04ppf8eh3a2plvh6.apps.googleusercontent.com">
-
+<!---->
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,7 +35,7 @@
     <link href="{{ url_for('static', filename='css/style.css')}}" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='login.css')}}">
     <link rel="icon" href="{{ url_for('static', filename='img/LOGO.png')}}" type="image/x-icon">
-
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body style="background-color: #b4ff9a;">
   {% with messages = get_flashed_messages(with_categories=true) %}
@@ -47,10 +47,10 @@
       </ul>
   {% endif %}
 {% endwith %}
-      <form action="{{ url_for('login') }}" method="POST">
+<form action="{{ url_for('login') }}" method="POST">
   <div class="container min-vh-100 d-flex justify-content-center align-items-center">
   <div id="alinear">
-    <form class="form" style="text-align: center;">
+   
       <h1 class="text-primary mb-0">Farm-to-table</h1>  
       <div style="align-items: center; margin-top: 50px;">
       <div class="caja">
@@ -66,14 +66,22 @@
     </div>
     <br>
     <div>
-      <div class="col-md-12">
+      <div class="col-md-12" style="text-align: center;">
         <button type="submit" class="btn btn-primary"><a href="{{url_for('index')}}" id="text-hip">Log in</a></button>
       </div>
+      <br>
+      <div class = "col.md-4">
       <div class="g-signin2" data-onsuccess="onSignIn"></div>
-  </div>
+    </div>
+    </div>
     <br>
+    <div class="col-md-4">
+      <div class="g-recaptcha" data-sitekey="6LdSIWwqAAAAAI4hs5hE33Y_-vH_aRy79pbX6xzo"></div>
+    </div>
+  
+    <br>
+    
     <a href="{{url_for('signup')}}">Don't have an account, click here & create one.</a>
-    </form>
   </div>
   </div>
 </form>   
