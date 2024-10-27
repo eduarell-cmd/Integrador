@@ -1,3 +1,11 @@
-client_secret_.json
-client_secret.json
-client_secret.json
+# Ignorar archivos de Python
+__pycache__/
+
+# Ignorar la carpeta de configuración de VSCode
+.vscode/
+
+# Ignorar la carpeta de entornos virtuales
+venv/
+
+# Ignorar archivos de logs
+*.log
