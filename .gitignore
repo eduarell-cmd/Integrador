@@ -9,3 +9,6 @@ venv/
 
 # Ignorar archivos de logs
 *.log
+
+# Ignorar el json de credenciales 
+credentials.json
