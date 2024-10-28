@@ -54,7 +54,7 @@ def index():
     return render_template('index.html')
 
 @app.route('/contactus')
-def contacto():
+def contact():
     return render_template('contact.html')
 
 @app.route('/checkout')
@@ -72,6 +72,10 @@ def shop():
 @app.route('/myprofile')
 def profile():
     return render_template('profile.html')
+
+@app.route('/myprofilevend')
+def profilevend():
+    return render_template('profile-vendedor.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
