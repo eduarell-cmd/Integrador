@@ -9,3 +9,5 @@ venv/
 
 # Ignorar archivos de logs
 *.log
+
+.env
