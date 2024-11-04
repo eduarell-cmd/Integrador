@@ -9,6 +9,7 @@ import logging
 
 app = Flask(__name__)
 
+<<<<<<< HEAD
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     conn = get_db_connection()
@@ -48,6 +49,11 @@ def login():
         else:
             flash("¿Inicio de sesión fallido! Porfavor revisa que tu Email y Contraseña sean correctas")
     return render_template('login.html', sitekey=sitekey)
+=======
+
+
+
+>>>>>>> f9aa4c194b24f85cf8de6c063143ec45a0800e6d
 
 @app.route('/')
 def index():

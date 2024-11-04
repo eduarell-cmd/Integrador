@@ -9,9 +9,3 @@ venv/
 
 # Ignorar archivos de logs
 *.log
-<<<<<<< HEAD
-=======
-
-.env
-client_secret.json
->>>>>>> f9aa4c194b24f85cf8de6c063143ec45a0800e6d
