@@ -1,6 +1,8 @@
 from flask import Flask, request, redirect, url_for, render_template, flash, session, abort
 from auth import register_user, verify_user, is_human, login_user, get_user_by_id
 from dotenv import load_dotenv
+
+import mail
 load_dotenv()
 import os
 import requests
@@ -10,10 +12,16 @@ from google_auth_oauthlib.flow import Flow
 from google.oauth2 import id_token
 import google.auth.transport.requests
 from pip._vendor import cachecontrol 
+from flask_mail import Message
+from conexionsql.models import User
+from werkzeug.security import generate_password_hash
+from itsdangerous import URLSafeTimedSerializer
 client_id = os.getenv("GOOGLE_CLIENT_ID")
 client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
 
 admin_key = os.getenv("ADMIN_KEY")
+
+s = URLSafeTimedSerializer(app.secret_key)
 
 app = Flask(__name__)
 app.secret_key = "AvVoMrDAFRBiPNO8o9guscemWcgP"  
@@ -150,7 +158,26 @@ def login():
 
 @app.route('/reset_password')
 def reset_request():
-    
+    if request.method == 'POST':
+        email = request.form.get('email')
+        user = User.query.filter_by(email=email).first()
+
+        if user:
+            token = s.dumps(email, salt='password-reset-salt')
+            link = url_for('reset_password', token=token, _external=True)
+
+            # Enviar el correo electrónico de restablecimiento
+            msg = Message("Password Reset Request",
+                          sender="noreply@example.com",
+                          recipients=[email])
+            msg.body = f'Click the link to reset your password: {link}'
+            mail.send(msg)
+
+            flash('An email with instructions to reset your password has been sent.', 'info')
+            return redirect(url_for('login'))
+
+        flash('This email is not registered with us.', 'danger')
+
     return render_template('reset_request.html')
 @app.route('/')
 def index():
