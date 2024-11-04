@@ -1,16 +1,11 @@
-from flask import Flask, request, redirect, url_for, render_template, flash, json, session, abort
-from werkzeug.security import generate_password_hash, check_password_hash
-from conexionsql import get_db_connection
-from auth import register_user, verify_user, is_human
+from flask import Flask, request, redirect, url_for, render_template, flash, session, abort
+from auth import register_user, verify_user, is_human, login_user, get_user_by_id
 from dotenv import load_dotenv
 load_dotenv()
 import os
-import pathlib
-from datetime import datetime
 import requests
 import googlemaps
 import logging
-import json
 from google_auth_oauthlib.flow import Flow
 from google.oauth2 import id_token
 import google.auth.transport.requests
@@ -18,6 +13,7 @@ from pip._vendor import cachecontrol
 client_id = os.getenv("GOOGLE_CLIENT_ID")
 client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
 
+admin_key = os.getenv("ADMIN_KEY")
 
 app = Flask(__name__)
 app.secret_key = "AvVoMrDAFRBiPNO8o9guscemWcgP"  
@@ -67,7 +63,7 @@ def callback_google():
         # Step 2: Validate state
         if session.get("state") != request.args.get("state"):
             logging.error("Session state does not match.")
-            abort(500)  # State does not match!
+            abort(500)  # State does not match
 
         # Step 3: Retrieve credentials and initialize token request
         credentials = flow.credentials
@@ -144,9 +140,9 @@ def login():
 
     if request.method == 'POST':
         Email      = request.form['Email']
-        Contraseña = request.form['Contraseña']
+        Contraseña = request.form['Password']
         captcha_response = request.form['g-recaptcha-response']
-        if verify_user(Email, Contraseña) and is_human(captcha_response):
+        if login_user(Email, Contraseña) and is_human(captcha_response):
             return redirect(url_for('dashboard',))
         else:
             flash("¿Inicio de sesión fallido! Porfavor revisa que tu Email y Contraseña sean correctas")
@@ -182,6 +178,24 @@ def carro():
 def shop():
     return render_template('shop.html')
 
+
+@app.route('/perfil')
+def perfil():
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('login'))  # Redirige a login si no hay usuario en sesión
+    
+    # Consulta los datos del usuario desde la base de datos
+    user = get_user_by_id(session['user_id'])
+    if not user:
+        return redirect(url_for('login'))
+
+    return render_template('profile.html', user=user)
+
+
+@app.route(f'/{admin_key}')
+def admin_dashboard():
+     return render_template('admin.html')
 
 
 if __name__ == '__main__':

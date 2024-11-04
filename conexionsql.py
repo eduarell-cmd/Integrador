@@ -4,8 +4,8 @@ def get_db_connection():
    try:
       conn = pyodbc.connect(
         'DRIVER={ODBC Driver 17 for SQL Server};'
-        'SERVER=DESKTOP-FE8999F;'
-        'DATABASE=INTEGRADORv1.1_LogInAndSign;'
+        'SERVER=DESKTOP-K3MNF88;'
+        'DATABASE=INTEGRADORv1.2;'
         'UID=sa;'
         'PWD=1234;') 
       
