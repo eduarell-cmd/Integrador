@@ -1,13 +1,3 @@
-<<<<<<< HEAD
-from conexionsql import get_db_connection
-from flask import Flask, request, redirect, url_for, render_template, flash
-from werkzeug.security import generate_password_hash
-from werkzeug.security import check_password_hash
-import secrets
-
-app = Flask(__name__)
-app.secret_key = 'secrets.token_hex(16)'
-=======
 from flask import Flask, request, redirect, url_for, render_template, flash, json, session, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from conexionsql import get_db_connection
@@ -194,4 +184,3 @@ def shop():
 
 if __name__ == '__main__':
     app.run(debug=True)
->>>>>>> f9aa4c194b24f85cf8de6c063143ec45a0800e6d
