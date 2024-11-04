@@ -1,36 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
-    <head>
-        <meta charset="utf-8">
-        <title>Contactanos - Farm-To-Table</title>
-        <meta content="width=device-width, initial-scale=1.0" name="viewport">
-        <meta content="" name="keywords">
-        <meta content="" name="description">
+<head>
+    <meta charset="utf-8">
+    <title>Farm-To-Table</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
 
-        <!-- Google Web Fonts -->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Raleway:wght@600;800&display=swap" rel="stylesheet"> 
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Raleway:wght@600;800&display=swap" rel="stylesheet"> 
 
-        <!-- Icon Font Stylesheet -->
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
-        <!-- Libraries Stylesheet -->
-        <link href="{{url_for('static',filename='lib/lightbox/css/lightbox.min.css')}}" rel="stylesheet">
-        <link href="{{url_for('static',filename='lib/owlcarousel/assets/owl.carousel.min.css')}}" rel="stylesheet">
+    <!-- Libraries Stylesheet -->
+    <link href="{{url_for('static',filename='lib/lightbox/css/lightbox.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='lib/owlcarousel/assets/owl.carousel.min.css')}}" rel="stylesheet">
 
 
-        <!-- Customized Bootstrap Stylesheet -->
-        <link href="{{url_for('static',filename='css/bootstrap.min.css')}}" rel="stylesheet">
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="{{url_for('static',filename='css/bootstrap.min.css')}}" rel="stylesheet">
 
-        <!-- Template Stylesheet -->
-        <link href="{{url_for('static',filename='css/style.css')}}" rel="stylesheet">
-        <link rel="icon" href="{{url_for('static',filename='img/LOGO.png')}}" type="image/x-icon">
-    </head>
+    <!-- Template Stylesheet -->
+    <link href="{{url_for('static',filename='css/style.css')}}" rel="stylesheet">
+    <link rel="icon" href="{{url_for('static',filename='img/LOGO.png')}}" type="image/x-icon">
+</head>
 
-    <body>
+<body>
 
         <!-- Spinner Start -->
         <div id="spinner" class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50  d-flex align-items-center justify-content-center">
@@ -64,8 +64,8 @@
                         <div class="navbar-nav mx-auto">
                             <a href="{{url_for('index')}}" class="nav-item nav-link">Home</a>
                             <a href="{{url_for('shop')}}" class="nav-item nav-link">Shop</a>
-                            
-                            <a href="{{url_for('contact')}}" class="nav-item nav-link active">Contact</a>
+                            <a href="{{url_for('contact')}}" class="nav-item nav-link">Contact</a>
+                            <a href="{{url_for('profile')}}" class="nav-item nav-link active">Profile</a>
                         </div>
                         <div class="d-flex m-3 me-0">
                             <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search text-primary"></i></button>
@@ -106,56 +106,104 @@
 
         <!-- Single Page Header start -->
         <div class="container-fluid page-header py-5">
-            <h1 class="text-center text-white display-6">Contact</h1>
+            <h1 class="text-center text-white display-6">My Profile</h1>
         </div>
         <!-- Single Page Header End -->
 
 
-        <!-- Contact Start -->
-        <div class="container-fluid contact py-5">
-            <div class="container py-5">
-                <div class="p-5 bg-light rounded">
-                    <div class="row g-4">
-                        <div class="col-12">
-                            <div class="text-center mx-auto" style="max-width: 700px;">
-                                <h1 class="text-primary">About us</h1>
-                                <p class="mb-4">Farm-To-Table is founded in 2024 with the goal of connecting local farms to consumers through technology. A small team is employed to develop a software platform that streamlines the farm-to-table process by managing orders, deliveries, and inventory for small farmers. The mission is focused on supporting sustainable agriculture and providing fresh, local produce to consumers, while communities are empowered through innovative solutions.</p>
-                            </div>
+        <div class="container mt-5 pt-5">
+            <h1 class="text-center mb-4">Perfil del Vendedor</h1>
+    
+            <div class="row">
+                <!-- Información del Vendedor -->
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Información del Vendedor</h4>
+                            <p><strong>Nombre:</strong> María González</p>
+                            <p><strong>Email:</strong> mariagonzalez@gmail.com</p>
+                            <p><strong>Teléfono:</strong> 555-6789</p>
+                            <a href="#" class="btn btn-primary">Editar Perfil</a>
                         </div>
-                        
-                        <div class="col-lg-7">
-                            <form action="" class="">
-                                <input type="text" class="w-100 form-control border-0 py-3 mb-4" placeholder="Your Name">
-                                <input type="email" class="w-100 form-control border-0 py-3 mb-4" placeholder="Enter Your Email">
-                                <textarea class="w-100 form-control border-0 mb-4" rows="5" cols="10" placeholder="Your Message"></textarea>
-                                <button class="w-100 btn form-control border-secondary py-3 bg-white text-primary " type="submit">Submit</button>
-                            </form>
+                    </div>
+                </div>
+    
+                <!-- Productos a la Venta -->
+                <div class="col-md-8">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h4 class="card-title">Productos a la Venta</h4>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Precio</th>
+                                        <th>Stock</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Tomates Orgánicos</td>
+                                        <td>$3.00/kg</td>
+                                        <td>50 kg</td>
+                                        <td>
+                                            <a href="#" class="btn btn-sm btn-warning">Editar</a>
+                                            <a href="#" class="btn btn-sm btn-danger">Eliminar</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Lechuga Fresca</td>
+                                        <td>$1.50/unidad</td>
+                                        <td>100 unidades</td>
+                                        <td>
+                                            <a href="#" class="btn btn-sm btn-warning">Editar</a>
+                                            <a href="#" class="btn btn-sm btn-danger">Eliminar</a>
+                                        </td>
+                                    </tr>
+                                    <!-- Más productos... -->
+                                </tbody>
+                            </table>
+                            <a href="#" class="btn btn-success">Agregar Nuevo Producto</a>
                         </div>
-                        <div class="col-lg-5">
-                            <div class="d-flex p-4 rounded mb-4 bg-white">
-                                <i class="fas fa-map-marker-alt fa-2x text-primary me-4"></i>
-                                <div>
-                                    <h4>Address</h4>
-                                    <p class="mb-2">Km 3.5 Carretera Chihuahua a Aldama Colinas de León, 31313 Chihuahua, Chih.</p>
-                                </div>
-                            </div>
-                            <div class="d-flex p-4 rounded mb-4 bg-white">
-                                <i class="fas fa-envelope fa-2x text-primary me-4"></i>
-                                <div>
-                                    <h4>Mail Us</h4>
-                                    <p class="mb-2">farmtable79@gmail.com</p>
-                                </div>
-                            </div>
-                            
+                    </div>
+    
+                    <!-- Historial de Ventas -->
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Historial de Ventas</h4>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>ID Venta</th>
+                                        <th>Fecha</th>
+                                        <th>Producto</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>#2001</td>
+                                        <td>10/10/2024</td>
+                                        <td>Tomates Orgánicos</td>
+                                        <td>$150.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>#2002</td>
+                                        <td>12/10/2024</td>
+                                        <td>Lechuga Fresca</td>
+                                        <td>$90.00</td>
+                                    </tr>
+                                    <!-- Más ventas... -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Contact End -->
 
-
-                <!-- Footer Start -->
+<!-- Footer Start -->
                 <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
                     <div class="container py-4">
                         <div class="pb-4 mb-4" style="border-bottom: 1px solid rgba(226, 175, 24, 0.5) ;">
@@ -208,24 +256,6 @@
                     </div>
                 </div>
                 <!-- Footer End -->
-        
-                <!-- Copyright Start -->
-                <div class="container-fluid copyright bg-dark py-4">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                                <span class="text-light"><a href="#"><i class="fas fa-copyright text-light me-2"></i>Farm-To-Table</a>, All right reserved.</span>
-                            </div>
-                            <div class="col-md-6 my-auto text-center text-md-end text-white">
-                                <!--/*** This template is free as long as you keep the below author’s credit link/attribution link/backlink. ***/-->
-                                <!--/*** If you'd like to use the template without the below author’s credit link/attribution link/backlink, ***/-->
-                                <!--/*** you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". ***/-->
-                                Designed By <a class="border-bottom" href="https://htmlcodex.com">LGE</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Copyright End -->
 
 
 
@@ -242,7 +272,6 @@
     <script src="{{url_for('static',filename='lib/owlcarousel/owl.carousel.min.js')}}"></script>
 
     <!-- Template Javascript -->
-    <script src="{{url_for('static',filename='js/main.js')}}"></script>
-    </body>
+    <script src="{{url_for('static',filename='js/main.js')}}"></script></body>
 
 </html>
