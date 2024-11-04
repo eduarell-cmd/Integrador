@@ -12,3 +12,5 @@ venv/
 
 .env
 client_secret.json
+
+conexionsql.py
