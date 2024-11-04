@@ -13,7 +13,7 @@ from google.oauth2 import id_token
 import google.auth.transport.requests
 from pip._vendor import cachecontrol 
 from flask_mail import Message
-from conexionsql.models import User
+#from conexionsql.models import User
 from werkzeug.security import generate_password_hash
 from itsdangerous import URLSafeTimedSerializer
 client_id = os.getenv("GOOGLE_CLIENT_ID")
@@ -21,7 +21,7 @@ client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
 
 admin_key = os.getenv("ADMIN_KEY")
 
-s = URLSafeTimedSerializer(app.secret_key)
+#s = URLSafeTimedSerializer(app.secret_key)
 
 app = Flask(__name__)
 app.secret_key = "AvVoMrDAFRBiPNO8o9guscemWcgP"  
