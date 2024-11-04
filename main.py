@@ -13,7 +13,7 @@ from google.oauth2 import id_token
 import google.auth.transport.requests
 from pip._vendor import cachecontrol 
 from flask_mail import Message
-from conexionsql.models import User
+#from conexionsql.models import User
 from werkzeug.security import generate_password_hash
 from itsdangerous import URLSafeTimedSerializer
 client_id = os.getenv("GOOGLE_CLIENT_ID")
@@ -21,12 +21,12 @@ client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
 
 admin_key = os.getenv("ADMIN_KEY")
 
-s = URLSafeTimedSerializer(app.secret_key)
+
 
 app = Flask(__name__)
 app.secret_key = "AvVoMrDAFRBiPNO8o9guscemWcgP"  
 gmaps = googlemaps.Client(key='AIzaSyCtOf_oaXQJd9iO83RzKtdWBsRk8R3EqYA')
-
+s = URLSafeTimedSerializer(app.secret_key)
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1" #permite que haya trafico al local dev
 
 client_id = os.getenv("GOOGLE_CLIENT_ID")
@@ -156,7 +156,7 @@ def login():
             flash("¿Inicio de sesión fallido! Porfavor revisa que tu Email y Contraseña sean correctas")
     return render_template('login.html', sitekey=sitekey)
 
-@app.route('/reset_password',methods=['GET','POST'])
+("""@app.route('/reset_password')
 def reset_request():
     if request.method == 'POST':
         email = request.form.get('email')
@@ -178,8 +178,7 @@ def reset_request():
 
         flash('This email is not registered with us.', 'danger')
 
-    return render_template('reset_request.html')
-    
+    return render_template('reset_request.html')""")
 @app.route('/')
 def index():
     return render_template('index.html')

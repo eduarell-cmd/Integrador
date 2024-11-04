@@ -57,28 +57,37 @@ def register_usergoogle(GoogleID, Nombre, PrimerApellido, SegundoApellido):
     cursor = conn.cursor()
 
     
-def register_user(Nombre, PrimerApellido, SegundoApellido, Email, Password,):
+def register_user(Nombre, PrimerApellido, SegundoApellido, Email, Password):
     conn = get_db_connection()
     cursor = conn.cursor()
 
     password_hash = generate_password_hash(Password)
-    register_user = "EXEC Registrar_Usuario ?, ?, ?, ?, ?, ?" 
-    Fecha_Registro = datetime.now()
+    register_user_sql = "EXEC Registrar_Usuario ?, ?, ?, ?, ?" 
     try:
-        cursor.execute(register_user, (Nombre, PrimerApellido, SegundoApellido, Email, password_hash, Fecha_Registro))
+        cursor.execute(register_user_sql, (Nombre, PrimerApellido, SegundoApellido, Email, password_hash,))
         result = cursor.fetchone()
-        if  result == 0:
+        
+        # Depuración: muestra el resultado
+        print(f"Resultado del procedimiento almacenado: {result}")
+        
+        # Verifica el resultado
+        if result and result[0] == 0:
             conn.commit()
             logging.info("Usuario registrado con éxito.")
             return True
-        if result == -1:
+        elif result and result[0] == 1:
             conn.rollback()
-            print(f"El correo ya existe.")
+            print("El correo ya existe.")
+            return False
+        else:
+            print("Error en el registro del usuario o resultado inesperado.")
+            return False
     except Exception as e:
         logging.error(f"Error durante la inserción de usuario: {e}")
         return False
     finally:
         conn.close()
+
 def verify_user(Email, password):
     conn = get_db_connection()
     cursor = conn.cursor()
