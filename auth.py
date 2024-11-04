@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, url_for, render_template, flash, json, session, abort
+from flask import Flask, json, session, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from conexionsql import get_db_connection
 from dotenv import load_dotenv
@@ -105,7 +105,50 @@ def login_is_required(function):
             return abort(401)  # Authorization required
         else:
             return function()
-
     return wrapper
+def get_user_by_email_and_password(email, password):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # Utiliza un placeholder (?) para prevenir inyección SQL
+    cursor.execute("SELECT ID_Persona, Email, Password FROM Persona WHERE Email = ?", email)
+    user = cursor.fetchone()
+    
+    conn.close()
+    
+    # Verifica si se encontró un usuario y si la contraseña coincide
+    if user and check_password_hash(user.Password, password):  # Utiliza una función de hashing para verificar la contraseña
+        return {'ID_Persona': user.ID_Persona, 'Email': user.Email}
+    
+    return None
 
 
+def login_user(email, password):
+    user = get_user_by_email_and_password(email, password)
+    if user:
+        session['user_id'] = user['ID_Persona']
+        return True
+    return False
+
+def get_user_by_id(user_id):
+    conn = None
+    user = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT Nombre, Email FROM Persona WHERE ID_Persona = ?", (user_id,))
+        result = cursor.fetchone()
+        
+        # Si se encuentra un usuario, convertirlo en un diccionario
+        if result:
+            user = {
+                'name': result[0],  # Nombre
+                'email': result[1]  # Email
+            }
+    except Exception as e:
+        print(f"Ocurrió un error al obtener el usuario: {e}")
+    finally:
+        if conn:
+            conn.close()
+    
+    return user
