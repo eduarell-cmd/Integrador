@@ -122,7 +122,6 @@ def get_user_by_email_and_password(email, password):
     
     return None
 
-
 def login_user(email, password):
     user = get_user_by_email_and_password(email, password)
     if user:
