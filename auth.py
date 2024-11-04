@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-from flask import Flask, request, redirect, url_for, render_template, flash, json
-from werkzeug.security import generate_password_hash, check_password_hash
-from conexionsql import get_db_connection
-import secrets
-=======
 from flask import Flask, request, redirect, url_for, render_template, flash, json, session, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from conexionsql import get_db_connection
@@ -11,21 +5,10 @@ from dotenv import load_dotenv
 load_dotenv()
 import os
 import pathlib
->>>>>>> f9aa4c194b24f85cf8de6c063143ec45a0800e6d
 from datetime import datetime
 import requests
 import googlemaps
 import logging
-<<<<<<< HEAD
-
-app = Flask(__name__)
-app.secret_key = secrets.token_hex(16)
-gmaps = googlemaps.Client(key='AIzaSyAjSN96XTz_okE3SwueGbWlk0w4is1TwiM')
-
-
-logging.basicConfig(level=logging.DEBUG)
-
-=======
 import json
 from google_auth_oauthlib.flow import Flow
 from google.oauth2 import id_token
@@ -74,7 +57,6 @@ def register_usergoogle(GoogleID, Nombre, PrimerApellido, SegundoApellido):
     cursor = conn.cursor()
 
     
->>>>>>> f9aa4c194b24f85cf8de6c063143ec45a0800e6d
 def register_user(Nombre, PrimerApellido, SegundoApellido, Email, Password,):
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -111,20 +93,12 @@ def verify_user(Email, password):
 
 def is_human(captcha_response):
     
-<<<<<<< HEAD
-    secret = "6Ldyi2AqAAAAAD2CKEoOADOlBpkmNmZ7A1f9jAhb"
-=======
     secret = "6LdSIWwqAAAAAI4hs5hE33Y_-vH_aRy79pbX6xzo"
->>>>>>> f9aa4c194b24f85cf8de6c063143ec45a0800e6d
     payload = {'response':captcha_response, 'secret':secret}
     response = requests.post("https://www.google.com/recaptcha/api/siteverify", payload)
     response_text = json.loads(response.text)
     return response_text['success']
 
-<<<<<<< HEAD
-
-#A PARTIR DE AQUI COMIENZAN LAS RUTAS 
-=======
 def login_is_required(function):
     def wrapper(*args, **kwargs):
         if "google_id" not in session:
@@ -133,6 +107,3 @@ def login_is_required(function):
             return function()
 
     return wrapper
-
->>>>>>> f9aa4c194b24f85cf8de6c063143ec45a0800e6d
-
