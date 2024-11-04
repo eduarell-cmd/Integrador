@@ -107,3 +107,4 @@ def login_is_required(function):
             return function()
 
     return wrapper
+
