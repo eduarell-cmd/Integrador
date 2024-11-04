@@ -148,12 +148,10 @@ def login():
             flash("¿Inicio de sesión fallido! Porfavor revisa que tu Email y Contraseña sean correctas")
     return render_template('login.html', sitekey=sitekey)
 
-@app.route('/reset_password',methods=['GET','POST'])
+@app.route('/reset_password')
 def reset_request():
     
-
     return render_template('reset_request.html')
-    
 @app.route('/')
 def index():
     return render_template('index.html')
