@@ -1,4 +1,4 @@
-from flask import Flask, json, session, abort
+from flask import Flask, json, session, abort, flash, redirect
 from werkzeug.security import generate_password_hash, check_password_hash
 from conexionsql import get_db_connection
 from dotenv import load_dotenv
@@ -62,15 +62,12 @@ def register_user(Nombre, PrimerApellido, SegundoApellido, Email, Password):
     cursor = conn.cursor()
 
     password_hash = generate_password_hash(Password)
-    register_user_sql = "EXEC Registrar_Usuario ?, ?, ?, ?, ?" 
+    register_user = "EXEC Registrar_Usuario ?, ?, ?, ?, ?" 
     try:
-        cursor.execute(register_user_sql, (Nombre, PrimerApellido, SegundoApellido, Email, password_hash,))
+        cursor.execute(register_user, (Nombre, PrimerApellido, SegundoApellido, Email, password_hash,))
         result = cursor.fetchone()
-        
-        # Depuración: muestra el resultado
         print(f"Resultado del procedimiento almacenado: {result}")
         
-        # Verifica el resultado
         if result and result[0] == 0:
             conn.commit()
             logging.info("Usuario registrado con éxito.")
@@ -137,7 +134,6 @@ def login_user(email, password):
         session['user_id'] = user['ID_Persona']
         return True
     return False
-
 def get_user_by_id(user_id):
     conn = None
     user = None
