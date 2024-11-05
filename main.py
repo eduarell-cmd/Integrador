@@ -155,8 +155,13 @@ def login():
         else:
             flash("¿Inicio de sesión fallido! Porfavor revisa que tu Email y Contraseña sean correctas")
     return render_template('login.html', sitekey=sitekey)
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash("Has cerrado sesion exitosamente", "info")
+    return redirect(url_for('login'))
 
-("""@app.route('/reset_password')
+@app.route('/reset_password')
 def reset_request():
     if request.method == 'POST':
         email = request.form.get('email')
@@ -178,7 +183,7 @@ def reset_request():
 
         flash('This email is not registered with us.', 'danger')
 
-    return render_template('reset_request.html')""")
+    return render_template('reset_request.html')
 @app.route('/')
 def index():
     return render_template('index.html')
