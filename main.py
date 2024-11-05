@@ -18,13 +18,12 @@ from werkzeug.security import generate_password_hash
 from itsdangerous import URLSafeTimedSerializer
 client_id = os.getenv("GOOGLE_CLIENT_ID")
 client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
-
+from conexionsql import connection
 admin_key = os.getenv("ADMIN_KEY")
-
-
 
 app = Flask(__name__)
 app.secret_key = "AvVoMrDAFRBiPNO8o9guscemWcgP"  
+s = URLSafeTimedSerializer(app.secret_key)
 gmaps = googlemaps.Client(key='AIzaSyCtOf_oaXQJd9iO83RzKtdWBsRk8R3EqYA')
 s = URLSafeTimedSerializer(app.secret_key)
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1" #permite que haya trafico al local dev
@@ -161,20 +160,20 @@ def logout():
     flash("Has cerrado sesion exitosamente", "info")
     return redirect(url_for('login'))
 
-@app.route('/reset_password')
+@app.route('/reset_request')
 def reset_request():
     if request.method == 'POST':
-        email = request.form.get('email')
-        user = User.query.filter_by(email=email).first()
+        Email = request.form.get('Email')
+        user = "SELECT Contraseña FROM Usuario WHERE Email = ?"
 
         if user:
-            token = s.dumps(email, salt='password-reset-salt')
+            token = s.dumps(Email, salt='password-reset-salt')
             link = url_for('reset_password', token=token, _external=True)
 
             # Enviar el correo electrónico de restablecimiento
             msg = Message("Password Reset Request",
-                          sender="noreply@example.com",
-                          recipients=[email])
+                          sender="farmtable79@gmail.com",
+                          recipients=[Email])
             msg.body = f'Click the link to reset your password: {link}'
             mail.send(msg)
 
@@ -184,6 +183,35 @@ def reset_request():
         flash('This email is not registered with us.', 'danger')
 
     return render_template('reset_request.html')
+
+@app.route('/reset_request/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    conn=connection
+    try:
+        # Validar el token y obtener el correo electrónico
+        Email = s.loads(token, salt='password-reset-salt', max_age=3600)  # 1 hora de validez
+    except:
+        flash('The reset link is invalid or has expired.', 'danger')
+        return redirect(url_for('forgot_password'))
+
+    if request.method == 'POST':
+        cursor = conn.cursor()
+        Password = request.form.get('Password')
+        user = "SELECT Contraseña FROM Usuario WHERE Email = ?"
+        cursor.execute(user, (Password,Email))
+        if user:
+            # Cambiar la contraseña del usuario
+            query = "UPDATE Persona SET Password = ? WHERE Email = ?"
+            user.password = generate_password_hash(Password)
+            params = (user.password, Email)
+            cursor.execute(query, (params))
+            conn.session.commit()
+
+            flash('Your password has been updated!', 'success')
+            return redirect(url_for('login'))
+
+    return render_template('reset_password.html')
+
 @app.route('/')
 def index():
     return render_template('index.html')

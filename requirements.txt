@@ -33,3 +33,5 @@ soupsieve==2.6
 uritemplate==4.1.1
 urllib3==2.2.3
 Werkzeug==3.0.4
+flask-mail==0.10.0
+python-dotenv==1.0.1
