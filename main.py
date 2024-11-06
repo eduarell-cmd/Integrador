@@ -184,7 +184,7 @@ def reset_request():
 
     return render_template('reset_request.html')
 
-@app.route('/reset_request/<token>', methods=['GET', 'POST'])
+@app.route('/reset_request', methods=['GET', 'POST'])
 def reset_password(token):
     conn=connection
     try:
