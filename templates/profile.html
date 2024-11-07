@@ -122,11 +122,10 @@
                                     <div class="card-body">
                                         <h4 class="card-title">Información del Usuario</h4>
                                         <span>Bienvenido, {{ user.name }}!</span>
-                                        <p><strong>Email:</strong> juanperez@gmail.com</p>
+                                        <p><strong>Email:</strong> {{ user.email }}!</p>
                                         <p><strong>Teléfono:</strong> 555-1234</p>
                                         <a href="#" class="btn btn-primary">Editar Perfil</a>
                                         <a href="{{ url_for('logout') }}">Cerrar sesión</a>
-
                                     </div>
                                 </div>
                             </div>

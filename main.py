@@ -23,7 +23,6 @@ admin_key = os.getenv("ADMIN_KEY")
 
 app = Flask(__name__)
 app.secret_key = "AvVoMrDAFRBiPNO8o9guscemWcgP"  
-s = URLSafeTimedSerializer(app.secret_key)
 gmaps = googlemaps.Client(key='AIzaSyCtOf_oaXQJd9iO83RzKtdWBsRk8R3EqYA')
 s = URLSafeTimedSerializer(app.secret_key)
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1" #permite que haya trafico al local dev
@@ -150,13 +149,14 @@ def login():
         Contraseña = request.form['Password']
         captcha_response = request.form['g-recaptcha-response']
         if login_user(Email, Contraseña) and is_human(captcha_response):
-            return redirect(url_for('dashboard',))
+            return redirect(url_for('profile',))
         else:
             flash("¿Inicio de sesión fallido! Porfavor revisa que tu Email y Contraseña sean correctas")
     return render_template('login.html', sitekey=sitekey)
 @app.route('/logout')
 def logout():
     session.clear()
+    session.pop(user_id.ID_Persona)
     flash("Has cerrado sesion exitosamente", "info")
     return redirect(url_for('login'))
 
