@@ -115,18 +115,15 @@ def login_is_required(function):
 def get_user_by_email_and_password(email, password):
     conn = get_db_connection()
     cursor = conn.cursor()
-    
-    # Utiliza un placeholder (?) para prevenir inyección SQL
     cursor.execute("SELECT ID_Persona, Email, Password FROM Persona WHERE Email = ?", email)
     user = cursor.fetchone()
-    
     conn.close()
-    
     # Verifica si se encontró un usuario y si la contraseña coincide
     if user and check_password_hash(user.Password, password):  # Utiliza una función de hashing para verificar la contraseña
         return {'ID_Persona': user.ID_Persona, 'Email': user.Email}
-    
-    return None
+    else:
+        print("El Email y la contraseña no coinciden")
+        return None
 
 def login_user(email, password):
     user = get_user_by_email_and_password(email, password)
