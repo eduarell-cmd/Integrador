@@ -204,7 +204,7 @@ def reset_password(token):
     if request.method == 'POST':
         cursor = conn.cursor()
         Password = request.form.get('Password')
-        user = "SELECT Contraseña FROM Usuario WHERE Email = ?"
+        user = "SELECT Password FROM Persona WHERE Email = ?"
         cursor.execute(user, (Password,Email))
         if user:
             # Cambiar la contraseña del usuario
