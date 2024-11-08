@@ -20,7 +20,7 @@ client_id = os.getenv("GOOGLE_CLIENT_ID")
 client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
 from conexionsql import connection
 admin_key = os.getenv("ADMIN_KEY")
-from mail import mail
+from mail import Mail
 app = Flask(__name__)
 app.secret_key = "AvVoMrDAFRBiPNO8o9guscemWcgP"  
 gmaps = googlemaps.Client(key='AIzaSyCtOf_oaXQJd9iO83RzKtdWBsRk8R3EqYA')
@@ -147,7 +147,7 @@ def login():
     sitekey = "6Ldyi2AqAAAAAEJrfFUi_p05WKVJNk8n_n2M2fYn"
 
     if request.method == 'POST':
-        Email      = request.form['Email']
+        Email = request.form['Email']
         Contraseña = request.form['Password']
         captcha_response = request.form['g-recaptcha-response']
         if login_user(Email, Contraseña) and is_human(captcha_response):
@@ -156,6 +156,7 @@ def login():
             flash("¿Inicio de sesión fallido! Porfavor revisa que tu Email y Contraseña sean correctas")
     return render_template('login.html', sitekey=sitekey)
 @app.route('/logout')
+
 def logout():
     session.clear()
     session.pop(user_id.ID_Persona)
@@ -166,7 +167,7 @@ def logout():
 def reset_request():
     conn=connection 
     cursor = conn.cursor()
-    mail(app)
+    Mail()
     if request.args.get("Email"):
         Email = request.args.get('Email')
         sqlquery= "SELECT Password FROM Persona WHERE Email = '"+Email+"'"
@@ -176,16 +177,17 @@ def reset_request():
         if user:
             token = s.dumps(Email, salt='password-reset-salt')
             link = url_for('reset_password', token=token, _external=True)
-
-            # Enviar el correo electrónico de restablecimiento
-            msg = Message("Password Reset Request",
+            class _MailMixin:
+                def send(self,Message):
+                    msg = Message(subject="Password Reset Request",
                           sender="farmtable79@gmail.com",
-                          recipients=[Email])
-            msg.body = f'Click the link to reset your password: {link}'
-            mail.send(msg)
+                          recipients=[Email],
+                          body=f'Click the link to reset your password: {link}')
+                    with app.app_context():
+                        mail.send(msg)
 
             flash('An email with instructions to reset your password has been sent.', 'info')
-            return redirect(url_for('login'))
+            return render_template('login.html')
 
         flash('This email is not registered with us.', 'danger')
 
@@ -215,7 +217,7 @@ def reset_password(token):
             conn.session.commit()
 
             flash('Your password has been updated!', 'success')
-            return redirect(url_for('login'))
+            return render_template('login.html')
 
     return render_template('reset_password.html')
 
