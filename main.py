@@ -20,7 +20,7 @@ client_id = os.getenv("GOOGLE_CLIENT_ID")
 client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
 from conexionsql import connection
 admin_key = os.getenv("ADMIN_KEY")
-
+from mail import mail
 app = Flask(__name__)
 app.secret_key = "AvVoMrDAFRBiPNO8o9guscemWcgP"  
 gmaps = googlemaps.Client(key='AIzaSyCtOf_oaXQJd9iO83RzKtdWBsRk8R3EqYA')
@@ -29,6 +29,8 @@ os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1" #permite que haya trafico al loc
 
 client_id = os.getenv("GOOGLE_CLIENT_ID")
 client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
+
+
 
 flow = Flow.from_client_config(
     client_config={
@@ -162,10 +164,15 @@ def logout():
 
 @app.route('/reset_request')
 def reset_request():
-    if request.method == 'POST':
-        Email = request.form.get('Email')
-        user = "SELECT Contraseña FROM Usuario WHERE Email = ?"
+    conn=connection 
+    cursor = conn.cursor()
+    mail(app)
+    if request.args.get("Email"):
+        Email = request.args.get('Email')
+        sqlquery= "SELECT Password FROM Persona WHERE Email = '"+Email+"'"
+        user = cursor.execute(sqlquery)
 
+        print(user)
         if user:
             token = s.dumps(Email, salt='password-reset-salt')
             link = url_for('reset_password', token=token, _external=True)
@@ -184,7 +191,7 @@ def reset_request():
 
     return render_template('reset_request.html')
 
-@app.route('/reset_request/<token>', methods=['GET', 'POST'])
+@app.route('/reset_request', methods=['GET', 'POST'])
 def reset_password(token):
     conn=connection
     try:
@@ -197,7 +204,7 @@ def reset_password(token):
     if request.method == 'POST':
         cursor = conn.cursor()
         Password = request.form.get('Password')
-        user = "SELECT Contraseña FROM Usuario WHERE Email = ?"
+        user = "SELECT Password FROM Persona WHERE Email = ?"
         cursor.execute(user, (Password,Email))
         if user:
             # Cambiar la contraseña del usuario
