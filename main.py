@@ -20,7 +20,7 @@ client_id = os.getenv("GOOGLE_CLIENT_ID")
 client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
 from conexionsql import connection
 admin_key = os.getenv("ADMIN_KEY")
-
+from mail import *
 app = Flask(__name__)
 app.secret_key = "AvVoMrDAFRBiPNO8o9guscemWcgP"  
 gmaps = googlemaps.Client(key='AIzaSyCtOf_oaXQJd9iO83RzKtdWBsRk8R3EqYA')
@@ -143,42 +143,59 @@ def signup():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     sitekey = "6Ldyi2AqAAAAAEJrfFUi_p05WKVJNk8n_n2M2fYn"
-
     if request.method == 'POST':
         Email      = request.form['Email']
         Contraseña = request.form['Password']
         captcha_response = request.form['g-recaptcha-response']
+        ID_Persona = "SELECT ID_Persona from Persona Where Email = '"+Email+"'"
+        session['user_id'] = ID_Persona
         if login_user(Email, Contraseña) and is_human(captcha_response):
             return redirect(url_for('profile',))
         else:
             flash("¿Inicio de sesión fallido! Porfavor revisa que tu Email y Contraseña sean correctas")
     return render_template('login.html', sitekey=sitekey)
+
 @app.route('/logout')
 def logout():
+    conn=connection
+    cursor = conn.cursor()
+    Email = "SELECT ID_Persona FROM Persona WHERE Email = ?"
+    session['user_id'] = ID_Persona = Email
+    user_id=ID_Persona
+    cursor.execute(ID_Persona, (Email,))
     session.clear()
-    session.pop(user_id.ID_Persona)
+    session.pop(user_id,ID_Persona)
     flash("Has cerrado sesion exitosamente", "info")
     return redirect(url_for('login'))
 
 @app.route('/reset_request')
 def reset_request():
-    if request.method == 'POST':
-        Email = request.form.get('Email')
-        user = "SELECT Contraseña FROM Usuario WHERE Email = ?"
-
+    conn=connection 
+    cursor = conn.cursor()
+    Mail()
+    if request.args.get("Email"):
+        Email = request.args.get('Email')
+        sqlquery= "SELECT Password FROM Persona WHERE Email = '"+Email+"'"
+        user = cursor.execute(sqlquery)
         if user:
             token = s.dumps(Email, salt='password-reset-salt')
             link = url_for('reset_password', token=token, _external=True)
-
-            # Enviar el correo electrónico de restablecimiento
-            msg = Message("Password Reset Request",
+            class _MailMixin:
+                def send(self,Message):
+                    print("ya estoy lleno")
+                    msg = Message(subject="Password Reset Request",
                           sender="farmtable79@gmail.com",
-                          recipients=[Email])
-            msg.body = f'Click the link to reset your password: {link}'
-            mail.send(msg)
+                          recipients=[Email],
+                          body=f'Click the link to reset your password: {link}')
+                    with app.app_context():
+                        try:
+                            mail.send(msg)
+                           
+                        except Exception as e:
+                            print(e)
 
-            flash('An email with instructions to reset your password has been sent.', 'info')
-            return redirect(url_for('login'))
+                flash('An email with instructions to reset your password has been sent.', 'info')
+            return render_template('login.html')
 
         flash('This email is not registered with us.', 'danger')
 
