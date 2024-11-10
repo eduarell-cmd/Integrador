@@ -19,7 +19,7 @@ client_id = os.getenv("GOOGLE_CLIENT_ID")
 client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
 from conexionsql import connection
 admin_key = os.getenv("ADMIN_KEY")
-
+from mail import Mail
 app = Flask(__name__)
 app.secret_key = "AvVoMrDAFRBiPNO8o9guscemWcgP"  
 gmaps = googlemaps.Client(key='AIzaSyCtOf_oaXQJd9iO83RzKtdWBsRk8R3EqYA')
@@ -28,6 +28,8 @@ os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1" #permite que haya trafico al loc
 
 client_id = os.getenv("GOOGLE_CLIENT_ID")
 client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
+
+
 
 flow = Flow.from_client_config(
     client_config={
@@ -144,7 +146,7 @@ def login():
     sitekey = "6Ldyi2AqAAAAAEJrfFUi_p05WKVJNk8n_n2M2fYn"
 
     if request.method == 'POST':
-        Email      = request.form['Email']
+        Email = request.form['Email']
         Contraseña = request.form['Password']
         captcha_response = request.form['g-recaptcha-response']
         if login_user(Email, Contraseña) and is_human(captcha_response):
@@ -153,6 +155,7 @@ def login():
             flash("¿Inicio de sesión fallido! Porfavor revisa que tu Email y Contraseña sean correctas")
     return render_template('login.html', sitekey=sitekey)
 @app.route('/logout')
+
 def logout():
     session.clear()
     session.pop(user_id.ID_Persona)
@@ -161,29 +164,35 @@ def logout():
 
 @app.route('/reset_request')
 def reset_request():
-    if request.method == 'POST':
-        Email = request.form.get('Email')
-        user = "SELECT Contraseña FROM Usuario WHERE Email = ?"
+    conn=connection 
+    cursor = conn.cursor()
+    Mail()
+    if request.args.get("Email"):
+        Email = request.args.get('Email')
+        sqlquery= "SELECT Password FROM Persona WHERE Email = '"+Email+"'"
+        user = cursor.execute(sqlquery)
 
+        print(user)
         if user:
             token = s.dumps(Email, salt='password-reset-salt')
             link = url_for('reset_password', token=token, _external=True)
-
-            # Enviar el correo electrónico de restablecimiento
-            msg = Message("Password Reset Request",
+            class _MailMixin:
+                def send(self,Message):
+                    msg = Message(subject="Password Reset Request",
                           sender="farmtable79@gmail.com",
-                          recipients=[Email])
-            msg.body = f'Click the link to reset your password: {link}'
-            mail.send(msg)
+                          recipients=[Email],
+                          body=f'Click the link to reset your password: {link}')
+                    with app.app_context():
+                        mail.send(msg)
 
             flash('An email with instructions to reset your password has been sent.', 'info')
-            return redirect(url_for('login'))
+            return render_template('login.html')
 
         flash('This email is not registered with us.', 'danger')
 
     return render_template('reset_request.html')
 
-@app.route('/reset_request/<token>', methods=['GET', 'POST'])
+@app.route('/reset_request', methods=['GET', 'POST'])
 def reset_password(token):
     conn=connection
     try:
@@ -196,7 +205,7 @@ def reset_password(token):
     if request.method == 'POST':
         cursor = conn.cursor()
         Password = request.form.get('Password')
-        user = "SELECT Contraseña FROM Usuario WHERE Email = ?"
+        user = "SELECT Password FROM Persona WHERE Email = ?"
         cursor.execute(user, (Password,Email))
         if user:
             # Cambiar la contraseña del usuario
@@ -207,7 +216,7 @@ def reset_password(token):
             conn.session.commit()
 
             flash('Your password has been updated!', 'success')
-            return redirect(url_for('login'))
+            return render_template('login.html')
 
     return render_template('reset_password.html')
 
