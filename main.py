@@ -1,7 +1,6 @@
 from flask import Flask, request, redirect, url_for, render_template, flash, session, abort
 from auth import register_user, verify_user, is_human, login_user, get_user_by_id
 from dotenv import load_dotenv
-
 import mail
 load_dotenv()
 import os
