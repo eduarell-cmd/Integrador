@@ -20,7 +20,7 @@ client_id = os.getenv("GOOGLE_CLIENT_ID")
 client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
 from conexionsql import connection
 admin_key = os.getenv("ADMIN_KEY")
-from mail import Mail
+from mail import *
 app = Flask(__name__)
 app.secret_key = "AvVoMrDAFRBiPNO8o9guscemWcgP"  
 gmaps = googlemaps.Client(key='AIzaSyCtOf_oaXQJd9iO83RzKtdWBsRk8R3EqYA')
@@ -179,8 +179,6 @@ def reset_request():
         Email = request.args.get('Email')
         sqlquery= "SELECT Password FROM Persona WHERE Email = '"+Email+"'"
         user = cursor.execute(sqlquery)
-
-        print(user)
         if user:
             token = s.dumps(Email, salt='password-reset-salt')
             link = url_for('reset_password', token=token, _external=True)
