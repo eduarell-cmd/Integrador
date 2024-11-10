@@ -1,7 +1,6 @@
 from flask import Flask, request, redirect, url_for, render_template, flash, session, abort
 from auth import register_user, verify_user, is_human, login_user, get_user_by_id
 from dotenv import load_dotenv
-
 import mail
 load_dotenv()
 import os
@@ -13,6 +12,7 @@ from google.oauth2 import id_token
 import google.auth.transport.requests
 from pip._vendor import cachecontrol 
 from flask_mail import Message
+from seller import *
 #from conexionsql.models import User
 from werkzeug.security import generate_password_hash
 from itsdangerous import URLSafeTimedSerializer
@@ -29,8 +29,6 @@ os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1" #permite que haya trafico al loc
 
 client_id = os.getenv("GOOGLE_CLIENT_ID")
 client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
-
-
 
 flow = Flow.from_client_config(
     client_config={
@@ -146,7 +144,7 @@ def signup():
 def login():
     sitekey = "6Ldyi2AqAAAAAEJrfFUi_p05WKVJNk8n_n2M2fYn"
     if request.method == 'POST':
-        Email = request.form['Email']
+        Email      = request.form['Email']
         Contraseña = request.form['Password']
         captcha_response = request.form['g-recaptcha-response']
         ID_Persona = "SELECT ID_Persona from Persona Where Email = '"+Email+"'"
@@ -203,7 +201,7 @@ def reset_request():
 
     return render_template('reset_request.html')
 
-@app.route('/reset_request', methods=['GET', 'POST'])
+@app.route('/reset_request/<token>', methods=['GET', 'POST'])
 def reset_password(token):
     conn=connection
     try:
@@ -216,7 +214,7 @@ def reset_password(token):
     if request.method == 'POST':
         cursor = conn.cursor()
         Password = request.form.get('Password')
-        user = "SELECT Password FROM Persona WHERE Email = ?"
+        user = "SELECT Contraseña FROM Usuario WHERE Email = ?"
         cursor.execute(user, (Password,Email))
         if user:
             # Cambiar la contraseña del usuario
@@ -227,7 +225,7 @@ def reset_password(token):
             conn.session.commit()
 
             flash('Your password has been updated!', 'success')
-            return render_template('login.html')
+            return redirect(url_for('login'))
 
     return render_template('reset_password.html')
 
@@ -274,6 +272,29 @@ def perfil():
 def admin_dashboard():
      return render_template('admin.html')
 
+@app.route('/register_seller', methods=['GET','POST'])
+def register_seller():
+    #DATA 
+    if request.method == 'POST':
+        name = request.form['name']
+        firstname = request.form['firstname']
+        lastname = request.form['lastname']
+        phone = request.form['phone']
+        birthdate = request.form['birthdate']
+        #FILES
+        ine_file = request.files['ine']
+        address_prof = request.files['comprobante']
+        licenceA = request.files['licenciaA']
+        licenceT = request.files['licenciaT']
+
+    #Google Cloud Storage (Upload)
+        ine_file = upload_file_to_bucket(ine_file, f"docs/{name}_INE.jpg")
+        address_prof = upload_file_to_bucket(address_prof, f"docs/{name}_addressprof.jpg")
+        licenceA = upload_file_to_bucket(licenceA, f"docs/{name}_licenseA.jpg")
+        licenceT = upload_file_to_bucket(licenceT, f"docs/{name}_licenseT.jpg")
+
+        
+    return render_template('register_seller.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

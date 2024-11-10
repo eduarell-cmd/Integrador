@@ -129,7 +129,9 @@ def login_user(email, password):
     if user:
         session['user_id'] = user['ID_Persona']
         return True
-    return False
+    else:
+        print("Aqui falla")
+        return False
 def get_user_by_id(user_id):
     conn = None
     user = None
