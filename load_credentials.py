@@ -1,13 +1,12 @@
 from dotenv import load_dotenv
 import os
 
-# Cargar variables desde el archivo .env
-load_dotenv()
+load_dotenv()  # Cargar variables de entorno desde el archivo .env
 
-# Obtener las credenciales
-client_id = os.getenv("GOOGLE_CLIENT_ID")
-client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
+# Acceder a las variables
+client_id = os.getenv('GOOGLE_CLIENT_ID')
+client_secret = os.getenv('GOOGLE_CLIENT_SECRET')
+admin_key = os.getenv('ADMIN_KEY')
+google_credentials = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
 
-# Imprimir las credenciales para verificar (solo durante pruebas)
-print("Client ID:", client_id)
-print("Client Secret:", client_secret)
+print(client_id, client_secret, admin_key, google_credentials)
