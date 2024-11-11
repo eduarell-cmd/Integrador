@@ -1,5 +1,6 @@
 # Ignorar archivos de Python
 __pycache__/
+*.py[cod]
 
 # Ignorar la carpeta de configuración de VSCode
 .vscode/
@@ -14,3 +15,4 @@ venv/
 client_secret.json
 
 conexionsql.py
+conexionsql.cpython-312.pyc
