@@ -25,12 +25,10 @@
     <link href="{{ url_for('static',filename='css/style.css') }}" rel="stylesheet">
     <link rel="icon" href="{{ url_for('static',filename='img/LOGO.png') }}" type="image/x-icon">
 </head>
-<form action="{{ url_for('register_seller') }}" method="POST">
+<form action="{{ url_for('register_seller') }}" method="POST" enctype="multipart/form-data" id="registerForm">
 <body class="bg-light d-flex align-items-center justify-content-center min-vh-100">
     <div class="container bg-white p-5 rounded shadow" style="max-width: 600px;">
         <h1 class="text-center mb-4">Registro de Agricultores</h1>
-        <form id="farmerRegistrationForm" enctype="multipart/form-data" method="POST" action="/upload">
-            <!-- Paso 1: Información Personal -->
             <div class="form-step">
                 <h2 class="h5 border-bottom pb-2">Paso 1: Información Personal</h2>
                 
@@ -62,7 +60,6 @@
                 <button type="button" class="btn btn-primary" onclick="nextStep()">Siguiente</button>
             </div>
 
-            <!-- Paso 2: Documentos Requeridos -->
             <div class="form-step" style="display: none;">
                 <h2 class="h5 border-bottom pb-2">Paso 2: Documentos Requeridos</h2>
                 
@@ -87,9 +84,8 @@
                 </div>
 
                 <button type="button" class="btn btn-secondary" onclick="prevStep()">Anterior</button>
-                <button type="submit" class="btn btn-success" href="{{ url_for('register_seller') }}">Enviar Registro</button>
+                <button type="submit" class="btn btn-success">Enviar Registro</button>
             </div>
-        </form>
     </div>
 </form>
     <script>
