@@ -143,13 +143,20 @@ def signup():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     sitekey = "6Ldyi2AqAAAAAEJrfFUi_p05WKVJNk8n_n2M2fYn"
-    if request.method == 'POST':
-        Email      = request.form['Email']
-        Contraseña = request.form['Password']
-        captcha_response = request.form['g-recaptcha-response']
-        ID_Persona = "SELECT ID_Persona from Persona Where Email = '"+Email+"'"
+    cursor = connection.cursor()
+    #if request.method == 'POST':
+    if request.method == 'GET':
+        print("hola buenos días")
+        Email      = request.args.get('Email')
+        Contraseña = request.args.get('Password')
+        captcha_response = request.args.get('g-recaptcha-response')
+        cursor.execute("SELECT ID_Persona from Persona Where Email = ?",Email)
+        user = cursor.fetchone()
+        ID_Persona = user
         session['user_id'] = ID_Persona
-        if login_user(Email, Contraseña) and is_human(captcha_response):
+        human = is_human(captcha_response)
+        print(login_user(Email, Contraseña), human)
+        if login_user(Email, Contraseña) and human:
             return redirect(url_for('profile',))
         else:
             flash("¿Inicio de sesión fallido! Porfavor revisa que tu Email y Contraseña sean correctas")
