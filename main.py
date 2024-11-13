@@ -238,6 +238,8 @@ def reset_password(token):
 
 @app.route('/')
 def index():
+    conn=connection
+    
     return render_template('index.html')
 
 @app.route('/protectedarea')

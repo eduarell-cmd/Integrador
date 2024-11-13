@@ -117,7 +117,6 @@ def get_user_by_email_and_password(email, password):
     cursor = conn.cursor()
     cursor.execute("SELECT ID_Persona, Email, Password FROM Persona WHERE Email = ?", email)
     user = cursor.fetchone()
-    print (f"agarra el{user[0]}")
     # Verifica si se encontró un usuario y si la contraseña coincide
     if user and check_password_hash(user.Password, password):  # Utiliza una función de hashing para verificar la contraseña
         return {'ID_Persona': user.ID_Persona, 'Email': user.Email}
