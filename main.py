@@ -1,5 +1,5 @@
 from flask import Flask, request, redirect, url_for, render_template, flash, session, abort
-from auth import register_user, verify_user, is_human, login_user, get_user_by_id
+from auth import *
 from dotenv import load_dotenv
 import mail
 load_dotenv()
@@ -142,38 +142,31 @@ def signup():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    sitekey = "6Ldyi2AqAAAAAEJrfFUi_p05WKVJNk8n_n2M2fYn"
-    cursor = connection.cursor()
-    #if request.method == 'POST':
-    if request.method == 'GET':
+    print("Estoy en login")
+    sitekey = "6LdSIWwqAAAAAI4hs5hE33Y_-vH_aRy79pbX6xzo"
+    if request.method == "POST":
         print("hola buenos días")
-        Email      = request.args.get('Email')
-        Contraseña = request.args.get('Password')
-        captcha_response = request.args.get('g-recaptcha-response')
-        cursor.execute("SELECT ID_Persona from Persona Where Email = ?",Email)
-        user = cursor.fetchone()
-        ID_Persona = user
-        session['user_id'] = ID_Persona
-        human = is_human(captcha_response)
-        print(login_user(Email, Contraseña), human)
-        if login_user(Email, Contraseña) and human:
-            return redirect(url_for('profile',))
+        Email      = request.form['Email']
+        Contraseña = request.form['Password']
+        captcha_response = request.form['g-recaptcha-response']
+        print(f"No está agarrando{captcha_response}")
+        if login_user(Email, Contraseña) and is_human(captcha_response):
+            print(login_user(Email, Contraseña), is_human(captcha_response))
+            return redirect(url_for('perfil',))
         else:
             flash("¿Inicio de sesión fallido! Porfavor revisa que tu Email y Contraseña sean correctas")
+        return render_template('login.html', sitekey=sitekey)
     return render_template('login.html', sitekey=sitekey)
-
 @app.route('/logout')
 def logout():
-    conn=connection
-    cursor = conn.cursor()
-    Email = "SELECT ID_Persona FROM Persona WHERE Email = ?"
-    session['user_id'] = ID_Persona = Email
-    user_id=ID_Persona
-    cursor.execute(ID_Persona, (Email,))
-    session.clear()
-    session.pop(user_id,ID_Persona)
-    flash("Has cerrado sesion exitosamente", "info")
-    return redirect(url_for('login'))
+    ID_Persona = session.get('user_id')
+    if ID_Persona:
+        user = get_user_by_email(ID_Persona)
+        email = user['email'] if user else None
+        session.pop('user_id', None)
+        session.clear()
+        flash("Has cerrado sesión exitosamente", "info")
+        return redirect(url_for('index'))     
 
 @app.route('/reset_request')
 def reset_request():
@@ -220,7 +213,7 @@ def reset_password(token):
 
     if request.method == 'POST':
         cursor = conn.cursor()
-        Password = request.form.get('Password')
+        Password = request.form['Password']
         user = "SELECT Contraseña FROM Usuario WHERE Email = ?"
         cursor.execute(user, (Password,Email))
         if user:

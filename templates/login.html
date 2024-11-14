@@ -35,7 +35,7 @@
     <link href="{{ url_for('static', filename='css/style.css')}}" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='login.css')}}">
     <link rel="icon" href="{{ url_for('static', filename='img/LOGO.png')}}" type="image/x-icon">
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="https://www.google.com/recaptcha/api.js"></script>
 </head>
 <body style="background-color: #b4ff9a;">
   {% with messages = get_flashed_messages(with_categories=true) %}
@@ -47,7 +47,7 @@
       </ul>
   {% endif %}
 {% endwith %}
-<form action="{{ url_for('login') }}" method="get">
+<form action="{{ url_for('login') }}" method="post">
   <div class="container min-vh-100 d-flex justify-content-center align-items-center">
   <div id="alinear">
    
@@ -67,7 +67,7 @@
     <br>
     <div>
       <div class="col-md-12" style="text-align: center;">
-        <button type="submit" class="btn btn-primary"><a href="{{url_for('perfil')}}" id="text-hip">Log in</a></button>
+        <button type="submit" class="btn btn-primary" href="{{ url_for('login') }} ">Log in</button>
       </div>
       <br>  
       <div class = "col.md-4" style="text-align: center;">
