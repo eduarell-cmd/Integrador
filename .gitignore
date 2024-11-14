@@ -15,5 +15,6 @@ venv/
 client_secret.json
 
 conexionsql.py
+conexionsql.cpython-312.pyc
 
 useful-memory-441220-g6-74d372e29035.json

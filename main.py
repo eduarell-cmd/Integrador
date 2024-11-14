@@ -1,5 +1,5 @@
 from flask import Flask, request, redirect, url_for, render_template, flash, session, abort
-from auth import register_user, verify_user, is_human, login_user, get_user_by_id
+from auth import *
 from dotenv import load_dotenv
 import mail
 load_dotenv()
@@ -131,8 +131,9 @@ def signup():
         SegundoApellido   = request.form['SegundoApellido']
         Email       = request.form['Email']
         Password  = request.form['Password']
+        captcha_response = request.form['g-recaptcha-response']
         print(f"Registrando: {Name}, {PrimerApellido}, {SegundoApellido}, {Email},")
-        if register_user(Name, PrimerApellido, SegundoApellido, Email, Password,):
+        if register_user(Name, PrimerApellido, SegundoApellido, Email, Password,) and is_human(captcha_response): #Lo mismo que login
             flash("¡Se ha registrado exitosamente! Ahora puede iniciar sesion.", "success")
             return redirect(url_for('login'))
         else:
@@ -142,38 +143,31 @@ def signup():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    sitekey = "6Ldyi2AqAAAAAEJrfFUi_p05WKVJNk8n_n2M2fYn"
-    cursor = connection.cursor()
-    #if request.method == 'POST':
-    if request.method == 'GET':
+    print("Estoy en login")
+    sitekey = "6LdSIWwqAAAAAI4hs5hE33Y_-vH_aRy79pbX6xzo"
+    if request.method == "POST":
         print("hola buenos días")
-        Email      = request.args.get('Email')
-        Contraseña = request.args.get('Password')
-        captcha_response = request.args.get('g-recaptcha-response')
-        cursor.execute("SELECT ID_Persona from Persona Where Email = ?",Email)
-        user = cursor.fetchone()
-        ID_Persona = user
-        session['user_id'] = ID_Persona
-        human = is_human(captcha_response)
-        print(login_user(Email, Contraseña), human)
-        if login_user(Email, Contraseña) and human:
-            return redirect(url_for('profile',))
+        Email      = request.form['Email']
+        Contraseña = request.form['Password']
+        captcha_response = request.form['g-recaptcha-response']
+        print(f"No está agarrando{captcha_response}")
+        if login_user(Email, Contraseña) and is_human(captcha_response):
+            print(login_user(Email, Contraseña), is_human(captcha_response))
+            return redirect(url_for('perfil',))
         else:
             flash("¿Inicio de sesión fallido! Porfavor revisa que tu Email y Contraseña sean correctas")
+        return render_template('login.html', sitekey=sitekey)
     return render_template('login.html', sitekey=sitekey)
-
 @app.route('/logout')
 def logout():
-    conn=connection
-    cursor = conn.cursor()
-    Email = "SELECT ID_Persona FROM Persona WHERE Email = ?"
-    session['user_id'] = ID_Persona = Email
-    user_id=ID_Persona
-    cursor.execute(ID_Persona, (Email,))
-    session.clear()
-    session.pop(user_id,ID_Persona)
-    flash("Has cerrado sesion exitosamente", "info")
-    return redirect(url_for('login'))
+    ID_Persona = session.get('user_id')
+    if ID_Persona:
+        user = get_user_by_email(ID_Persona)
+        email = user['email'] if user else None
+        session.pop('user_id', None)
+        session.clear()
+        flash("Has cerrado sesión exitosamente", "info")
+        return redirect(url_for('index'))     
 
 @app.route('/reset_request')
 def reset_request():
@@ -220,7 +214,7 @@ def reset_password(token):
 
     if request.method == 'POST':
         cursor = conn.cursor()
-        Password = request.form.get('Password')
+        Password = request.form['Password']
         user = "SELECT Contraseña FROM Usuario WHERE Email = ?"
         cursor.execute(user, (Password,Email))
         if user:
@@ -285,23 +279,43 @@ def admin_dashboard():
 def register_seller():
     #DATA 
     if request.method == 'POST':
-        name = request.form['name']
-        firstname = request.form['firstname']
-        lastname = request.form['lastname']
-        phone = request.form['phone']
-        birthdate = request.form['birthdate']
-        #FILES
-        ine_file = request.files['ine']
-        address_prof = request.files['comprobante']
-        licenceA = request.files['licenciaA']
-        licenceT = request.files['licenciaT']
+        try:
+            name = request.form['name']
+            firstname = request.form['firstname']
+            lastname = request.form['lastname']
+            phone = request.form['phone']
+            birthdate = request.form['birthdate']
+            #FILES
+            ine_file = request.files['ine']
+            address_prof = request.files['comprobante']
+            licenceA = request.files['licenciaA']
+            licenceT = request.files['licenciaT']
 
-    #Google Cloud Storage (Upload)
-        ine_file = upload_file_to_bucket(ine_file, f"docs/{name}_INE.jpg")
-        address_prof = upload_file_to_bucket(address_prof, f"docs/{name}_addressprof.jpg")
-        licenceA = upload_file_to_bucket(licenceA, f"docs/{name}_licenseA.jpg")
-        licenceT = upload_file_to_bucket(licenceT, f"docs/{name}_licenseT.jpg")
+            if ine_file:
+                print("INE file received")
+            if address_prof:
+                print("Comprobante file received")
+            if licenceA:
+                print("Licencia A file received")
+            if licenceT:
+                print("Licencia T file received")
 
+            #Google Cloud Storage (Upload)
+            ine_file = upload_file_to_bucket(ine_file, f"docs/{name}_INE.jpg")
+            address_prof = upload_file_to_bucket(address_prof, f"docs/{name}_addressprof.jpg")
+            licenceA = upload_file_to_bucket(licenceA, f"docs/{name}_licenseA.jpg")
+            licenceT = upload_file_to_bucket(licenceT, f"docs/{name}_licenseT.jpg")
+
+            flash('Vendedor registrado exitosamente!', 'success')
+            return redirect(url_for('some_success_page'))  # Redirigir después del registro exitoso
+
+        except ValueError as e:
+            flash(str(e), 'error')  # Manejo de error si el tipo de archivo no es válido
+            return redirect(url_for('register_seller'))
+
+        except Exception as e:
+            flash(f'Ocurrió un error: {str(e)}', 'error')  # Manejo de otros errores
+            return redirect(url_for('register_seller'))
         
     return render_template('register_seller.html')
 
