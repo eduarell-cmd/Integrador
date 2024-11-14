@@ -99,10 +99,11 @@ def verify_user(Email, password):
 
 def is_human(captcha_response):
     
-    secret = "6LdSIWwqAAAAAI4hs5hE33Y_-vH_aRy79pbX6xzo"
+    secret = "6LdSIWwqAAAAAAyR8FoP1i0-21eU5iNC0A6FxVnq"
     payload = {'response':captcha_response, 'secret':secret}
     response = requests.post("https://www.google.com/recaptcha/api/siteverify", payload)
     response_text = json.loads(response.text)
+    print(response_text)
     return response_text['success']
 
 def login_is_required(function):
@@ -115,14 +116,18 @@ def login_is_required(function):
 def get_user_by_email_and_password(email, password):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT ID_Persona, Email, Password FROM Persona WHERE Email = ?", email)
-    user = cursor.fetchone()
+    query = "SELECT ID_Persona, Password FROM Persona WHERE Email = ?"
+    queyejecutado = cursor.execute(query, (email,))
+    print(queyejecutado)
+    result = cursor.fetchone()
+    print (f"agarra el{result}")
     # Verifica si se encontró un usuario y si la contraseña coincide
-    if user and check_password_hash(user.Password, password):  # Utiliza una función de hashing para verificar la contraseña
-        return {'ID_Persona': user.ID_Persona, 'Email': user.Email}
+    if result and  check_password_hash(result[1], password):  # Utiliza una función de hashing para verificar la contraseña
+        return True and {'ID_Persona': result[0]}
     else:
         print("El Email y la contraseña no coinciden")
         return None
+
 
 def login_user(email, password):
     user = get_user_by_email_and_password(email, password)
@@ -152,5 +157,19 @@ def get_user_by_id(user_id):
     finally:
         if conn:
             conn.close()
-    
     return user
+def get_user_by_email(email):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT ID_Persona FROM Persona WHERE Email = ?",(email))
+        result = cursor.fetchone()
+        if result:
+            return { 'email': result[0]}
+        else:
+            None
+    except Exception as e:
+          print(f"No se encontró usuario con Email")
+    finally:
+        if conn:
+                conn.close()
