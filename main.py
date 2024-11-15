@@ -131,8 +131,9 @@ def signup():
         SegundoApellido   = request.form['SegundoApellido']
         Email       = request.form['Email']
         Password  = request.form['Password']
+        captcha_response = request.form['g-recaptcha-response']
         print(f"Registrando: {Name}, {PrimerApellido}, {SegundoApellido}, {Email},")
-        if register_user(Name, PrimerApellido, SegundoApellido, Email, Password,):
+        if register_user(Name, PrimerApellido, SegundoApellido, Email, Password,) and is_human(captcha_response): #Lo mismo que login
             flash("¡Se ha registrado exitosamente! Ahora puede iniciar sesion.", "success")
             return redirect(url_for('login'))
         else:
@@ -267,6 +268,29 @@ def perfil():
 
     return render_template('profile.html', user=user)
 
+@app.route('/edit_profile', methods=['GET', 'POST'])
+def edit_profile():
+    user_id = session.get('user_id')
+    
+    if request.method == 'POST':
+        # Recibe los datos del formulario
+        nombre = request.form.get('Name')
+        primer_apellido = request.form.get('PrimerApellido')
+        segundo_apellido = request.form.get('SegundoApellido')
+        
+        # Llama a la función para actualizar los datos en la base de datos
+        success = update_user_name(user_id, nombre, primer_apellido, segundo_apellido)
+        
+        # Si la actualización es exitosa, redirige o muestra un mensaje
+        if success:
+            flash('Perfil actualizado con éxito', 'success')
+            return redirect(url_for('perfil'))
+        else:
+            flash('Error al actualizar el perfil', 'error')
+    
+    # Si es una solicitud GET, carga los datos del usuario
+    user = get_user_by_id(user_id)
+    return render_template('edit-profile.html', user=user)
 
 @app.route(f'/{admin_key}')
 def admin_dashboard():
