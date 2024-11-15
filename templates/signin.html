@@ -22,9 +22,22 @@
     <link rel="icon" href="{{ url_for('static', filename='img/LOGO.png')}}" type="image/x-icon">
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <meta name="google-signin-client_id" content="293860019099-hn8qqiuee0ar7s9b04ppf8eh3a2plvh6.apps.googleusercontent.com">
+    
+    <script>
+        function validatePassword() {
+            var password = document.getElementById("Password").value;
+            var confirmPassword = document.getElementById("ConfirmPassword").value;
+            if (password != confirmPassword) {
+                alert("Passwords do not match.");
+                return false;
+            }
+            return true;
+        }
+    </script>
+    
 </head>
 <body style="background-color: #b4ff9a;">
-<form action="{{ url_for('signup') }}" method="POST">
+<form action="{{ url_for('signup') }}" method="POST" onsubmit="return validatePassword()">
     <div class="container mt-5">
         <h1 class="text-primary mb-0" style="text-align: center;">Farm-to-Table</h1> 
         <div id="divsignup" class="row g-3">
@@ -35,6 +48,10 @@
             <div class="col-md-6">
                 <label for="Password" class="form-label">Password</label>
                 <input type="password" class="form-control" id="Password" name="Password" placeholder="Password" required>
+            </div>
+            <div class="col-md-6">
+                <label for="ConfirmPassword" class="form-label">Confirm Password</label>
+                <input type="password" class="form-control" id="ConfirmPassword" name="ConfirmPassword" placeholder="Confirm Password" required>
             </div>
             <div class="col-6">
                 <label for="Name" class="form-label">Name</label>
@@ -53,8 +70,6 @@
             </div>
             <div class="col-lg-12 text-center mt-3">
                 <button type="submit" class="btn btn-primary" href="{{url_for('signup')}}">Sign Up</button>
-            </div>
-    
             </div>
         </div>
     </div>
