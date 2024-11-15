@@ -13,23 +13,21 @@ import google.auth.transport.requests
 from pip._vendor import cachecontrol 
 from flask_mail import Message
 from seller import *
-#from conexionsql.models import User
 from werkzeug.security import generate_password_hash
 from itsdangerous import URLSafeTimedSerializer
+from conexionsql import connection
+from profile import update_user_name
+from mail import *
+admin_key = os.getenv("ADMIN_KEY")
 client_id = os.getenv("GOOGLE_CLIENT_ID")
 client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
-from conexionsql import connection
-admin_key = os.getenv("ADMIN_KEY")
-from mail import *
 app = Flask(__name__)
 app.secret_key = "AvVoMrDAFRBiPNO8o9guscemWcgP"  
 gmaps = googlemaps.Client(key='AIzaSyCtOf_oaXQJd9iO83RzKtdWBsRk8R3EqYA')
 s = URLSafeTimedSerializer(app.secret_key)
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1" #permite que haya trafico al local dev
-
 client_id = os.getenv("GOOGLE_CLIENT_ID")
 client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
-
 flow = Flow.from_client_config(
     client_config={
         "web": {
@@ -133,11 +131,7 @@ def signup():
         Password  = request.form['Password']
         captcha_response = request.form['g-recaptcha-response']
         print(f"Registrando: {Name}, {PrimerApellido}, {SegundoApellido}, {Email},")
-<<<<<<< HEAD
         if register_user(Name, PrimerApellido, SegundoApellido, Email, Password,) and is_human(captcha_response): #Nomas para que me deje pushear
-=======
-        if register_user(Name, PrimerApellido, SegundoApellido, Email, Password,) and is_human(captcha_response): #Lo mismo que login
->>>>>>> 50e7c1c391d7320c3cf5880c1055967e6654e6b2
             flash("¡Se ha registrado exitosamente! Ahora puede iniciar sesion.", "success")
             return redirect(url_for('login'))
         else:
@@ -155,6 +149,8 @@ def login():
         Contraseña = request.form['Password']
         captcha_response = request.form['g-recaptcha-response']
         print(f"No está agarrando{captcha_response}")
+        if not captcha_response:
+            return render_template('login.html')
         if login_user(Email, Contraseña) and is_human(captcha_response):
             print(login_user(Email, Contraseña), is_human(captcha_response))
             return redirect(url_for('perfil',))
@@ -272,8 +268,6 @@ def perfil():
 
     return render_template('profile.html', user=user)
 
-<<<<<<< HEAD
-=======
 @app.route('/edit_profile', methods=['GET', 'POST'])
 def edit_profile():
     user_id = session.get('user_id')
@@ -298,7 +292,6 @@ def edit_profile():
     user = get_user_by_id(user_id)
     return render_template('edit-profile.html', user=user)
 
->>>>>>> a65134d7079c2914be13c3544ebdd210ac594b23
 @app.route(f'/{admin_key}')
 def admin_dashboard():
      return render_template('admin.html')
