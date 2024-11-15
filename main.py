@@ -133,7 +133,11 @@ def signup():
         Password  = request.form['Password']
         captcha_response = request.form['g-recaptcha-response']
         print(f"Registrando: {Name}, {PrimerApellido}, {SegundoApellido}, {Email},")
+<<<<<<< HEAD
         if register_user(Name, PrimerApellido, SegundoApellido, Email, Password,) and is_human(captcha_response): #Nomas para que me deje pushear
+=======
+        if register_user(Name, PrimerApellido, SegundoApellido, Email, Password,) and is_human(captcha_response): #Lo mismo que login
+>>>>>>> 50e7c1c391d7320c3cf5880c1055967e6654e6b2
             flash("¡Se ha registrado exitosamente! Ahora puede iniciar sesion.", "success")
             return redirect(url_for('login'))
         else:
