@@ -233,7 +233,13 @@ def reset_password(token):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    conn=connection
+    cursor = conn.cursor()
+    query = "SELECT Foto_Vendedor from Vendedor WHERE ID_Vendedor <= 6"
+    cursor.execute(query)
+    rows=cursor.fetchall()
+    
+    return render_template('index.html',Vendedor=rows)
 
 @app.route('/protectedarea')
 def protected_area():
