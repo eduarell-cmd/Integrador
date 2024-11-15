@@ -1,5 +1,6 @@
 from conexionsql import get_db_connection
 import logging
+
 def update_user_name(ID_Persona, Nombre, PrimerApellido, SegundoApellido):
     conn = get_db_connection()
     cursor = conn.cursor()

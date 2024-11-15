@@ -339,13 +339,16 @@
                 <div class="text-center mx-auto mb-5" style="max-width: 700px;">
                     <h1 class="display-4">Bestseller farmers</h1>
                     <p>Cuadro de honor.</p>
-                </div>
+                </div> 
                 <div class="row g-4">
+                    {% for Vendedor in Vendedores %}
                     <div class="col-lg-6 col-xl-4">
                         <div class="p-4 rounded bg-light">
                             <div class="row align-items-center">
                                 <div class="col-6">
-                                    <img src="{{url_for('static', filename='img/best-product-1.jpg')}}" class="img-fluid rounded-circle w-100" alt="">
+                                    <img src="{{Vendedor}}" class="img-fluid rounded-circle w-100" alt="">
+                                    
+                                    <p>{{ Vendedor[0] }}</p>
                                 </div>
                                 <div class="col-6">
                                     <a href="#" class="h5">Papu 1</a>
@@ -360,16 +363,20 @@
                             </div>
                         </div>
                     </div>
+                    {% endfor %}
+                    {% for Vendedor in Vendedores %}
                     <div class="col-lg-6 col-xl-4">
                         <div class="p-4 rounded bg-light">
                             <div class="row align-items-center">
                                 <div class="col-6">
-                                    <img src="{{url_for('static', filename='img/best-product-2.jpg')}}" class="img-fluid rounded-circle w-100" alt="">
+                                    <img src="{{Vendedor}}" class="img-fluid rounded-circle w-100" alt="">
+                                    <p>{{ Vendedor[1] }}</p>
                                 </div>
                                 <div class="col-6">
                                     <a href="#" class="h5">Papu 2</a>
-                                    <i class="fas fa-star text-primary"></i>
+                                    
                                     <div class="d-flex my-3">
+                                        <i class="fas fa-star text-primary"></i>
                                         <i class="fas fa-star text-primary"></i>
                                         <i class="fas fa-star text-primary"></i>
                                         <i class="fas fa-star text-primary"></i>
@@ -379,6 +386,7 @@
                             </div>
                         </div>
                     </div>
+                    {% endfor %}
                     <div class="col-lg-6 col-xl-4">
                         <div class="p-4 rounded bg-light">
                             <div class="row align-items-center">

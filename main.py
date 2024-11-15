@@ -12,6 +12,7 @@ from google.oauth2 import id_token
 import google.auth.transport.requests
 from pip._vendor import cachecontrol 
 from flask_mail import Message
+from profilee import update_user_name
 from seller import *
 from werkzeug.security import generate_password_hash
 from itsdangerous import URLSafeTimedSerializer
@@ -232,7 +233,12 @@ def reset_password(token):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    conn=connection
+    cursor = conn.cursor()
+    query = "SELECT Foto_Vendedor from Vendedor WHERE ID_Vendedor <= 6"
+    cursor.execute(query)
+    rows=cursor.fetchall()
+    return render_template('index.html',Vendedores=rows)
 
 @app.route('/protectedarea')
 def protected_area():
