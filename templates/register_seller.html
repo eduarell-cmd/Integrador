@@ -25,27 +25,13 @@
     <link href="{{ url_for('static',filename='css/style.css') }}" rel="stylesheet">
     <link rel="icon" href="{{ url_for('static',filename='img/LOGO.png') }}" type="image/x-icon">
 </head>
-<form action="{{ url_for('register_seller') }}" method="POST" enctype="multipart/form-data" id="registerForm">
+
+<form action="{{ url_for('register_seller') }}" method="POST" enctype="multipart/form-data">
 <body class="bg-light d-flex align-items-center justify-content-center min-vh-100">
     <div class="container bg-white p-5 rounded shadow" style="max-width: 600px;">
         <h1 class="text-center mb-4">Registro de Agricultores</h1>
             <div class="form-step">
                 <h2 class="h5 border-bottom pb-2">Paso 1: Información Personal</h2>
-                
-                <div class="mb-3">
-                    <label for="name" class="form-label">Nombre(s) <span class="text-danger">*</span></label>
-                    <input type="text" id="name" name="name" class="form-control" required>
-                </div>
-                
-                <div class="mb-3">
-                    <label for="firstName" class="form-label">Primer Apellido <span class="text-danger">*</span></label>
-                    <input type="text" id="firstName" name="firstName" class="form-control" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="lastName" class="form-label">Segundo Apellido</label>
-                    <input type="text" id="lastName" name="lastName" class="form-control">
-                </div>
                 
                 <div class="mb-3">
                     <label for="phone" class="form-label">Teléfono</label>
@@ -56,7 +42,35 @@
                     <label for="birthdate" class="form-label">Fecha de Nacimiento</label>
                     <input type="date" id="birthdate" name="birthdate" class="form-control" required>
                 </div>
+                
+                <div class="mb-3">
+                    <label for="Estado" class="form-label">Estado</label>
+                    <input type="text" id="estado" name="estado" class="form-control" required>
+                </div>
 
+                <div class="mb-3">
+                    <label for="Ciudad" class="form-label">Ciudad</label>
+                    <input type="text" id="ciudad" name="ciudad" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="Calle" class="form-label">Calle</label>
+                    <input type="text" id="calle" name="calle" class="form-control" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="Numerocasa" class="form-label">N° Casa</label>
+                    <input type="text" id="numerocasa" name="numerocasa" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="colonia" class="form-label">Colonia</label>
+                    <input type="text" id="colonia" name="colonia" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="cp" class="form-label">Codigo Postal</label>
+                    <input type="text" id="cp" name="cp" class="form-control" required>
+                </div>
                 <button type="button" class="btn btn-primary" onclick="nextStep()">Siguiente</button>
             </div>
 
@@ -84,7 +98,7 @@
                 </div>
 
                 <button type="button" class="btn btn-secondary" onclick="prevStep()">Anterior</button>
-                <button type="submit" class="btn btn-success">Enviar Registro</button>
+                <button type="submit" class="btn btn-primary" href="{{ url_for('register_seller') }}">Enviar Registro</button>
             </div>
     </div>
 </form>

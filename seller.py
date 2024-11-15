@@ -37,35 +37,3 @@ def upload_file_to_bucket(file, destination_blob_name):
     else:
         raise ValueError("Tipo de archivo no permitido")
     
-@app.route('/register_seller', methods=['POST'])
-def register_seller():
-    #DATA 
-    try:
-        name = request.form['name']
-        firstname = request.form['firstname']
-        lastname = request.form['lastname']
-        phone = request.form['phone']
-        birthdate = request.form['birthdate']
-        #FILES
-        ine_file = request.files['ine']
-        address_prof = request.files['comprobante']
-        licenceA = request.files['licenciaA']
-        licenceT = request.files['licenciaT']
-
-        #(Upload)
-        ine_file = upload_file_to_bucket(ine_file, f"docs/{name}_INE.jpg")
-        address_prof = upload_file_to_bucket(address_prof, f"docs/{name}_addressprof.jpg")
-        licenceA = upload_file_to_bucket(licenceA, f"docs/{name}_licenseA.jpg")
-        licenceT = upload_file_to_bucket(licenceT, f"docs/{name}_licenseT.jpg")
-
-        flash('Vendedor registrado exitosamente!', 'success')
-        return redirect(url_for('some_success_page'))  # Redirigir después del registro exitoso
-
-    except ValueError as e:
-        flash(str(e), 'error')  # Manejo de error si el tipo de archivo no es válido
-        return redirect(url_for('register_seller'))
-
-    except Exception as e:
-        flash(f'Ocurrió un error: {str(e)}', 'error')  # Manejo de otros errores
-        return redirect(url_for('register_seller'))
-    
