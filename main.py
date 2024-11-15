@@ -12,6 +12,7 @@ from google.oauth2 import id_token
 import google.auth.transport.requests
 from pip._vendor import cachecontrol 
 from flask_mail import Message
+from profilee import update_user_name
 from seller import *
 #from conexionsql.models import User
 from werkzeug.security import generate_password_hash
