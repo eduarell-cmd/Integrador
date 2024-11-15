@@ -17,7 +17,7 @@ from seller import *
 from werkzeug.security import generate_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from conexionsql import connection
-from profile import update_user_name
+from profilee import update_user_name
 from mail import *
 admin_key = os.getenv("ADMIN_KEY")
 client_id = os.getenv("GOOGLE_CLIENT_ID")
