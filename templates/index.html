@@ -340,12 +340,14 @@
                     <h1 class="display-4">Bestseller farmers</h1>
                     <p>Cuadro de honor.</p>
                 </div>
+                {% for Vendedor in Vendedores %}
                 <div class="row g-4">
                     <div class="col-lg-6 col-xl-4">
                         <div class="p-4 rounded bg-light">
                             <div class="row align-items-center">
                                 <div class="col-6">
-                                    <img src="{{url_for('static', filename='img/best-product-1.jpg')}}" class="img-fluid rounded-circle w-100" alt="">
+                                    <img src="{{Vendedor.Foto_Vendedor}}" class="img-fluid rounded-circle w-100" alt="">
+                                <p>{{ Foto_Vendedor }}</p>
                                 </div>
                                 <div class="col-6">
                                     <a href="#" class="h5">Papu 1</a>
@@ -456,6 +458,7 @@
                         </div>
                     </div>  
                 </div>
+                {% endfor %}
             </div>
         </div>
         <!-- Bestsaler Product End -->
