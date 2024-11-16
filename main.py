@@ -14,23 +14,21 @@ from pip._vendor import cachecontrol
 from flask_mail import Message
 from profilee import update_user_name
 from seller import *
-#from conexionsql.models import User
 from werkzeug.security import generate_password_hash
 from itsdangerous import URLSafeTimedSerializer
+from conexionsql import connection
+from profilee import update_user_name
+from mail import *
+admin_key = os.getenv("ADMIN_KEY")
 client_id = os.getenv("GOOGLE_CLIENT_ID")
 client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
-from conexionsql import connection
-admin_key = os.getenv("ADMIN_KEY")
-from mail import *
 app = Flask(__name__)
 app.secret_key = "AvVoMrDAFRBiPNO8o9guscemWcgP"  
 gmaps = googlemaps.Client(key='AIzaSyCtOf_oaXQJd9iO83RzKtdWBsRk8R3EqYA')
 s = URLSafeTimedSerializer(app.secret_key)
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1" #permite que haya trafico al local dev
-
 client_id = os.getenv("GOOGLE_CLIENT_ID")
 client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
-
 flow = Flow.from_client_config(
     client_config={
         "web": {
@@ -134,7 +132,7 @@ def signup():
         Password  = request.form['Password']
         captcha_response = request.form['g-recaptcha-response']
         print(f"Registrando: {Name}, {PrimerApellido}, {SegundoApellido}, {Email},")
-        if register_user(Name, PrimerApellido, SegundoApellido, Email, Password,) and is_human(captcha_response): #Lo mismo que login
+        if register_user(Name, PrimerApellido, SegundoApellido, Email, Password,) and is_human(captcha_response): #Nomas para que me deje pushear
             flash("¡Se ha registrado exitosamente! Ahora puede iniciar sesion.", "success")
             return redirect(url_for('login'))
         else:
@@ -152,6 +150,8 @@ def login():
         Contraseña = request.form['Password']
         captcha_response = request.form['g-recaptcha-response']
         print(f"No está agarrando{captcha_response}")
+        if not captcha_response:
+            return render_template('login.html')
         if login_user(Email, Contraseña) and is_human(captcha_response):
             print(login_user(Email, Contraseña), is_human(captcha_response))
             return redirect(url_for('perfil',))
@@ -305,46 +305,42 @@ def admin_dashboard():
 @app.route('/register_seller', methods=['GET','POST'])
 def register_seller():
     #DATA 
-    if request.method == 'POST':
-        try:
-            name = request.form['name']
-            firstname = request.form['firstname']
-            lastname = request.form['lastname']
+    print("Register ruta")
+    user_id = session.get('user_id')
+    try:
+        if request.method == 'POST':
+            print("Estoy en POST (registerseller)")
+            #DATOS
             phone = request.form['phone']
             birthdate = request.form['birthdate']
+            estado = request.form['estado']
+            ciudad = request.form['ciudad']
+            calle = request.form['calle']
+            numerocasa = request.form['numerocasa']
+            colonia = request.form['colonia']
             #FILES
             ine_file = request.files['ine']
             address_prof = request.files['comprobante']
             licenceA = request.files['licenciaA']
             licenceT = request.files['licenciaT']
-
-            if ine_file:
-                print("INE file received")
-            if address_prof:
-                print("Comprobante file received")
-            if licenceA:
-                print("Licencia A file received")
-            if licenceT:
-                print("Licencia T file received")
-
+            print(f"Registrando: {phone}, {birthdate}, {ine_file}, {address_prof}, {licenceA}, {licenceT}")
+            user = get_user_by_id(session['user_id'])
             #Google Cloud Storage (Upload)
-            ine_file = upload_file_to_bucket(ine_file, f"docs/{name}_INE.jpg")
-            address_prof = upload_file_to_bucket(address_prof, f"docs/{name}_addressprof.jpg")
-            licenceA = upload_file_to_bucket(licenceA, f"docs/{name}_licenseA.jpg")
-            licenceT = upload_file_to_bucket(licenceT, f"docs/{name}_licenseT.jpg")
-
+            ine_file = upload_file_to_bucket(ine_file, f"docs/{user.name, user.lastname, user.slastname}_INE.jpg")
+            address_prof = upload_file_to_bucket(address_prof, f"docs/{user.name, user.lastname, user.slastname}_addressprof.jpg")
+            licenceA = upload_file_to_bucket(licenceA, f"docs/{user.name, user.lastname, user.slastname}_licenseA.jpg")
+            licenceT = upload_file_to_bucket(licenceT, f"docs/{user.name, user.lastname, user.slastname}_licenseT.jpg")
+            print(ine_file)
             flash('Vendedor registrado exitosamente!', 'success')
             return redirect(url_for('some_success_page'))  # Redirigir después del registro exitoso
-
-        except ValueError as e:
-            flash(str(e), 'error')  # Manejo de error si el tipo de archivo no es válido
-            return redirect(url_for('register_seller'))
-
-        except Exception as e:
-            flash(f'Ocurrió un error: {str(e)}', 'error')  # Manejo de otros errores
-            return redirect(url_for('register_seller'))
+    except ValueError as e:
+                flash(str(e), 'error')  # Manejo de error si el tipo de archivo no es válido
+                return redirect(url_for('register_seller'))
+    except Exception as e:
+                flash(f'Ocurrió un error: {str(e)}', 'error')  # Manejo de otros errores
+                return redirect(url_for('register_seller'))
         
-    return render_template('register_seller.html')
+    return render_template('register_seller.html',)
 
 if __name__ == '__main__':
     app.run(debug=True)
