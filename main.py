@@ -235,7 +235,7 @@ def reset_password(token):
 def index():
     conn=connection
     cursor = conn.cursor()
-    query = "SELECT Foto_Vendedor from Vendedor WHERE ID_Vendedor <= 6"
+    query = "SELECT Foto_Vendedor from Vendedor WHERE ID_Vendedor <= 7"
     cursor.execute(query)
     rows=cursor.fetchall()
     return render_template('index.html',Vendedores=rows)
@@ -258,7 +258,12 @@ def carro():
 
 @app.route('/shop')
 def shop():
-    return render_template('shop.html')
+    conn=connection
+    cursor = conn.cursor()
+    query = "EXEC MuestraTienda"
+    cursor.execute(query)
+    rows=cursor.fetchall()
+    return render_template('shop.html',Productos=rows)
 
 
 @app.route('/perfil')
