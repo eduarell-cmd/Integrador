@@ -175,3 +175,33 @@ def get_user_by_email(email):
     finally:
         if conn:
                 conn.close()
+
+def get_product_by_id(product_id):
+    conn = None
+    product = None
+    try:
+        # Obtén la conexión a la base de datos
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Ejecuta la consulta para obtener los datos del producto
+        cursor.execute("SELECT Nombre_Producto, Punto_Venta_ID_Punto_Venta, Categoria_ID_Categoria, Precio, Disponible, Foto_Producto FROM Producto WHERE ID_Producto = ?", (product_id,))
+        
+        result = cursor.fetchone()
+        
+        # Si se encuentra un producto, convertirlo en un diccionario
+        if result:
+            product = {
+                'name': result[0],  # Nombre del producto
+                'point': result[1],  # Punto de venta
+                'category': result[2],  # Categoría
+                'price': result[3],  # Precio
+                'stock': result[4],  # Disponibilidad
+                'image': result[5]  # Foto del producto
+            }
+    except Exception as e:
+        print(f"Ocurrió un error al obtener el producto: {e}")
+    finally:
+        if conn:
+            conn.close()
+    return product

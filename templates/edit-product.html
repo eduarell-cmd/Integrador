@@ -65,7 +65,6 @@
                             <a href="{{url_for('index')}}" class="nav-item nav-link">Home</a>
                             <a href="{{url_for('shop')}}" class="nav-item nav-link">Shop</a>
                             <a href="{{url_for('contacto')}}" class="nav-item nav-link">Contact</a>
-                            <a href="{{url_for('perfil')}}" class="nav-item nav-link active">Profile</a>
                         </div>
                         <div class="d-flex m-3 me-0">
                             <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search text-primary"></i></button>
@@ -106,99 +105,49 @@
 
         <!-- Single Page Header start -->
         <div class="container-fluid page-header py-5">
-            <h1 class="text-center text-white display-6">My Profile</h1>
+            <h1 class="text-center text-white display-6">My Products</h1>
         </div>
         <!-- Single Page Header End -->
 
 
         <div class="container mt-5 pt-5">
-            <h1 class="text-center mb-4">Perfil del Vendedor</h1>
-    
-            <div class="row">
-                <!-- Información del Vendedor -->
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card-title">Información del Vendedor</h4>
-                            <p><strong>Nombre:</strong> María González</p>
-                            <p><strong>Email:</strong> mariagonzalez@gmail.com</p>
-                            <p><strong>Teléfono:</strong> 555-6789</p>
-                            <a href="#" class="btn btn-primary">Editar Perfil</a>
+            <h2 class="text-center mb-4">Editar Producto</h2>
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <form action="{{ url_for('edit_product') }}" method="POST">
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre del Producto</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" value="{{ product.name }}" required>
                         </div>
-                    </div>
-                </div>
-    
-                <!-- Productos a la Venta -->
-                <div class="col-md-8">
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <h4 class="card-title">Productos a la Venta</h4>
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Producto</th>
-                                        <th>Precio</th>
-                                        <th>Stock</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Tomates Orgánicos</td>
-                                        <td>$3.00/kg</td>
-                                        <td>50 kg</td>
-                                        <td>
-                                            <a href="#" class="btn btn-sm btn-warning">Editar</a>
-                                            <a href="#" class="btn btn-sm btn-danger">Eliminar</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Lechuga Fresca</td>
-                                        <td>$1.50/unidad</td>
-                                        <td>100 unidades</td>
-                                        <td>
-                                            <a href="#" class="btn btn-sm btn-warning">Editar</a>
-                                            <a href="#" class="btn btn-sm btn-danger">Eliminar</a>
-                                        </td>
-                                    </tr>
-                                    <!-- Más productos... -->
-                                </tbody>
-                            </table>
-                            <a href="{{url_for('add_product')}}" class="btn btn-success">Agregar Nuevo Producto</a>
+                        <div class="mb-3">
+                            <label for="categoria" class="form-label">Categoría</label>
+                            <select name="categoria" id="categoria" class="form-control" value="{{ product.category }}" required>
+                                <option value="">Selecciona una categoría</option>
+                                <option value="frutas">Fruta</option>
+                                <option value="verduras">Verdura</option>
+                            </select>
                         </div>
-                    </div>
-    
-                    <!-- Historial de Ventas -->
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card-title">Historial de Ventas</h4>
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>ID Venta</th>
-                                        <th>Fecha</th>
-                                        <th>Producto</th>
-                                        <th>Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>#2001</td>
-                                        <td>10/10/2024</td>
-                                        <td>Tomates Orgánicos</td>
-                                        <td>$150.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>#2002</td>
-                                        <td>12/10/2024</td>
-                                        <td>Lechuga Fresca</td>
-                                        <td>$90.00</td>
-                                    </tr>
-                                    <!-- Más ventas... -->
-                                </tbody>
-                            </table>
+                        <div class="mb-3">
+                            <label for="precio" class="form-label">Precio</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" min="0" step="1.00" class="form-control" id="precio" name="precio" value="{{ product.price }}" required>
+                            </div>
                         </div>
-                    </div>
+                        <div class="mb-3">
+                            <label for="stock" class="form-label">Stock</label>
+                            <div class="input-group">
+                            <input type="number" min="0" step="1.00" class="form-control" id="stock" name="stock" value="{{ product.stock }}" required>
+                            <select class="form-control" name="unidad" id="unidad">
+                                <option value="kg">Kg</option>
+                                <option value="unidades">Unidades</option>
+                            </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Agregar Producto</button>
+                        <h1></h1>
+                        <a href="{{ url_for('perfilvend') }}" class="btn btn-secondary">Cancelar</a>
+                    </form>
                 </div>
             </div>
         </div>
