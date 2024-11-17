@@ -255,7 +255,14 @@ def checkout():
 
 @app.route('/perfilvend')
 def perfilvend():
-    return render_template('profile-vendedor.html')
+    user = session.get('user_id')
+    if not user:
+        return redirect(url_for('login'))
+    seller_id = get_seller_by_id(user)
+    if not seller_id:
+        return redirect(url_for('login'))
+
+    return render_template('profile-vendedor.html', user=user)
 
 @app.route('/addproduct')
 def add_product():
