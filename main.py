@@ -252,6 +252,18 @@ def contacto():
 def checkout():
     return render_template('chackout.html')
 
+@app.route('/perfilvend')
+def perfilvend():
+    return render_template('profile-vendedor.html')
+
+@app.route('/addproduct')
+def add_product():
+    return render_template('add-product.html')
+
+@app.route('/editproduct')
+def edit_product():
+    return render_template('edit-product.html')
+
 @app.route('/cart')
 def carro():
     return render_template('cart.html')
