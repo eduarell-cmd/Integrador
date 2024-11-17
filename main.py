@@ -19,6 +19,7 @@ from itsdangerous import URLSafeTimedSerializer
 from conexionsql import connection
 from profilee import update_user_name
 from mail import *
+from admin import *
 admin_key = os.getenv("ADMIN_KEY")
 client_id = os.getenv("GOOGLE_CLIENT_ID")
 client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
@@ -143,7 +144,7 @@ def signup():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     print("Estoy en login")
-    sitekey = "6LdSIWwqAAAAAI4hs5hE33Y_-vH_aRy79pbX6xzo"
+    sitekey = "6LdSIWwqAAAAAI4hs5hE33Y_-vH_pbX6xzo"
     if request.method == "POST":
         print("hola buenos días")
         Email      = request.form['Email']
@@ -254,7 +255,14 @@ def checkout():
 
 @app.route('/perfilvend')
 def perfilvend():
-    return render_template('profile-vendedor.html')
+    user = session.get('user_id')
+    if not user:
+        return redirect(url_for('login'))
+    seller_id = get_seller_by_id(user)
+    if not seller_id:
+        return redirect(url_for('login'))
+
+    return render_template('profile-vendedor.html', user=user)
 
 @app.route('/addproduct')
 def add_product():
@@ -317,13 +325,19 @@ def edit_profile():
 
 @app.route(f'/{admin_key}')
 def admin_dashboard():
-     return render_template('admin.html')
-
+     user = session.get('user_id')
+     if not user:
+         return redirect(url_for('login'))
+     admin = get_admin_by_id(user)
+     if not admin:
+         print("No hay admin")
+         return redirect(url_for('login'))
+     return render_template('admin.html', admin=admin)
 @app.route('/register_seller', methods=['GET','POST'])
 def register_seller():
     #DATA 
     print("Register ruta")
-    user_id = session.get('user_id')
+    user = session.get('user_id')
     try:
         if request.method == 'POST':
             print("Estoy en POST (registerseller)")
@@ -340,16 +354,21 @@ def register_seller():
             address_prof = request.files['comprobante']
             licenceA = request.files['licenciaA']
             licenceT = request.files['licenciaT']
+            
             print(f"Registrando: {phone}, {birthdate}, {ine_file}, {address_prof}, {licenceA}, {licenceT}")
             user = get_user_by_id(session['user_id'])
             #Google Cloud Storage (Upload)
-            ine_file = upload_file_to_bucket(ine_file, f"docs/{user.name, user.lastname, user.slastname}_INE.jpg")
-            address_prof = upload_file_to_bucket(address_prof, f"docs/{user.name, user.lastname, user.slastname}_addressprof.jpg")
-            licenceA = upload_file_to_bucket(licenceA, f"docs/{user.name, user.lastname, user.slastname}_licenseA.jpg")
-            licenceT = upload_file_to_bucket(licenceT, f"docs/{user.name, user.lastname, user.slastname}_licenseT.jpg")
-            print(ine_file)
-            flash('Vendedor registrado exitosamente!', 'success')
-            return redirect(url_for('some_success_page'))  # Redirigir después del registro exitoso
+            if user:
+                print(user['name'])
+                print("Si agarro el user")
+                extension = get_extension(ine_file, address_prof, licenceA, licenceT)
+                print("Esta extension")
+                Gine_file = upload_file_to_bucket(ine_file, f"docs/INE/{user['name'], user['lastname'], user['slastname']}_INE.{extension['ine_extension']}")
+                Gaddress_prof = upload_file_to_bucket(address_prof, f"docs/Comprobante Domicilio/{user['name'], user['lastname'], user['slastname']}_addressprof.{extension['addres_prof_extension']}")
+                GlicenceA = upload_file_to_bucket(licenceA, f"docs/Licencia Agricultor/{user['name'], user['lastname'], user['slastname']}_licenseA.{extension['license_A_extension']}")
+                GlicenceT = upload_file_to_bucket(licenceT, f"docs/Licencia Tenencia/{user['name'], user['lastname'], user['slastname']}_licenseT.{extension['license_T_extension']}")
+                flash('Vendedor registrado exitosamente!', 'success')
+                return redirect(url_for('dashboard'))  # Va a redirigir al perfil o seccion de solicitudes pendientes nc
     except ValueError as e:
                 flash(str(e), 'error')  # Manejo de error si el tipo de archivo no es válido
                 return redirect(url_for('register_seller'))
