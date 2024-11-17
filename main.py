@@ -235,7 +235,7 @@ def reset_password(token):
 def index():
     conn=connection
     cursor = conn.cursor()
-    query = "SELECT Foto_Vendedor from Vendedor WHERE ID_Vendedor <= 7"
+    query = "Exec Vendedormuestra"
     cursor.execute(query)
     rows=cursor.fetchall()
     return render_template('index.html',Vendedores=rows)
