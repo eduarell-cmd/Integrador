@@ -1,12 +1,14 @@
 from conexionsql import get_db_connection, connection
 import logging
 
-def add_producto(nombre_producto, punto_venta, categoria_nombre, precio, stock, disponibilidad, imagen):    
+def add_producto(nombre_producto, punto_venta, categoria_id, precio, stock, disponibilidad, imagen):    
+    conn = connection
+    cursor = conn.cursor()
     try: 
         # Mapear las categorías
-        if categoria_nombre == 'frutas':
+        if categoria_id == 'frutas':
             categoria_id = 1
-        elif categoria_nombre == 'verduras':
+        elif categoria_id == 'verduras':
             categoria_id = 2
         else:
             categoria_id = None
@@ -14,12 +16,10 @@ def add_producto(nombre_producto, punto_venta, categoria_nombre, precio, stock, 
         # Verificar que la categoría es válida
         if categoria_id is not None:
             # Conexión a la base de datos (ajustar detalles de conexión)
-            conn = get_db_connection()
-            cursor = conn.cursor()
 
-            update_user_query = "EXEC Registrar_Producto ?, ?, ?, ?, ?, ?, ?"
+            update_user_query = "EXEC Agregar_Producto ?, ?, ?, ?, ?, ?, ?"
             # Llamada al procedimiento almacenado
-            cursor.execute(update_user_query,(nombre_producto, punto_venta, categoria_nombre, precio, stock, disponibilidad, imagen))
+            cursor.execute(update_user_query,(nombre_producto, punto_venta, categoria_id, precio, stock, disponibilidad, imagen))
             result = cursor.fetchone()
 
             if result and result[0] == 0:
@@ -33,15 +33,13 @@ def add_producto(nombre_producto, punto_venta, categoria_nombre, precio, stock, 
             else:
                 print("Error en el registro del usuario o resultado inesperado.")
                 return False
-            # Confirmar el éxito
-            conn.commit()
-            conn.close()
-            print(f"Resultado del procedimiento almacenado: {result}")
-            return True
+
         else:
             return 'Categoría no válida'
     except Exception as e:
                 print(f"Ocurrio un error al agregar un producto: {e}")
+                print(nombre_producto, punto_venta, categoria_id, precio, stock, disponibilidad, imagen)
+
 
 def get_point_by_id(point_id,):
     cursor = connection.cursor()
@@ -52,6 +50,7 @@ def get_point_by_id(point_id,):
         if not result:
             print("No se encontró punto de venta")
             return False
-        return result
+        point_id = result[0]
+        return point_id
     except Exception as e:
         print(f"Ocurrio un error al buscar punto de venta: {e}")
