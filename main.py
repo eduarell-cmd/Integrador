@@ -275,17 +275,17 @@ def add_product():
         return redirect(url_for('login'))
     if request.method == 'POST':
         nombre_producto = request.form['nombre']
-        categoria_nombre = request.form['categoria']  # 'frutas' o 'verduras'
+        categoria_id = request.form['categoria']  # 'frutas' o 'verduras'
         precio = request.form['precio']
         stock = request.form['stock']
         disponibilidad = request.form['disponible']
         imagenpr = request.files['imagenpr']
-        
+
         user = get_user_by_id(session['user_id'])
         Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}_Imgproduct.png")
 
         id_punto_venta = get_point_by_id(seller_id)
-        added_product = add_producto(nombre_producto, id_punto_venta, categoria_nombre, precio, stock, disponibilidad, Gimagen_file)
+        added_product = add_producto(nombre_producto, id_punto_venta, categoria_id, precio, stock, disponibilidad, Gimagen_file)
 
         return redirect (url_for('add_product'))
     return render_template('add-product.html', user=user)
