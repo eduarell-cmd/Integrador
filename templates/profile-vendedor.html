@@ -120,10 +120,10 @@
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title">Información del Vendedor</h4>
-                            <p><strong>Nombre:</strong> María González</p>
-                            <p><strong>Email:</strong> mariagonzalez@gmail.com</p>
-                            <p><strong>Teléfono:</strong> 555-6789</p>
-                            <a href="#" class="btn btn-primary">Editar Perfil</a>
+                            <p><strong>Nombre:</strong> {{ user.name }}</p>
+                            <p><strong>Email:</strong> {{ user.email }}</p>
+                            <p><strong>Teléfono:</strong> {{ user.phone }}</p>
+                            <a href="{{url_for('edit_profile')}}" class="btn btn-primary">Editar Perfil</a>
                         </div>
                     </div>
                 </div>
@@ -148,7 +148,7 @@
                                         <td>$3.00/kg</td>
                                         <td>50 kg</td>
                                         <td>
-                                            <a href="#" class="btn btn-sm btn-warning">Editar</a>
+                                            <a href="{{url_for('edit_product')}}" class="btn btn-sm btn-warning">Editar</a>
                                             <a href="#" class="btn btn-sm btn-danger">Eliminar</a>
                                         </td>
                                     </tr>

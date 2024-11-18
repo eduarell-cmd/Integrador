@@ -14,6 +14,7 @@ from pip._vendor import cachecontrol
 from flask_mail import Message
 from profilee import update_user_name
 from seller import *
+from products import *
 from werkzeug.security import generate_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from conexionsql import connection
@@ -264,9 +265,30 @@ def perfilvend():
 
     return render_template('profile-vendedor.html', user=user)
 
-@app.route('/addproduct')
+@app.route('/addproduct', methods=['GET', 'POST'])
 def add_product():
-    return render_template('add-product.html')
+    user = session.get('user_id')
+    if not user:
+        return redirect(url_for('login'))
+    seller_id = get_seller_by_id(user)
+    if not seller_id:
+        return redirect(url_for('login'))
+    if request.method == 'POST':
+        nombre_producto = request.form['nombre']
+        categoria_nombre = request.form['categoria']  # 'frutas' o 'verduras'
+        precio = request.form['precio']
+        stock = request.form['stock']
+        disponibilidad = request.form['disponible']
+        imagenpr = request.files['imagenpr']
+        
+        user = get_user_by_id(session['user_id'])
+        Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}_Imgproduct.png")
+
+        id_punto_venta = get_point_by_id(seller_id)
+        added_product = add_producto(nombre_producto, id_punto_venta, categoria_nombre, precio, stock, disponibilidad, Gimagen_file)
+
+        return redirect (url_for('add_product'))
+    return render_template('add-product.html', user=user)
 
 @app.route('/editproduct')
 def edit_product():
