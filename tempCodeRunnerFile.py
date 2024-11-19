@@ -1,0 +1,1 @@
+user = get_user_by_id(session['user_id'])

@@ -24,6 +24,7 @@
     <!-- Template Stylesheet -->
     <link href="{{ url_for('static',filename='css/style.css') }}" rel="stylesheet">
     <link rel="icon" href="{{ url_for('static',filename='img/LOGO.png') }}" type="image/x-icon">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <form action="{{ url_for('register_seller') }}" method="POST" enctype="multipart/form-data">
@@ -35,7 +36,7 @@
                 
                 <div class="mb-3">
                     <label for="phone" class="form-label">Teléfono</label>
-                    <input type="tel" id="phone" name="phone" class="form-control" required>
+                    <input type="tel" id="phone" name="phone" class="form-control" pattern="^\+?[1-9]\d{1,14}$" required>
                 </div>
                 
                 <div class="mb-3">
@@ -45,32 +46,21 @@
                 
                 <div class="mb-3">
                     <label for="Estado" class="form-label">Estado</label>
-                    <input type="text" id="estado" name="estado" class="form-control" required>
+                    <select id ="Estado" class="form-select" name="estado" required>
+                        <option selected disabled >Elegir...</option>
+                        {% for Estado in estados %}
+                        <option value ="{{ Estado[0] }}">{{ Estado[1]}}</option>
+                    {% endfor %}
+                </select>
                 </div>
 
                 <div class="mb-3">
                     <label for="Ciudad" class="form-label">Ciudad</label>
-                    <input type="text" id="ciudad" name="ciudad" class="form-control" required>
+                    <select id="Ciudad" class="form-select" name ="ciudad" required>
+                    <option selected disabled >Elegir...</option>
+                </select>
                 </div>
 
-                <div class="mb-3">
-                    <label for="Calle" class="form-label">Calle</label>
-                    <input type="text" id="calle" name="calle" class="form-control" required>
-                </div>
-                
-                <div class="mb-3">
-                    <label for="Numerocasa" class="form-label">N° Casa</label>
-                    <input type="text" id="numerocasa" name="numerocasa" class="form-control" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="colonia" class="form-label">Colonia</label>
-                    <input type="text" id="colonia" name="colonia" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label for="cp" class="form-label">Codigo Postal</label>
-                    <input type="text" id="cp" name="cp" class="form-control" required>
-                </div>
                 <button type="button" class="btn btn-primary" onclick="nextStep()">Siguiente</button>
             </div>
 
@@ -103,6 +93,26 @@
     </div>
 </form>
     <script>
+        $(document).ready(function() {
+            $('#Estado').change(function() {
+                var estadoID = $(this).val();
+                $.ajax({
+                    url: '/get_cities',
+                    type: 'GET',
+                    data: {estado_id: estadoID},
+                    success: function(data) {
+                        var $ciudadSelect = $('#Ciudad');
+                        $ciudadSelect.empty();
+                        $ciudadSelect.append('<option selected disabled>Elegir...</option>');
+                        $.each(data, function(index, value) {
+                            $ciudadSelect.append('<option value="' + value.ID_Ciudad + '">' + value.Nombre_Ciudad + '</option>');
+                        });
+                    }
+                });
+            });
+        });
+
+
         let currentStep = 0;
 
         function showStep(step) {
