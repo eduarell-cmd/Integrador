@@ -124,6 +124,7 @@
                             <p><strong>Email:</strong> {{ user.email }}</p>
                             <p><strong>Teléfono:</strong> {{ user.phone }}</p>
                             <a href="{{url_for('edit_profile')}}" class="btn btn-primary">Editar Perfil</a>
+                            <a href="{{ url_for('logout') }}">Cerrar sesión</a>
                         </div>
                     </div>
                 </div>

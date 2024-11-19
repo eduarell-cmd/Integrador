@@ -104,4 +104,22 @@ def get_seller_by_id(seller_id):
         return result
     except Exception as e:
         print(f"Ocurrio un error al buscar vendedor: {e}")
+def get_all_states():
+    cursor = connection.cursor()
+    query = "SELECT ID_Estado, Nombre_Estado FROM Estado"
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    return rows
+def get_all_cities_by_state(estado_id):
+    cursor = connection.cursor()
+    query = "SELECT ID_Ciudad, Nombre_Ciudad FROM Ciudad WHERE Estado_ID_Estado = ?"
+    cursor.execute(query, (estado_id,))
+    rows = cursor.fetchall()
+    ciudades = [{"ID_Ciudad": row[0], "Nombre_Ciudad": row[1]} for row in rows]
+    return ciudades
+#def send_request_seller():
+    #cursor = connection.cursor()
+    #query =
+    #return result
+
       
