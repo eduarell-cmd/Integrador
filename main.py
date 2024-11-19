@@ -338,6 +338,7 @@ def register_seller():
     #DATA 
     print("Register ruta")
     user = session.get('user_id')
+    rowstates = get_all_states()
     try:
         if request.method == 'POST':
             print("Estoy en POST (registerseller)")
@@ -346,9 +347,6 @@ def register_seller():
             birthdate = request.form['birthdate']
             estado = request.form['estado']
             ciudad = request.form['ciudad']
-            calle = request.form['calle']
-            numerocasa = request.form['numerocasa']
-            colonia = request.form['colonia']
             #FILES
             ine_file = request.files['ine']
             address_prof = request.files['comprobante']
@@ -376,7 +374,12 @@ def register_seller():
                 flash(f'Ocurrió un error: {str(e)}', 'error')  # Manejo de otros errores
                 return redirect(url_for('register_seller'))
         
-    return render_template('register_seller.html',)
+    return render_template('register_seller.html',estados=rowstates)
 
+@app.route('/get_cities') 
+def get_cities(): 
+    estado_id = request.args.get('estado_id') 
+    ciudades = get_all_cities_by_state(estado_id) 
+    return jsonify(ciudades)
 if __name__ == '__main__':
     app.run(debug=True)
