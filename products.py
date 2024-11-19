@@ -41,12 +41,13 @@ def add_producto(nombre_producto, punto_venta, categoria_id, precio, stock, disp
                 print(nombre_producto, punto_venta, categoria_id, precio, stock, disponibilidad, imagen)
 
 
-def get_point_by_id(point_id,):
+def get_point_by_id(point_id):
     cursor = connection.cursor()
     query = "SELECT ID_Punto_Venta From Punto_Venta WHERE Vendedor_ID_Vendedor = ?"
     try:
         cursor.execute(query, (point_id))
         result = cursor.fetchone()
+        print(result)
         if not result:
             print("No se encontró punto de venta")
             return False
@@ -54,6 +55,35 @@ def get_point_by_id(point_id,):
         return point_id
     except Exception as e:
         print(f"Ocurrio un error al buscar punto de venta: {e}")
+
+def get_products_by_point_id(point_id):
+    conn = None
+    products = []
+    try:
+        cursor = connection.cursor()
+        
+        # Consulta para obtener los productos del punto de venta específico
+        query = "SELECT ID_Producto, Punto_Venta_ID_Punto_Venta, Nombre_Producto, Precio, Stock FROM Producto WHERE Punto_Venta_ID_Punto_Venta = ?"
+        cursor.execute(query, (point_id,))
+        
+        results = cursor.fetchall()
+        
+        # Convertir cada fila en un diccionario
+        for row in results:
+            product = {
+                'id': row[0],  # ID del producto
+                'point_id': row[1],  # ID del punto de venta
+                'name': row[2],  # Nombre del producto
+                'price': row[3],  # Precio
+                'stock': row[4]  # Stock
+            }
+            products.append(product)
+    except Exception as e:
+        print(f"Error al recuperar productos: {e}")
+    finally:
+        if conn:
+            connection.close()
+    return products
 
 def editar_producto(product_id, nombre_producto, categoria_id, precio, stock, disponibilidad, imagen):
     conn = connection

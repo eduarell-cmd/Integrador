@@ -254,7 +254,7 @@ def contacto():
 def checkout():
     return render_template('chackout.html')
 
-@app.route('/perfilvend')
+@app.route('/perfilvend', methods=['GET', 'POST'])
 def perfilvend():
     user_id = session.get('user_id')
     if not user_id:
@@ -264,8 +264,17 @@ def perfilvend():
     user = get_user_by_id(session['user_id'])
     if not user:
         return redirect(url_for('login'))
+    seller_id = get_seller_by_id(user_id)
 
-    return render_template('profile-vendedor.html', user=user)
+    point_id = get_point_by_id(seller_id)
+    if not point_id:
+        flash("No tienes productos asignados a un punto de venta.", "error")
+        return redirect(url_for('perfilvend'))
+
+    # Obtener los productos del punto de venta
+    products = get_products_by_point_id(point_id)
+
+    return render_template('profile-vendedor.html', user=user, products=products)
 
 @app.route('/addproduct', methods=['GET', 'POST'])
 def add_product():
@@ -294,43 +303,51 @@ def add_product():
 
 @app.route('/editproduct', methods=['GET','POST'])
 def edit_product():
-    user = session.get('user_id')
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('login'))
+    user = get_user_by_id(user_id)
     if not user:
         return redirect(url_for('login'))
-    seller_id = get_seller_by_id(user)
-    if not seller_id:
-        return redirect(url_for('login'))
-
-    product_details = get_product_by_id(product_id)
-    if not product_details:
-        flash("Producto no encontrado")
+    # Recuperar ID del punto de venta del vendedor
+    point_id = get_point_by_id(user_id)
+    if not point_id:
+        flash("No tienes un punto de venta asignado", "error")
         return redirect(url_for('dashboard'))
+    # Recuperar productos del punto de venta
+    products = get_products_by_point_id(point_id)  # Implementa esta función en `products.py`
 
     if request.method == 'POST':
+        # Actualización del producto
+        product_id = request.form['product_id']
         nombre_producto = request.form['nombre']
-        categoria_id = request.form['categoria']  # 'frutas' o 'verduras'
+        categoria_id = request.form['categoria']
         precio = request.form['precio']
         stock = request.form['stock']
         disponibilidad = request.form['disponible']
         imagenpr = request.files.get('imagenpr')
 
-        user = get_user_by_id(session['user_id'])
-        Gimagen_file = None
-
-        if imagenpr:  # Solo sube una nueva imagen si se selecciona
-            Gimagen_file = upload_file_to_bucket(imagenpr,f"img/products/{user['name'], user['lastname'], user['slastname']}_Imgproduct_updated.png")
+        # Subir imagen si se proporciona
+        Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name']}_product_{product_id}.png") if imagenpr else None
+        # Actualizar producto
+        updated = editar_producto(product_id, nombre_producto, categoria_id, precio, stock, disponibilidad, Gimagen_file)
+        if updated:
+            flash("Producto actualizado con éxito", "success")
         else:
-            Gimagen_file = product_details['imagen']  # Mantén la imagen existente
+            flash("Error al actualizar el producto", "error")
+        return redirect(url_for('edit_product'))
 
-        updated_product = edita_producto(product_id, nombre_producto, categoria_id, precio, stock, disponibilidad, Gimagen_file)
+    return render_template('edit-product.html', user=user, products=products)
 
-        if edita_producto:
-            flash("Producto actualizado con éxito")
-        else:
-            flash("Error al actualizar el producto")
-        return redirect(url_for('dashboard'))
+@app.route('/delproduct', methods=['POST'])
+def delete_product():
+    product_id = request.form['product_id']
+    if eliminar_producto(product_id):
+        flash("Producto eliminado con éxito", "success")
+    else:
+        flash("Error al eliminar el producto", "error")
+    return redirect(url_for('perfilvend'))
 
-    return render_template('edit-product.html', user=user, product=product_details)
 
 @app.route('/cart')
 def carro():
