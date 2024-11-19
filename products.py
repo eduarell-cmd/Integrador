@@ -54,3 +54,36 @@ def get_point_by_id(point_id,):
         return point_id
     except Exception as e:
         print(f"Ocurrio un error al buscar punto de venta: {e}")
+
+def editar_producto(product_id, nombre_producto, categoria_id, precio, stock, disponibilidad, imagen):
+    conn = connection
+    cursor = conn.cursor()
+    try:
+        if categoria_id == 'frutas':
+            categoria_id = 1
+        elif categoria_id == 'verduras':
+            categoria_id = 2
+        else:
+            categoria_id = None
+
+        if categoria_id is not None:
+            update_product_query = "EXEC Actualizar_Producto ?, ?, ?, ?, ?, ?, ?"
+            cursor.execute(update_product_query,(product_id, nombre_producto, categoria_id, precio, stock, disponibilidad, imagen))
+            result = cursor.fetchone()
+
+            if result and result[0] == 0:
+                conn.commit()
+                logging.info("Producto actualizado con éxito")
+                return True
+            elif result and result[0] == 1:
+                conn.rollback()
+                print("Error en la actualización del producto")
+                return False
+            else:
+                print("Error inesperado al actualizar producto.")
+                return False
+        else:
+            return 'Categoría no válida'
+    except Exception as e:
+        print(f"Error al actualizar producto: {e}")
+        return False

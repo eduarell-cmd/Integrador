@@ -290,9 +290,45 @@ def add_product():
         return redirect (url_for('add_product'))
     return render_template('add-product.html', user=user)
 
-@app.route('/editproduct')
+@app.route('/editproduct', methods=['GET','POST'])
 def edit_product():
-    return render_template('edit-product.html')
+    user = session.get('user_id')
+    if not user:
+        return redirect(url_for('login'))
+    seller_id = get_seller_by_id(user)
+    if not seller_id:
+        return redirect(url_for('login'))
+
+    product_details = get_product_by_id(product_id)
+    if not product_details:
+        flash("Producto no encontrado")
+        return redirect(url_for('dashboard'))
+
+    if request.method == 'POST':
+        nombre_producto = request.form['nombre']
+        categoria_id = request.form['categoria']  # 'frutas' o 'verduras'
+        precio = request.form['precio']
+        stock = request.form['stock']
+        disponibilidad = request.form['disponible']
+        imagenpr = request.files.get('imagenpr')
+
+        user = get_user_by_id(session['user_id'])
+        Gimagen_file = None
+
+        if imagenpr:  # Solo sube una nueva imagen si se selecciona
+            Gimagen_file = upload_file_to_bucket(imagenpr,f"img/products/{user['name'], user['lastname'], user['slastname']}_Imgproduct_updated.png")
+        else:
+            Gimagen_file = product_details['imagen']  # Mantén la imagen existente
+
+        updated_product = edita_producto(product_id, nombre_producto, categoria_id, precio, stock, disponibilidad, Gimagen_file)
+
+        if edita_producto:
+            flash("Producto actualizado con éxito")
+        else:
+            flash("Error al actualizar el producto")
+        return redirect(url_for('dashboard'))
+
+    return render_template('edit-product.html', user=user, product=product_details)
 
 @app.route('/cart')
 def carro():
