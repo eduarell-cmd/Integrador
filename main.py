@@ -164,13 +164,15 @@ def login():
 @app.route('/logout')
 def logout():
     ID_Persona = session.get('user_id')
-    if ID_Persona:
-        user = get_user_by_email(ID_Persona)
-        email = user['email'] if user else None
-        session.pop('user_id', None)
-        session.clear()
-        flash("Has cerrado sesión exitosamente", "info")
-        return redirect(url_for('index'))     
+    if not ID_Persona:
+        print("Aqui falla /logout")
+        return redirect(url_for('login'))
+    user = get_user_by_email(ID_Persona)
+    email = user['email'] if user else None
+    session.pop('user_id', None)
+    session.clear()
+    flash("Has cerrado sesión exitosamente", "info")
+    return redirect(url_for('index'))     
 
 @app.route('/reset_request')
 def reset_request():
@@ -257,9 +259,11 @@ def checkout():
 @app.route('/perfilvend')
 def perfilvend():
     user_id = session.get('user_id')
+    seller_id = get_seller_by_id(user_id)
     if not user_id:
         return redirect(url_for('login'))  # Redirige a login si no hay usuario en sesión
-    
+    if not seller_id:
+        return redirect(url_for('perfil'))
     # Consulta los datos del usuario desde la base de datos
     user = get_user_by_id(session['user_id'])
     if not user:
@@ -274,7 +278,7 @@ def add_product():
         return redirect(url_for('login'))
     seller_id = get_seller_by_id(user)
     if not seller_id:
-        return redirect(url_for('login'))
+        return redirect(url_for('perfil'))
     if request.method == 'POST':
         nombre_producto = request.form['nombre']
         categoria_id = request.form['categoria']  # 'frutas' o 'verduras'
@@ -294,8 +298,16 @@ def add_product():
 
 @app.route('/editproduct')
 def edit_product():
-    return render_template('edit-product.html')
+    user = session.get('user_id')
+    if not user:
+        return redirect(url_for('login'))
+    seller_id = get_seller_by_id(user)
+    if not seller_id:
+        return redirect(url_for('perfil'))
+    
+    return render_template('edit-product.html', user=user)
 
+    
 @app.route('/cart')
 def carro():
     return render_template('cart.html')
@@ -316,16 +328,24 @@ def perfil():
     if not user_id:
         return redirect(url_for('login'))  # Redirige a login si no hay usuario en sesión
     
+    seller_id = get_seller_by_id(user_id)
+    if seller_id:
+        return redirect(url_for('perfilvend'))
     # Consulta los datos del usuario desde la base de datos
     user = get_user_by_id(session['user_id'])
     if not user:
         return redirect(url_for('login'))
-
+    
     return render_template('profile.html', user=user)
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
 def edit_profile():
     user_id = session.get('user_id')
+    seller_id = get_seller_by_id(user_id)
+    if seller_id:
+        return redirect(url_for('perfilvend'))
+    if not user_id:
+         return redirect(url_for('login'))
     
     if request.method == 'POST':
         # Recibe los datos del formulario
@@ -361,7 +381,12 @@ def admin_dashboard():
 def register_seller():
     #DATA 
     print("Register ruta")
-    user = session.get('user_id')
+    user_id = session.get('user_id')
+    seller_id = get_seller_by_id(user_id)
+    if seller_id:
+        return redirect(url_for('perfilvend'))
+    if not user_id:
+         return redirect(url_for('login'))
     rowstates = get_all_states()
     try:
         if request.method == 'POST':
