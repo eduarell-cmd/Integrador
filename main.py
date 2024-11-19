@@ -256,11 +256,13 @@ def checkout():
 
 @app.route('/perfilvend')
 def perfilvend():
-    user = session.get('user_id')
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('login'))  # Redirige a login si no hay usuario en sesión
+    
+    # Consulta los datos del usuario desde la base de datos
+    user = get_user_by_id(session['user_id'])
     if not user:
-        return redirect(url_for('login'))
-    seller_id = get_seller_by_id(user)
-    if not seller_id:
         return redirect(url_for('login'))
 
     return render_template('profile-vendedor.html', user=user)
