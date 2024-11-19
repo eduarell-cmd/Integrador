@@ -143,7 +143,7 @@ def get_user_by_id(user_id):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT Nombre, Email, PrimerApellido, SegundoApellido FROM Persona WHERE ID_Persona = ?", (user_id,))
+        cursor.execute("SELECT Nombre, Email, PrimerApellido, SegundoApellido, Telefono FROM Persona WHERE ID_Persona = ?", (user_id,))
         result = cursor.fetchone()
         
         # Si se encuentra un usuario, convertirlo en un diccionario
@@ -152,7 +152,8 @@ def get_user_by_id(user_id):
                 'name': result[0],  # Nombre
                 'email': result[1],  # Email
                 'lastname': result[2], #Primer Apellido
-                'slastname': result[3] #Segundo Apellido
+                'slastname': result[3], #Segundo Apellido
+                'phone': result[4] #Telefono
             }
     except Exception as e:
         print(f"Ocurrió un error al obtener el usuario: {e}")

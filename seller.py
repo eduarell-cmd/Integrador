@@ -37,7 +37,6 @@ def upload_file_to_bucket(file, destination_blob_name):
         file_url = blob.public_url
         if not file_url:
             print("No agarra el public url")
-        print("Lol")
         print(file_url)
         return file_url
     else:
