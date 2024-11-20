@@ -25,43 +25,47 @@
     <link href="{{ url_for('static',filename='css/style.css') }}" rel="stylesheet">
     <link rel="icon" href="{{ url_for('static',filename='img/LOGO.png') }}" type="image/x-icon">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .error-message { color: red; display: none; }
+    </style>
 </head>
-
-<form action="{{ url_for('register_seller') }}" method="POST" enctype="multipart/form-data">
 <body class="bg-light d-flex align-items-center justify-content-center min-vh-100">
     <div class="container bg-white p-5 rounded shadow" style="max-width: 600px;">
         <h1 class="text-center mb-4">Registro de Agricultores</h1>
+        <form id="registrationForm" action="{{ url_for('register_seller') }}" method="POST" enctype="multipart/form-data">
             <div class="form-step">
                 <h2 class="h5 border-bottom pb-2">Paso 1: Información Personal</h2>
                 
                 <div class="mb-3">
                     <label for="phone" class="form-label">Teléfono</label>
-                    <input type="tel" id="phone" name="phone" class="form-control" pattern="^\+?[1-9]\d{1,14}$" required>
+                    <input type="tel" id="phone" name="phone" class="form-control" pattern="^\+?[1-9]\d{9,14}$" required>
+                    <small class="error-message" id="phone-error">Número de teléfono no válido.</small>
                 </div>
                 
                 <div class="mb-3">
                     <label for="birthdate" class="form-label">Fecha de Nacimiento</label>
                     <input type="date" id="birthdate" name="birthdate" class="form-control" required>
+                    <small class="error-message" id="birthdate-error">Debe tener al menos 18 años.</small>
                 </div>
                 
                 <div class="mb-3">
                     <label for="Estado" class="form-label">Estado</label>
-                    <select id ="Estado" class="form-select" name="estado" required>
-                        <option selected disabled >Elegir...</option>
+                    <select id="Estado" class="form-select" name="estado" required>
+                        <option selected disabled>Elegir...</option>
                         {% for Estado in estados %}
-                        <option value ="{{ Estado[0] }}">{{ Estado[1]}}</option>
-                    {% endfor %}
-                </select>
+                            <option value="{{ Estado[0] }}">{{ Estado[1] }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
 
                 <div class="mb-3">
                     <label for="Ciudad" class="form-label">Ciudad</label>
-                    <select id="Ciudad" class="form-select" name ="ciudad" required>
-                    <option selected disabled >Elegir...</option>
-                </select>
+                    <select id="Ciudad" class="form-select" name="ciudad" required>
+                        <option selected disabled>Elegir...</option>
+                    </select>
                 </div>
 
-                <button type="button" class="btn btn-primary" onclick="nextStep()">Siguiente</button>
+                <button type="button" class="btn btn-primary" id="nextButton">Siguiente</button>
             </div>
 
             <div class="form-step" style="display: none;">
@@ -87,11 +91,12 @@
                     <input type="file" id="licenciaT" name="licenciaT" class="form-control" accept=".jpg,.jpeg,.png,.pdf" required>
                 </div>
 
-                <button type="button" class="btn btn-secondary" onclick="prevStep()">Anterior</button>
-                <button type="submit" class="btn btn-primary" href="{{ url_for('register_seller') }}">Enviar Registro</button>
+                <button type="button" class="btn btn-secondary" id="prevButton">Anterior</button>
+                <button type="submit" class="btn btn-primary">Enviar Registro</button>
             </div>
+        </form>
     </div>
-</form>
+
     <script>
         $(document).ready(function() {
             $('#Estado').change(function() {
@@ -99,7 +104,7 @@
                 $.ajax({
                     url: '/get_cities',
                     type: 'GET',
-                    data: {estado_id: estadoID},
+                    data: { estado_id: estadoID },
                     success: function(data) {
                         var $ciudadSelect = $('#Ciudad');
                         $ciudadSelect.empty();
@@ -110,29 +115,84 @@
                     }
                 });
             });
-        });
 
+            var birthdateInput = document.getElementById('birthdate');
+            var birthdateError = document.getElementById('birthdate-error');
+            var phoneInput = document.getElementById('phone');
+            var phoneError = document.getElementById('phone-error');
 
-        let currentStep = 0;
+            function validateAge() {
+                var birthdate = new Date(birthdateInput.value);
+                var today = new Date();
+                var age = today.getFullYear() - birthdate.getFullYear();
+                var monthDifference = today.getMonth() - birthdate.getMonth();
+                
+                if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthdate.getDate())) {
+                    age--;
+                }
 
-        function showStep(step) {
-            const steps = document.querySelectorAll('.form-step');
-            steps.forEach((s, index) => {
-                s.style.display = index === step ? 'block' : 'none';
+                if (age < 18) {
+                    birthdateError.style.display = 'block';
+                    return false;
+                } else {
+                    birthdateError.style.display = 'none';
+                    return true;
+                }
+            }
+
+            function validatePhone() {
+                var phonePattern = /^\+?[1-9]\d{9,14}$/;
+                if (!phonePattern.test(phoneInput.value)) {
+                    phoneError.style.display = 'block';
+                    return false;
+                } else {
+                    phoneError.style.display = 'none';
+                    return true;
+                }
+            }
+
+            birthdateInput.addEventListener("input", validateAge);
+            phoneInput.addEventListener("input", validatePhone);
+
+            document.getElementById("nextButton").addEventListener("click", function(event) {
+                var isAgeValid = validateAge();
+                var isPhoneValid = validatePhone();
+                if (!isAgeValid || !isPhoneValid) {
+                    event.preventDefault();
+                } else {
+                    nextStep();
+                }
             });
-        }
 
-        function nextStep() {
-            currentStep++;
-            showStep(currentStep);
-        }
+            document.getElementById("prevButton").addEventListener("click", function() {
+                prevStep();
+            });
 
-        function prevStep() {
-            currentStep--;
-            showStep(currentStep);
-        }
+            let currentStep = 0;
 
-        showStep(currentStep); // Muestra el primer paso al cargar
+            function nextStep() {
+                const steps = document.querySelectorAll('.form-step');
+                steps[currentStep].style.display = 'none';
+                currentStep++;
+                steps[currentStep].style.display = 'block';
+            }
+
+            function prevStep() {
+                const steps = document.querySelectorAll('.form-step');
+                steps[currentStep].style.display = 'none';
+                currentStep--;
+                steps[currentStep].style.display = 'block';
+            }
+
+            function showStep(step) {
+                const steps = document.querySelectorAll('.form-step');
+                steps.forEach((s, index) => {
+                    s.style.display = index === step ? 'block' : 'none';
+                });
+            }
+
+            showStep(currentStep); // Muestra el primer paso al cargar
+        });
     </script>
 </body>
 </html>

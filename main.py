@@ -335,8 +335,11 @@ def perfil():
     user = get_user_by_id(session['user_id'])
     if not user:
         return redirect(url_for('login'))
-    
-    return render_template('profile.html', user=user)
+    consumer_id = get_consumer_by_id(user_id)
+    request = get_request_by_consumer(consumer_id)
+    if not request:
+        return render_template('profile.html',user=user)
+    return render_template('profile.html', user=user,request=request)
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
 def edit_profile():
@@ -369,14 +372,17 @@ def edit_profile():
 
 @app.route(f'/{admin_key}')
 def admin_dashboard():
-     user = session.get('user_id')
-     if not user:
+    
+     user_id = session.get('user_id')
+     if not user_id:
          return redirect(url_for('login'))
-     admin = get_admin_by_id(user)
+     admin = get_admin_by_id(user_id)
      if not admin:
          print("No hay admin")
-         return redirect(url_for('login'))
+         return redirect(url_for('index'))
+     
      return render_template('admin.html', admin=admin)
+
 @app.route('/register_seller', methods=['GET','POST'])
 def register_seller():
     #DATA 
@@ -405,17 +411,24 @@ def register_seller():
             print(f"Registrando: {phone}, {birthdate}, {ine_file}, {address_prof}, {licenceA}, {licenceT}")
             user = get_user_by_id(session['user_id'])
             #Google Cloud Storage (Upload)
-            if user:
-                print(user['name'])
-                print("Si agarro el user")
-                extension = get_extension(ine_file, address_prof, licenceA, licenceT)
-                print("Esta extension")
-                Gine_file = upload_file_to_bucket(ine_file, f"docs/INE/{user['name'], user['lastname'], user['slastname']}_INE.{extension['ine_extension']}")
-                Gaddress_prof = upload_file_to_bucket(address_prof, f"docs/Comprobante Domicilio/{user['name'], user['lastname'], user['slastname']}_addressprof.{extension['addres_prof_extension']}")
-                GlicenceA = upload_file_to_bucket(licenceA, f"docs/Licencia Agricultor/{user['name'], user['lastname'], user['slastname']}_licenseA.{extension['license_A_extension']}")
-                GlicenceT = upload_file_to_bucket(licenceT, f"docs/Licencia Tenencia/{user['name'], user['lastname'], user['slastname']}_licenseT.{extension['license_T_extension']}")
+            if not user:
+                print("Error no agarro user")
+            print(user['name'])
+            print("Si agarro el user")
+            ID_Consumer = get_consumer_by_id(user_id)
+            extension = get_extension(ine_file, address_prof, licenceA, licenceT)
+            print("Esta en extension")
+            Gine_file = upload_file_to_bucket(ine_file, f"docs/INE/{user['name'], user['lastname'], user['slastname']}_INE.{extension['ine_extension']}")
+            Gaddress_prof = upload_file_to_bucket(address_prof, f"docs/Comprobante Domicilio/{user['name'], user['lastname'], user['slastname']}_addressprof.{extension['addres_prof_extension']}")
+            GlicenceA = upload_file_to_bucket(licenceA, f"docs/Licencia Agricultor/{user['name'], user['lastname'], user['slastname']}_licenseA.{extension['license_A_extension']}")
+            GlicenceT = upload_file_to_bucket(licenceT, f"docs/Licencia Tenencia/{user['name'], user['lastname'], user['slastname']}_licenseT.{extension['license_T_extension']}")
+            if send_request_seller(phone, birthdate, estado, ciudad, Gine_file, Gaddress_prof, GlicenceA, GlicenceT, ID_Consumer):
                 flash('Vendedor registrado exitosamente!', 'success')
-                return redirect(url_for('dashboard'))  # Va a redirigir al perfil o seccion de solicitudes pendientes nc
+                return redirect(url_for('perfilvend'))
+            else:
+                flash('Ha habido un error, el telefono ya está en uso')
+                
+            return redirect(url_for('perfilvend'))  # Va a redirigir al perfil o seccion de solicitudes pendientes nc
     except ValueError as e:
                 flash(str(e), 'error')  # Manejo de error si el tipo de archivo no es válido
                 return redirect(url_for('register_seller'))
