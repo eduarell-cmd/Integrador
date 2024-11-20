@@ -75,7 +75,7 @@
                                 <i class="fa fa-shopping-bag fa-2x"></i>
                                 <span class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style="top: -5px; left: 15px; height: 20px; min-width: 20px;">3</span>
                             </a>
-                            <a href="{{url_for('login')}}" class="my-auto">
+                            <a href="{{url_for('perfilvend')}}" class="my-auto">
                                 <i class="fas fa-user fa-2x"></i>
                             </a>
                         </div>
@@ -117,7 +117,7 @@
             <h2 class="text-center mb-4">Editar Producto</h2>
             <div class="row justify-content-center">
                 <div class="col-md-6">
-                    <form action="{{ url_for('edit_product') }}" method="POST" and method = enctype="multipart/form-data">
+                    <form action="{{ url_for('edit_product') }}" method="POST" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label for="nombre" class="form-label">ID Producto: {{products.id}}</label>
                             <input type="hidden" class="form-control" id="product_id" name="product_id" required>
