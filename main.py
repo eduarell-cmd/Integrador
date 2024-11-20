@@ -328,7 +328,6 @@ def edit_product():
     user = get_user_by_id(session['user_id'])
     if not user:
         return redirect(url_for('login'))
-    seller_id = get_seller_by_id(user_id)
 
     point_id = get_point_by_id(seller_id)
     if not point_id:
@@ -348,7 +347,7 @@ def edit_product():
         imagenpr = request.files.get('imagenpr')
 
         # Subir imagen si se proporciona
-        Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name']}_product_{product_id}.png") if imagenpr else None
+        Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}_Imgproduct.png")
         # Actualizar producto
         updated = editar_producto(product_id, nombre_producto, categoria_id, precio, stock, disponibilidad, Gimagen_file)
         if updated:
@@ -356,11 +355,12 @@ def edit_product():
         else:
             flash("Error al actualizar el producto", "error")
         return redirect(url_for('edit_product'))
-    for producto in products:
-        if(producto['id'] == int(request.args.get("product_id"))):
-            product = producto
-    #        print(product['id'])
-    #print(product)
+    if request.args.get("product_id"):
+        for producto in products:
+            if(producto['id'] == int(request.args.get("product_id"))):
+                product = producto
+        #        print(product['id'])
+        #print(product)
     return render_template('edit-product.html', user=user, products=product)
 
 #@app.route('/delproduct', methods=['POST'])

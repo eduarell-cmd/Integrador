@@ -124,7 +124,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="nombre" class="form-label">Nombre del Producto</label>
-                            <input type="text" class="form-control" id="nombre" name="nombre" required placeholder="{{products.name}}">
+                            <input type="text" class="form-control" id="nombre" name="nombre" required value="{{products.name}}">
                         </div>
                         <div class="mb-3">
                             <label for="categoria" class="form-label">Categoría</label>
@@ -138,13 +138,13 @@
                             <label for="precio" class="form-label">Precio</label>
                             <div class="input-group">
                                 <span class="input-group-text">$</span>
-                                <input type="number" min="0" step="1.00" class="form-control" id="precio" name="precio" placeholder="{{products.price}}" required>
+                                <input type="number" min="0" step="1.00" class="form-control" id="precio" name="precio" value="{{products.price}}" required>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="stock" class="form-label">Stock</label>
                             <div class="input-group">
-                            <input type="number" min="0" step="1.00" class="form-control" id="stock" name="stock" placeholder="{{products.stock}}" required>
+                            <input type="number" min="0" step="1.00" class="form-control" id="stock" name="stock" value="{{products.stock}}" required>
                             <select class="form-control" name="unidad" id="unidad">
                                 <option value="kg">Kg</option>
                                 <option value="unidades">Unidades</option>
@@ -160,7 +160,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="imagenpr" class="form-label">Imagen del producto</label>
-                            <input type="file" id="imagenpr" name="imagenpr" class="form-control" accept=".jpg,.jpeg,.png">
+                            <input type="file" id="imagenpr" name="imagenpr" class="form-control" accept=".jpg,.jpeg,.png" required>
                         </div>
                         <div class="text-center">
                         <button type="submit" class="btn btn-primary w-100">Actualizar Producto</button>
