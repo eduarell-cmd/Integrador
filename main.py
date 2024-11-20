@@ -158,7 +158,7 @@ def login():
             print(login_user(Email, Contraseña), is_human(captcha_response))
             return redirect(url_for('perfil',))
         else:
-            flash("¿Inicio de sesión fallido! Porfavor revisa que tu Email y Contraseña sean correctas")
+            flash("¡Inicio de sesión fallido! Porfavor revisa que tu Email y Contraseña sean correctas")
         return render_template('login.html', sitekey=sitekey)
     return render_template('login.html', sitekey=sitekey)
 @app.route('/logout')
@@ -238,7 +238,7 @@ def reset_password(token):
 @app.route('/')
 def index():
     conn=connection
-    cursor = conn.cursor()
+    cursor = connection.cursor()
     query = "Exec Vendedormuestra"
     cursor.execute(query)
     rows=cursor.fetchall()
@@ -461,6 +461,11 @@ def register_seller():
         return redirect(url_for('perfilvend'))
     if not user_id:
          return redirect(url_for('login'))
+    ID_Consumer = get_consumer_by_id(user_id)
+    Seller_Point = get_request_by_consumer(ID_Consumer)
+    if Seller_Point == -1:
+        flash("Ya tienes una solicitud pendiente, espera a que sea aceptada o rechazada")
+        return redirect(url_for('perfil'))
     rowstates = get_all_states()
     try:
         if request.method == 'POST':
@@ -483,7 +488,7 @@ def register_seller():
                 print("Error no agarro user")
             print(user['name'])
             print("Si agarro el user")
-            ID_Consumer = get_consumer_by_id(user_id)
+            
             extension = get_extension(ine_file, address_prof, licenceA, licenceT)
             print("Esta en extension")
             Gine_file = upload_file_to_bucket(ine_file, f"docs/INE/{user['name'], user['lastname'], user['slastname']}_INE.{extension['ine_extension']}")
