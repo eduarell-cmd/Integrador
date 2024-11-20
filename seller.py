@@ -63,7 +63,13 @@ def get_extension(ine_file,addres_prof,license_A,license_T):
     print(f"Si esta agarrando:{ file_extensions['ine_extension']}")
     return file_extensions
 
-
+def get_extension_for_img(img):
+    producfilename = img.filename
+    format_productimg = os.path.splitext(producfilename)[1][1:]
+    img_extension = {
+        'product_extension': format_productimg
+    }
+    return img_extension
 def get_product_by_id(product_id):
     conn = None
     product = None
@@ -147,6 +153,29 @@ def get_request_by_consumer(consumer_id):
         return request_rechazada
     request_pendiente = -1
     return request_pendiente
+
+def get_all_requests():
+    cursor = connection.cursor()
+    query = "EXEC MuestraSolicitudes"
+    cursor.execute(query)
+    requests = cursor.fetchall()
+    requestlol = []
+    for row in requests:
+        request = {
+            'ID_Solicitud': row[0],
+            'Nombre': row[2],
+            'Apelldo': row[3],
+            'Telefono': row[4],
+            'INE': row[5],
+            'Comprobante_D': row[6],
+            'Licencia_A': row[7],
+            'Tenencia': row[8],
+            'Estado_Solicitud': row[9],
+            'Fecha': row[10],
+            'Comentario': row[11]
+        }
+        requestlol.append(request)
+    return request
 
 def send_request_seller(phone, birthdate, estado, ciudad, INE, ComprobanteDomicilio, LicenciaA, LicenciaT, IDConsumer):
     cursor = connection.cursor()
