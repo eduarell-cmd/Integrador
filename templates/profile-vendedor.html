@@ -144,25 +144,20 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {% for product in products %}
                                     <tr>
-                                        <td>Tomates Orgánicos</td>
-                                        <td>$3.00/kg</td>
-                                        <td>50 kg</td>
+                                        <td>{{ product['name'] }}</td>
+                                        <td>${{ product['price'] }}</td>
+                                        <td>{{ product['stock'] }}</td>
                                         <td>
-                                            <a href="{{url_for('edit_product')}}" class="btn btn-sm btn-warning">Editar</a>
-                                            <a href="#" class="btn btn-sm btn-danger">Eliminar</a>
+                                            <a href="{{ url_for('edit_product', product_id=product['id']) }}" class="btn btn-sm btn-warning">Editar</a>
+                                            <form action="{{ url_for('delete_product') }}" method="POST" style="display:inline;">
+                                                <input type="hidden" name="product_id" value="{{ product['id'] }}">
+                                                <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                                            </form>
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td>Lechuga Fresca</td>
-                                        <td>$1.50/unidad</td>
-                                        <td>100 unidades</td>
-                                        <td>
-                                            <a href="#" class="btn btn-sm btn-warning">Editar</a>
-                                            <a href="#" class="btn btn-sm btn-danger">Eliminar</a>
-                                        </td>
-                                    </tr>
-                                    <!-- Más productos... -->
+                                    {% endfor %}
                                 </tbody>
                             </table>
                             <a href="{{url_for('add_product')}}" class="btn btn-success">Agregar Nuevo Producto</a>

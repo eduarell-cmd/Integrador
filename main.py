@@ -266,7 +266,7 @@ def ubicacion_pv():
     producto_seleccionado = rows[0]
     return render_template('seller_location.html',Producto=producto_seleccionado)
 
-@app.route('/perfilvend')
+@app.route('/perfilvend', methods=['GET', 'POST'])
 def perfilvend():
     user_id = session.get('user_id')
     seller_id = get_seller_by_id(user_id)
@@ -278,8 +278,17 @@ def perfilvend():
     user = get_user_by_id(session['user_id'])
     if not user:
         return redirect(url_for('login'))
+    seller_id = get_seller_by_id(user_id)
 
-    return render_template('profile-vendedor.html', user=user)
+    point_id = get_point_by_id(seller_id)
+    if not point_id:
+        flash("No tienes productos asignados a un punto de venta.", "error")
+        return redirect(url_for('perfilvend'))
+
+    # Obtener los productos del punto de venta
+    products = get_products_by_point_id(point_id)
+
+    return render_template('profile-vendedor.html', user=user, products=products)
 
 @app.route('/addproduct', methods=['GET', 'POST'])
 def add_product():
@@ -306,16 +315,63 @@ def add_product():
         return redirect (url_for('add_product'))
     return render_template('add-product.html', user=user)
 
-@app.route('/editproduct')
+@app.route('/editproduct', methods=['GET','POST'])
 def edit_product():
-    user = session.get('user_id')
-    if not user:
-        return redirect(url_for('login'))
-    seller_id = get_seller_by_id(user)
+    user_id = session.get('user_id')
+    seller_id = get_seller_by_id(user_id)
+    product ={"Esta es el producto que tenemos hasta el momento"}
+    if not user_id:
+        return redirect(url_for('login'))  # Redirige a login si no hay usuario en sesión
     if not seller_id:
         return redirect(url_for('perfil'))
-    
-    return render_template('edit-product.html', user=user)
+    # Consulta los datos del usuario desde la base de datos
+    user = get_user_by_id(session['user_id'])
+    if not user:
+        return redirect(url_for('login'))
+    seller_id = get_seller_by_id(user_id)
+
+    point_id = get_point_by_id(seller_id)
+    if not point_id:
+        flash("No tienes productos asignados a un punto de venta.", "error")
+        return redirect(url_for('perfilvend'))
+
+    # Obtener los productos del punto de venta
+    products = get_products_by_point_id(point_id)
+    if request.method == 'POST':
+        # Actualización del producto
+        product_id = request.form['product_id']
+        nombre_producto = request.form['nombre']
+        categoria_id = request.form['categoria']
+        precio = request.form['precio']
+        stock = request.form['stock']
+        disponibilidad = request.form['disponible']
+        imagenpr = request.files.get('imagenpr')
+
+        # Subir imagen si se proporciona
+        Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name']}_product_{product_id}.png") if imagenpr else None
+        # Actualizar producto
+        updated = editar_producto(product_id, nombre_producto, categoria_id, precio, stock, disponibilidad, Gimagen_file)
+        if updated:
+            flash("Producto actualizado con éxito", "success")
+        else:
+            flash("Error al actualizar el producto", "error")
+        return redirect(url_for('edit_product'))
+    for producto in products:
+        if(producto['id'] == int(request.args.get("product_id"))):
+            product = producto
+    #        print(product['id'])
+    #print(product)
+    return render_template('edit-product.html', user=user, products=product)
+
+@app.route('/delproduct', methods=['POST'])
+def delete_product():
+    product_id = request.form['product_id']
+    if eliminar_producto(product_id):
+        flash("Producto eliminado con éxito", "success")
+    else:
+        flash("Error al eliminar el producto", "error")
+    return redirect(url_for('perfilvend'))
+
 
     
 @app.route('/cart')
