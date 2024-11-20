@@ -133,14 +133,16 @@ def get_consumer_by_id(user_id):
 
 def get_request_by_consumer(consumer_id):
     cursor = connection.cursor()
-    query = "SELECT ID_Solicitud_Vendedor FROM Solicitud_Vendedor WHERE Consumidor_ID_Consumidor = ?"
+    query = "SELECT ID_Solicitud_Vendedor FROM Solicitud_Vendedor WHERE Consumidor_ID_Consumidor = ? AND Estado_Solicitud = 'Pendiente'"
     cursor.execute(query, (consumer_id))
-    request_id = cursor.fetchone()
-    if not request_id:
-        print("No se encontró solicitud")
-        return False
-    print(request_id)
-    return request_id[0]
+    request_pendiente = cursor.fetchone()
+    if not request_pendiente:
+        querynot = "SELECT ID_Solicitud_Vendedor, Comentario_Admin FROM Solicitud_Vendedor WHERE Consumidor_ID_Consumidor = ? AND Estado_Solicitud = 'Rechazada'"
+        cursor.execute(querynot, (consumer_id))
+        request_rechazada = cursor.fetchone()
+        return request_rechazada
+    request_pendiente = -1
+    return request_pendiente
 
 def send_request_seller(phone, birthdate, estado, ciudad, INE, ComprobanteDomicilio, LicenciaA, LicenciaT, IDConsumer):
     cursor = connection.cursor()

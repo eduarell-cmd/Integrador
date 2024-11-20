@@ -137,7 +137,28 @@
                                         </div>
                                     </div>
                                 </div>
+                                {%if request == -1 %}
+                                <div class="col-md-8">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h4 class="card-title">¡Tu solicitud esta siendo revisada!</h4>
+                                            <a >Estado de Solicitud: 'Pendiente'</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="col-md-8">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h4 class="card-title">¡Tu solicitud ha sido rechazada!</h4>
+                                            <a >Estado de Solicitud: 'Rechazada'</a>
+                                            <a >Motivo de rechazo: {{ request[1] }}</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
                             </div>
+
                             <!-- Historial de Pedidos -->
                             <div class="col-md-8">
                                 <div class="card mb-4">

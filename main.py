@@ -349,6 +349,7 @@ def perfil():
     request = get_request_by_consumer(consumer_id)
     if not request:
         return render_template('profile.html',user=user)
+        
     return render_template('profile.html', user=user,request=request)
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
