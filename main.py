@@ -308,22 +308,25 @@ def add_product():
 @app.route('/editproduct', methods=['GET','POST'])
 def edit_product():
     user_id = session.get('user_id')
+    seller_id = get_seller_by_id(user_id)
+    product ={"Esta es el producto que tenemos hasta el momento"}
     if not user_id:
-        return redirect(url_for('login'))
-    user = get_user_by_id(user_id)
-    if not user:
-        return redirect(url_for('login'))
-    seller_id = get_seller_by_id(user)
+        return redirect(url_for('login'))  # Redirige a login si no hay usuario en sesión
     if not seller_id:
         return redirect(url_for('perfil'))
-    # Recuperar ID del punto de venta del vendedor
+    # Consulta los datos del usuario desde la base de datos
+    user = get_user_by_id(session['user_id'])
+    if not user:
+        return redirect(url_for('login'))
+    seller_id = get_seller_by_id(user_id)
+
     point_id = get_point_by_id(seller_id)
     if not point_id:
-        flash("No tienes un punto de venta asignado", "error")
-        return redirect(url_for('dashboard'))
-    # Recuperar productos del punto de venta
-    products = get_products_by_point_id(point_id)  # Implementa esta función en `products.py`
+        flash("No tienes productos asignados a un punto de venta.", "error")
+        return redirect(url_for('perfilvend'))
 
+    # Obtener los productos del punto de venta
+    products = get_products_by_point_id(point_id)
     if request.method == 'POST':
         # Actualización del producto
         product_id = request.form['product_id']
@@ -343,8 +346,12 @@ def edit_product():
         else:
             flash("Error al actualizar el producto", "error")
         return redirect(url_for('edit_product'))
-
-    return render_template('edit-product.html', user=user, products=products)
+    for producto in products:
+        if(producto['id'] == int(request.args.get("product_id"))):
+            product = producto
+    #        print(product['id'])
+    #print(product)
+    return render_template('edit-product.html', user=user, products=product)
 
 @app.route('/delproduct', methods=['POST'])
 def delete_product():

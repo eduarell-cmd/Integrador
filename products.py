@@ -63,7 +63,7 @@ def get_products_by_point_id(point_id):
         cursor = connection.cursor()
         
         # Consulta para obtener los productos del punto de venta específico
-        query = "SELECT ID_Producto, Punto_Venta_ID_Punto_Venta, Nombre_Producto, Precio, Stock FROM Producto WHERE Punto_Venta_ID_Punto_Venta = ?"
+        query = "SELECT ID_Producto, Punto_Venta_ID_Punto_Venta, Nombre_Producto, Categoria_ID_Categoria, Precio, Stock, Disponible FROM Producto WHERE Punto_Venta_ID_Punto_Venta = ?"
         cursor.execute(query, (point_id,))
         
         results = cursor.fetchall()
@@ -74,8 +74,10 @@ def get_products_by_point_id(point_id):
                 'id': row[0],  # ID del producto
                 'point_id': row[1],  # ID del punto de venta
                 'name': row[2],  # Nombre del producto
-                'price': row[3],  # Precio
-                'stock': row[4]  # Stock
+                'category': row[3], #Categoria
+                'price': row[4],  # Precio
+                'stock': row[5],  # Stock
+                'disponible': row[6] #Disponibilidad
             }
             products.append(product)
     except Exception as e:
