@@ -100,7 +100,7 @@ def editar_producto(product_id, nombre_producto, categoria_id, precio, stock, di
             categoria_id = None
 
         if categoria_id is not None:
-            update_product_query = "EXEC Actualizar_Producto ?, ?, ?, ?, ?, ?, ?"
+            update_product_query = "EXEC Editar_Producto ?, ?, ?, ?, ?, ?, ?"
             cursor.execute(update_product_query,(product_id, nombre_producto, categoria_id, precio, stock, disponibilidad, imagen))
             result = cursor.fetchone()
 
