@@ -256,6 +256,16 @@ def contacto():
 def checkout():
     return render_template('chackout.html')
 
+@app.route('/locationvp')
+def ubicacion_pv():
+    conn=connection
+    cursor = conn.cursor()
+    query = "EXEC MuestraTienda"
+    cursor.execute(query)
+    rows=cursor.fetchall()
+    producto_seleccionado = rows[0]
+    return render_template('seller_location.html',Producto=producto_seleccionado)
+
 @app.route('/perfilvend')
 def perfilvend():
     user_id = session.get('user_id')
