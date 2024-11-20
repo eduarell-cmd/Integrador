@@ -1,8 +1,8 @@
-from flask import Flask, request, redirect, url_for, jsonify, render_template, flash
+from flask import Flask, jsonify
 from google.cloud import storage
 from werkzeug.utils import secure_filename  
 import os
-import json
+import logging
 from conexionsql import connection
 app = Flask(__name__)
 
@@ -104,12 +104,14 @@ def get_seller_by_id(seller_id):
         return result
     except Exception as e:
         print(f"Ocurrio un error al buscar vendedor: {e}")
+
 def get_all_states():
     cursor = connection.cursor()
     query = "SELECT ID_Estado, Nombre_Estado FROM Estado"
     cursor.execute(query)
     rows = cursor.fetchall()
     return rows
+
 def get_all_cities_by_state(estado_id):
     cursor = connection.cursor()
     query = "SELECT ID_Ciudad, Nombre_Ciudad FROM Ciudad WHERE Estado_ID_Estado = ?"
@@ -117,9 +119,58 @@ def get_all_cities_by_state(estado_id):
     rows = cursor.fetchall()
     ciudades = [{"ID_Ciudad": row[0], "Nombre_Ciudad": row[1]} for row in rows]
     return ciudades
-#def send_request_seller():
-    #cursor = connection.cursor()
-    #query =
-    #return result
+
+def get_consumer_by_id(user_id):
+    cursor = connection.cursor()
+    query = "SELECT ID_Consumidor FROM Consumidor WHERE Persona_ID_Persona = ?"
+    cursor.execute(query, (user_id))
+    consumer_id = cursor.fetchone()
+    if not consumer_id:
+        print("No se encontro usuario")
+        return False
+    print(consumer_id)
+    return consumer_id[0]
+
+def get_request_by_consumer(consumer_id):
+    cursor = connection.cursor()
+    query = "SELECT ID_Solicitud_Vendedor FROM Solicitud_Vendedor WHERE Consumidor_ID_Consumidor = ? AND Estado_Solicitud = 'Pendiente'"
+    cursor.execute(query, (consumer_id))
+    request_pendiente = cursor.fetchone()
+    if not request_pendiente:
+        querynot = "SELECT ID_Solicitud_Vendedor, Comentario_Admin FROM Solicitud_Vendedor WHERE Consumidor_ID_Consumidor = ? AND Estado_Solicitud = 'Rechazada'"
+        cursor.execute(querynot, (consumer_id))
+        request_rechazada = cursor.fetchone()
+        return request_rechazada
+    request_pendiente = -1
+    return request_pendiente
+
+def send_request_seller(phone, birthdate, estado, ciudad, INE, ComprobanteDomicilio, LicenciaA, LicenciaT, IDConsumer):
+    cursor = connection.cursor()
+    query = "EXEC Registrar_Solicitud_Vendedor ?,?,?,?,?,?,?,?,?"
+    try:
+        cursor.execute(query,(phone, birthdate, estado, ciudad, INE, ComprobanteDomicilio, LicenciaA, LicenciaT, IDConsumer))
+        result = cursor.fetchone()
+        if not result:
+            print("No se encontró resultado")
+        print (result)
+        if result and result[0] == 0:
+            connection.commit()
+            logging.info("Solicitud registrada con éxito.")
+            return True
+        elif result and result[0] == -1:
+            connection.rollback()
+            print("Error dentro del procedimiento.")
+            return False
+        elif result and result[0] == -2:
+            connection.rollback()
+            print("El telefono ya está en uso")
+            return False
+        else:
+            print("Error en el registro de la solicitud o resultado inesperado.")
+            return False
+    except Exception as e:
+        logging.error(f"Error durante la inserción de solicitud: {e}")
+        return False
+    
 
       

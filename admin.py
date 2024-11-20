@@ -14,3 +14,7 @@ def get_admin_by_id(session_id):
         logging.error(f"Error durante la busqueda de un administrador:{e}")
     finally:
             connection.close()
+
+def get_all_request_seller():
+     cursor = connection.cursor()
+     query = "SELECT"
