@@ -256,16 +256,25 @@ def contacto():
 def checkout():
     return render_template('chackout.html')
 
-@app.route('/locationvp')
+@app.route('/locationvp', methods=['GET'])
 def ubicacion_pv():
-    conn=connection
+    conn = connection
     cursor = conn.cursor()
     query = "EXEC MuestraTienda"
     cursor.execute(query)
-    rows=cursor.fetchall()
-    producto_seleccionado = rows[0]
-    print(producto_seleccionado)
-    return render_template('seller_location.html',Producto=producto_seleccionado)
+    rows = cursor.fetchall()
+
+    # Obtener el índice del producto desde el parámetro de consulta
+    productid = int(request.args.get('productid', 0))  # Por defecto, 0
+    producto_seleccionado = rows[productid]
+
+    return render_template('seller_location.html', productos=rows, Producto=producto_seleccionado)
+
+
+    return render_template('seller_location.html', productos=rows, Producto=producto_seleccionado)
+
+
+
 
 @app.route('/perfilvend', methods=['GET', 'POST'])
 def perfilvend():
@@ -279,7 +288,6 @@ def perfilvend():
     user = get_user_by_id(session['user_id'])
     if not user:
         return redirect(url_for('login'))
-    seller_id = get_seller_by_id(user_id)
 
     point_id = get_point_by_id(seller_id)
     if not point_id:
@@ -298,6 +306,10 @@ def add_product():
     seller_id = get_seller_by_id(user)
     if not seller_id:
         return redirect(url_for('perfil'))
+    point_id = get_point_by_id(seller_id)
+    if not point_id:
+        flash("No tienes productos asignados a un punto de venta.",)
+        return redirect(url_for('perfil'))
     if request.method == 'POST':
         nombre_producto = request.form['nombre']
         categoria_id = request.form['categoria']  # 'frutas' o 'verduras'
@@ -306,12 +318,16 @@ def add_product():
         disponibilidad = request.form['disponible']
         imagenpr = request.files['imagenpr']
 
+        extensionimg = get_extension_for_img(imagenpr)
         user = get_user_by_id(session['user_id'])
-        Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}_Imgproduct.png")
+        Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}/{product['name'], product['category']}_Imgproduct.{extensionimg['product_extension']}")
+        product = get_products_by_point_id(point_id)
 
         id_punto_venta = get_point_by_id(seller_id)
         added_product = add_producto(nombre_producto, id_punto_venta, categoria_id, precio, stock, disponibilidad, Gimagen_file)
-
+        if added_product:
+            print("Se ha añadido punto de venta")
+            return redirect(url_for('add_product'))
         return redirect (url_for('add_product'))
     return render_template('add-product.html', user=user)
 
