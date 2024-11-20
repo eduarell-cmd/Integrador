@@ -56,6 +56,7 @@ def get_point_by_id(point_id):
     except Exception as e:
         print(f"Ocurrio un error al buscar punto de venta: {e}")
 
+
 def get_products_by_point_id(point_id):
     conn = None
     products = []

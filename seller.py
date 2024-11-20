@@ -154,28 +154,6 @@ def get_request_by_consumer(consumer_id):
     request_pendiente = -1
     return request_pendiente
 
-def get_all_requests():
-    cursor = connection.cursor()
-    query = "EXEC MuestraSolicitudes"
-    cursor.execute(query)
-    requests = cursor.fetchall()
-    requestlol = []
-    for row in requests:
-        request = {
-            'ID_Solicitud': row[0],
-            'Nombre': row[2],
-            'Apelldo': row[3],
-            'Telefono': row[4],
-            'INE': row[5],
-            'Comprobante_D': row[6],
-            'Licencia_A': row[7],
-            'Tenencia': row[8],
-            'Estado_Solicitud': row[9],
-            'Fecha': row[10],
-            'Comentario': row[11]
-        }
-        requestlol.append(request)
-    return request
 
 def send_request_seller(phone, birthdate, estado, ciudad, INE, ComprobanteDomicilio, LicenciaA, LicenciaT, IDConsumer):
     cursor = connection.cursor()

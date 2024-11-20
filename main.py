@@ -457,15 +457,16 @@ def edit_profile():
 @app.route(f'/{admin_key}')
 def admin_dashboard():
     
-     user_id = session.get('user_id')
-     if not user_id:
-         return redirect(url_for('login'))
-     admin = get_admin_by_id(user_id)
-     if not admin:
-         print("No hay admin")
-         return redirect(url_for('index'))
-     
-     return render_template('admin.html', admin=admin)
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('login'))
+    admin = get_admin_by_id(user_id)
+    if not admin:
+        print("No hay admin")
+        return redirect(url_for('index'))
+    allrequests = get_all_requests()
+
+    return render_template('admin.html', admin=admin, solicitudes=allrequests)
 
 @app.route('/register_seller', methods=['GET','POST'])
 def register_seller():
