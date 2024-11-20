@@ -256,16 +256,25 @@ def contacto():
 def checkout():
     return render_template('chackout.html')
 
-@app.route('/locationvp')
+@app.route('/locationvp', methods=['GET'])
 def ubicacion_pv():
-    conn=connection
+    conn = connection
     cursor = conn.cursor()
     query = "EXEC MuestraTienda"
     cursor.execute(query)
-    rows=cursor.fetchall()
-    producto_seleccionado = rows[0]
-    print(producto_seleccionado)
-    return render_template('seller_location.html',Producto=producto_seleccionado)
+    rows = cursor.fetchall()
+
+    # Obtener el índice del producto desde el parámetro de consulta
+    productid = int(request.args.get('productid', 0))  # Por defecto, 0
+    producto_seleccionado = rows[productid]
+
+    return render_template('seller_location.html', productos=rows, Producto=producto_seleccionado)
+
+
+    return render_template('seller_location.html', productos=rows, Producto=producto_seleccionado)
+
+
+
 
 @app.route('/perfilvend', methods=['GET', 'POST'])
 def perfilvend():
