@@ -30,16 +30,7 @@
 </head>
 
 <body>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        <ul class="alert alert-warning">
-            {% for category, message in messages %}
-                <li class="{{ category }}">{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-  {% endwith %}
-    <!-- Spinner End -->
+        <!-- Spinner End -->
 
      <!-- Navbar start -->
      <div class="container-fluid fixed-top">
@@ -108,7 +99,15 @@
         <h1 class="text-center text-white display-6">My Profile</h1>
     </div>
     <!-- Single Page Header End -->
-
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <ul class="alert alert-warning">
+            {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+     {% endwith %}
     <!-- Contact Start -->
     <div class="container-fluid contact py-5">
         <div class="container py-5">
@@ -135,6 +134,7 @@
                                     </div>
                                 </div>
                                 <br>
+                                {%if request == 0 %}
                                 <div class="col-md-12">
                                     <div class="card">
                                         <div class="card-body">
@@ -143,7 +143,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                {%if request == -1 %}
+                                {%elif request == -1 %}
                                 <br>
                                 <div class="col-md-12">
                                     <div class="card">
@@ -153,9 +153,16 @@
                                         </div>
                                     </div>
                                 </div>
-                                {% elif request == 0 %}
                                 
                                 {% else %}
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h4 class="card-title">Corrige los datos de tu solicitud</h4>
+                                            <a href="{{url_for('index')}}" class="btn btn-primary">¡Corrige aqui!</a>
+                                        </div>
+                                    </div>
+                                </div>
                                 <br>
                                 <div class="col-md-12">
                                     <div class="card">
