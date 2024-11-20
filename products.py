@@ -119,3 +119,6 @@ def editar_producto(product_id, nombre_producto, categoria_id, precio, stock, di
     except Exception as e:
         print(f"Error al actualizar producto: {e}")
         return False
+def get_location_by_product():
+    cursor = connection.cursor()
+    query = "SELECT ID_Producto,"

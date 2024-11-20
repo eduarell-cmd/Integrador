@@ -37,6 +37,15 @@
     
 </head>
 <body style="background-color: #b4ff9a;">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <ul class="alert alert-warning">
+            {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+  {% endwith %}
 <form action="{{ url_for('signup') }}" method="POST" onsubmit="return validatePassword()">
     <div class="container mt-5">
         <h1 class="text-primary mb-0" style="text-align: center;">Farm-to-Table</h1> 

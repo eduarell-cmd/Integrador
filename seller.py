@@ -140,6 +140,10 @@ def get_request_by_consumer(consumer_id):
         querynot = "SELECT ID_Solicitud_Vendedor, Comentario_Admin FROM Solicitud_Vendedor WHERE Consumidor_ID_Consumidor = ? AND Estado_Solicitud = 'Rechazada'"
         cursor.execute(querynot, (consumer_id))
         request_rechazada = cursor.fetchone()
+        print (request_rechazada)
+        if not request_rechazada:
+            print("No se encontró ninguna solicitud")
+            return 0
         return request_rechazada
     request_pendiente = -1
     return request_pendiente

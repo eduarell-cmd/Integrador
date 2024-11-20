@@ -30,7 +30,15 @@
 </head>
 
 <body>
-
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <ul class="alert alert-warning">
+            {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+  {% endwith %}
     <!-- Spinner End -->
 
      <!-- Navbar start -->
@@ -111,9 +119,7 @@
                             <h1 class="text-primary">Perfil de Usuario</h1>
                         </div>
                     </div>
-                    <div class="container mt-5 pt-5">
-                        <div class="row">
-                            
+                          
                     <!-- Perfil de Usuario -->
                     <div class="container mt-5 pt-5">
                         <div class="row">
@@ -129,7 +135,7 @@
                                     </div>
                                 </div>
                                 <br>
-                                <div class="col-md-8">
+                                <div class="col-md-12">
                                     <div class="card">
                                         <div class="card-body">
                                             <h4 class="card-title">¿Quieres vender con nosotros?</h4>
@@ -138,7 +144,8 @@
                                     </div>
                                 </div>
                                 {%if request == -1 %}
-                                <div class="col-md-8">
+                                <br>
+                                <div class="col-md-12">
                                     <div class="card">
                                         <div class="card-body">
                                             <h4 class="card-title">¡Tu solicitud esta siendo revisada!</h4>
@@ -146,12 +153,15 @@
                                         </div>
                                     </div>
                                 </div>
+                                {% elif request == 0 %}
+                                
                                 {% else %}
-                                <div class="col-md-8">
+                                <br>
+                                <div class="col-md-12">
                                     <div class="card">
                                         <div class="card-body">
                                             <h4 class="card-title">¡Tu solicitud ha sido rechazada!</h4>
-                                            <a >Estado de Solicitud: 'Rechazada'</a>
+                                            <a >Estado de Solicitud: 'Rechazada'</a><br>
                                             <a >Motivo de rechazo: {{ request[1] }}</a>
                                         </div>
                                     </div>
@@ -211,6 +221,9 @@
             </div>
         </div>
     </div>
+    </div>
+    </div>
+    
     <!-- Footer Start -->
     <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
         <div class="container py-4">
@@ -222,20 +235,12 @@
                             <p class="text-secondary mb-0">Fresh products</p>
                         </a>
                     </div>
-                    
-                    <div class="col-lg-6 text-end">
-                        <div class="d-inline-flex align-items-center">
-                            <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-instagram"></i></a>
-                            <a class="btn btn-outline-light btn-social" href="#"><i class="fab fa-linkedin"></i></a>
-                        </div>
-                    </div>
+                                        
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                    &copy; <a class="text-white" href="#">Your Site Name</a>. All Rights Reserved.
+                    &copy; <a class="text-white" href="#"> Farm-To-Table</a>. All Rights Reserved.
                 </div>
                 <div class="col-md-6 text-center text-md-end">
                     <a class="text-white" href="#">Privacy Policy</a>

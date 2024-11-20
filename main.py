@@ -264,6 +264,7 @@ def ubicacion_pv():
     cursor.execute(query)
     rows=cursor.fetchall()
     producto_seleccionado = rows[0]
+    print(producto_seleccionado)
     return render_template('seller_location.html',Producto=producto_seleccionado)
 
 @app.route('/perfilvend', methods=['GET', 'POST'])
@@ -282,8 +283,7 @@ def perfilvend():
 
     point_id = get_point_by_id(seller_id)
     if not point_id:
-        flash("No tienes productos asignados a un punto de venta.", "error")
-        return redirect(url_for('perfilvend'))
+        flash("No tienes productos asignados a un punto de venta.",)
 
     # Obtener los productos del punto de venta
     products = get_products_by_point_id(point_id)
@@ -363,14 +363,14 @@ def edit_product():
     #print(product)
     return render_template('edit-product.html', user=user, products=product)
 
-@app.route('/delproduct', methods=['POST'])
-def delete_product():
-    product_id = request.form['product_id']
-    if eliminar_producto(product_id):
-        flash("Producto eliminado con éxito", "success")
-    else:
-        flash("Error al eliminar el producto", "error")
-    return redirect(url_for('perfilvend'))
+#@app.route('/delproduct', methods=['POST'])
+#def delete_product():
+    #product_id = request.form['product_id']
+    #if eliminar_producto(product_id):
+        #flash("Producto eliminado con éxito", "success")
+    #else:
+        #flash("Error al eliminar el producto", "error")
+    #return redirect(url_for('perfilvend'))
 
 
     
@@ -403,7 +403,8 @@ def perfil():
         return redirect(url_for('login'))
     consumer_id = get_consumer_by_id(user_id)
     request = get_request_by_consumer(consumer_id)
-    if not request:
+    print(f"El valor de request:{request}")
+    if not request or request == 0:
         return render_template('profile.html',user=user)
         
     return render_template('profile.html', user=user,request=request)
