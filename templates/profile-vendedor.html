@@ -65,7 +65,6 @@
                             <a href="{{url_for('index')}}" class="nav-item nav-link">Home</a>
                             <a href="{{url_for('shop')}}" class="nav-item nav-link">Shop</a>
                             <a href="{{url_for('contacto')}}" class="nav-item nav-link">Contact</a>
-                            <a href="{{url_for('perfil')}}" class="nav-item nav-link active">Profile</a>
                         </div>
                         <div class="d-flex m-3 me-0">
                             <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search text-primary"></i></button>
@@ -151,7 +150,7 @@
                                         <td>{{ product['stock'] }}</td>
                                         <td>
                                             <a href="{{ url_for('edit_product', product_id=product['id']) }}" class="btn btn-sm btn-warning">Editar</a>
-                                            <form action="{{ url_for('delete_product') }}" method="POST" style="display:inline;">
+                                            <form action="" method="" style="display:inline;">
                                                 <input type="hidden" name="product_id" value="{{ product['id'] }}">
                                                 <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
                                             </form>
