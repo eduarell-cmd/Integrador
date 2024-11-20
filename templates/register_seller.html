@@ -30,6 +30,15 @@
     </style>
 </head>
 <body class="bg-light d-flex align-items-center justify-content-center min-vh-100">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <ul class="alert alert-warning">
+            {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+  {% endwith %}
     <div class="container bg-white p-5 rounded shadow" style="max-width: 600px;">
         <h1 class="text-center mb-4">Registro de Agricultores</h1>
         <form id="registrationForm" action="{{ url_for('register_seller') }}" method="POST" enctype="multipart/form-data">
