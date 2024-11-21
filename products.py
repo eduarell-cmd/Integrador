@@ -56,6 +56,7 @@ def get_point_by_id(point_id):
     except Exception as e:
         print(f"Ocurrio un error al buscar punto de venta: {e}")
 
+
 def get_products_by_point_id(point_id):
     conn = None
     products = []
@@ -82,9 +83,7 @@ def get_products_by_point_id(point_id):
             products.append(product)
     except Exception as e:
         print(f"Error al recuperar productos: {e}")
-    finally:
-        if conn:
-            connection.close()
+
     return products
 
 def editar_producto(product_id, nombre_producto, categoria_id, precio, stock, disponibilidad, imagen):
@@ -98,7 +97,14 @@ def editar_producto(product_id, nombre_producto, categoria_id, precio, stock, di
         else:
             categoria_id = None
 
-        if categoria_id is not None:
+        if disponibilidad == '1':
+            disponibilidad = 1
+        elif disponibilidad == '2':
+            disponibilidad = 0
+        else:   
+            disponibilidad = None
+
+        if categoria_id and disponibilidad is not None:
             update_product_query = "EXEC Editar_Producto ?, ?, ?, ?, ?, ?, ?"
             cursor.execute(update_product_query,(product_id, nombre_producto, categoria_id, precio, stock, disponibilidad, imagen))
             result = cursor.fetchone()

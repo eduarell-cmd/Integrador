@@ -15,6 +15,25 @@ def get_admin_by_id(session_id):
     finally:
             connection.close()
 
-def get_all_request_seller():
-     cursor = connection.cursor()
-     query = "SELECT"
+def get_all_requests():
+    cursor = connection.cursor()
+    query = "EXEC MuestraSolicitudes"
+    cursor.execute(query)
+    requests = cursor.fetchall()
+    #requestlol = []
+    #for row in requests:
+        #request = {
+         #   'ID_Solicitud': row[0],
+          #  'Nombre': row[2],
+           # 'Apelldo': row[3],
+            #'Telefono': row[4],
+            #'INE': row[5],
+            #'Comprobante_D': row[6],
+            #'Licencia_A': row[7],
+            #'Tenencia': row[8],
+            #'Estado_Solicitud': row[9],
+            #'Fecha': row[10],
+            #'Comentario': row[11]
+       # }
+        #requestlol.append(request)
+    return requests

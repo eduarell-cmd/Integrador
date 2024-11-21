@@ -320,7 +320,7 @@ def add_product():
 
         extensionimg = get_extension_for_img(imagenpr)
         user = get_user_by_id(session['user_id'])
-        Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}/{product['name'], product['category']}_Imgproduct.{extensionimg['product_extension']}")
+        Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}/{product[3], product[4]}_Imgproduct.{extensionimg['product_extension']}")
         product = get_products_by_point_id(point_id)
 
         id_punto_venta = get_point_by_id(seller_id)
@@ -352,7 +352,7 @@ def edit_product():
         return redirect(url_for('perfilvend'))
 
     # Obtener los productos del punto de venta
-    products = get_products_by_point_id(point_id)
+    product = get_products_by_point_id(point_id)
     if request.method == 'POST':
         # Actualización del producto
         product_id = request.form['product_id']
@@ -365,7 +365,7 @@ def edit_product():
         print(f"El valor de imagen{imagenpr}")
         extensionimg = get_extension_for_img(imagenpr)
         # Subir imagen si se proporciona
-        Gimagen_file = upload_file_to_bucket(imagenprpost, f"img/products/{user['name'], user['lastname'], user['slastname']}/{product['name'], product['category']}_Imgproduct.{extensionimg['product_extension']}")
+        Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}/{product[3], product[4]}_Imgproduct.{extensionimg['product_extension']}")
         # Actualizar producto
         updated = editar_producto(product_id, nombre_producto, categoria_id, precio, stock, disponibilidad, Gimagen_file)
         if updated:
@@ -375,7 +375,7 @@ def edit_product():
             flash("Error al actualizar el producto", "error")
         return redirect(url_for('edit_product'))
     if request.args.get("product_id"):
-        for producto in products:
+        for producto in product:
             if(producto['id'] == int(request.args.get("product_id"))):
                 product = producto
         #        print(product['id'])
@@ -460,15 +460,16 @@ def edit_profile():
 @app.route(f'/{admin_key}')
 def admin_dashboard():
     
-     user_id = session.get('user_id')
-     if not user_id:
-         return redirect(url_for('login'))
-     admin = get_admin_by_id(user_id)
-     if not admin:
-         print("No hay admin")
-         return redirect(url_for('index'))
-     
-     return render_template('admin.html', admin=admin)
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('login'))
+    admin = get_admin_by_id(user_id)
+    if not admin:
+        print("No hay admin")
+        return redirect(url_for('index'))
+    allrequests = get_all_requests()
+
+    return render_template('admin.html', admin=admin, solicitudes=allrequests)
 
 @app.route('/register_seller', methods=['GET','POST'])
 def register_seller():

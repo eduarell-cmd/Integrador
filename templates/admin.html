@@ -35,11 +35,13 @@
         </div>
 
         <div class="row">
+            {% for Solicitud in solicitudes %}
             <div class="col-md-6 mb-4">
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title">Solicitud de Registro - Agricultor</h5>
-                        <p class="card-text"><strong>Nombre:</strong> Juan Pérez</p>
+                        <p class="card-text"><strong>ID:</strong> {{ Solicitud[0]}}</p>
+                        <p class="card-text"><strong>Nombre:</strong>{{Solicitud [1]}} {{Solicitud[2]}} {{}} </p>
                         <p class="card-text"><strong>Teléfono:</strong> +52 123 456 7890</p>
 
                         <div class="documents mb-3">
