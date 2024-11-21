@@ -65,7 +65,7 @@ def get_extension(ine_file,addres_prof,license_A,license_T):
 
 def get_extension_for_img(imagenpr):
     productimg_filename = imagenpr.filename
-    format_productimg = os.path.splitext(producfilename)[1][1:]
+    format_productimg = os.path.splitext(productimg_filename)[1][1:]
     img_extension = {
         'product_extension': format_productimg
     }
