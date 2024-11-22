@@ -363,9 +363,13 @@ def edit_product():
         disponibilidad = request.form['disponible']
         imagenpr = request.files.get('imagenpr')
         print(f"El valor de imagen{imagenpr}")
-        extensionimg = get_extension_for_img(imagenpr)
+        if not imagenpr or imagenpr.filename == '':
+            product_data = next((p for p in get_products_by_point_id(point_id) if p['id'] == product_id), None)
+            Gimagen_file = product_data['img'] if product_data else None
+        else:
+            extensionimg = get_extension_for_img(imagenpr)
         # Subir imagen si se proporciona
-        Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}/{product[3], product[4]}_Imgproduct.{extensionimg['product_extension']}")
+            Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}/{product[3], product[4]}_Imgproduct.{extensionimg['product_extension']}")
         # Actualizar producto
         updated = editar_producto(product_id, nombre_producto, categoria_id, precio, stock, disponibilidad, Gimagen_file)
         if updated:
