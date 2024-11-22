@@ -362,18 +362,32 @@ def edit_product():
         precio = request.form['precio']
         stock = request.form['stock']
         disponibilidad = request.form['disponible']
+        if disponibilidad == 'True' or disponibilidad == '1':
+            disponibilidad = 1
+        else:
+            disponibilidad = 0
         imagenpr = request.files.get('imagenpr')
         print(f"El valor de imagen{imagenpr}")
-        extensionimg = get_extension_for_img(imagenpr)
-        # Subir imagen si se proporciona
-        if imagenpr:
-            Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}/producto_Imgproduct.{extensionimg['product_extension']}")
-            updated = editar_producto(product_id, nombre_producto, categoria_id, precio, stock, disponibilidad, Gimagen_file)
+        
+        if imagenpr and imagenpr.filename != '':
+            # Obtener extensión y subir la nueva imagen
+            extensionimg = get_extension_for_img(imagenpr)
+            Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}/{product[3], product[4]}_Imgproduct.{extensionimg['product_extension']}")
+        else:
+            conn = connection
+            cursor = conn.cursor()
+            cursor.execute("SELECT Foto_Producto FROM Producto WHERE ID_Producto = ?",(product_id,))
+            result = cursor.fetchone()
+
+            if result:
+                Gimagen_file = result[0]
+            else:
+                Gimagen_file = ""
         # Actualizar producto
-        updated = editar_producto(product_id, nombre_producto, categoria_id, precio, stock, disponibilidad, )
+        updated = editar_producto(product_id, nombre_producto, categoria_id, precio, stock, disponibilidad, Gimagen_file)
         if updated:
             flash("Producto actualizado con éxito", "success")
-            return redirect(url_for('profilevend'))
+            return redirect(url_for('perfilvend'))
         else:
             flash("Error al actualizar el producto", "error")
         return redirect(url_for('edit_product'))

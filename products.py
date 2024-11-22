@@ -1,7 +1,6 @@
 from conexionsql import get_db_connection, connection
 import logging
 
-
 def add_producto(nombre_producto, punto_venta, categoria_id, precio, stock, disponibilidad, imagen):    
     conn = connection
     cursor = conn.cursor()
@@ -65,7 +64,7 @@ def get_products_by_point_id(point_id):
         cursor = connection.cursor()
         
         # Consulta para obtener los productos del punto de venta específico
-        query = "SELECT ID_Producto, Punto_Venta_ID_Punto_Venta, Nombre_Producto, Categoria_ID_Categoria, Precio, Stock, Disponible FROM Producto WHERE Punto_Venta_ID_Punto_Venta = ?"
+        query = "SELECT ID_Producto, Punto_Venta_ID_Punto_Venta, Nombre_Producto, Categoria_ID_Categoria, Precio, Stock, Disponible, Foto_Producto FROM Producto WHERE Punto_Venta_ID_Punto_Venta = ?"
         cursor.execute(query, (point_id,))
         
         results = cursor.fetchall()
@@ -79,7 +78,8 @@ def get_products_by_point_id(point_id):
                 'category': row[3], #Categoria
                 'price': row[4],  # Precio
                 'stock': row[5],  # Stock
-                'disponible': row[6] #Disponibilidad
+                'disponible': row[6], #Disponibilidad
+                'img': row[7] #Imagen
             }
             products.append(product)
     except Exception as e:
@@ -129,5 +129,3 @@ def editar_producto(product_id, nombre_producto, categoria_id, precio, stock, di
 def get_location_by_product():
     cursor = connection.cursor()
     query = "SELECT ID_Producto,"
-
-    
