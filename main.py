@@ -333,7 +333,8 @@ def add_product():
     return render_template('add-product.html', user=user)
 
 @app.route('/editproduct', methods=['GET','POST'])
-def edit_product():
+def edit_product():   
+    product_id=request.args.get("product_id")
     user_id = session.get('user_id')
     if not user_id:
         return redirect(url_for('login'))  # Redirige a login si no hay usuario en sesión
@@ -384,7 +385,9 @@ def edit_product():
             else:
                 Gimagen_file = ""
         # Actualizar producto
-        updated = editar_producto(product_id, nombre_producto, categoria_id, precio, stock, disponibilidad, Gimagen_file)
+        id_punto_venta = get_point_by_id(seller_id)
+        print(f"estos son tus datos{int(product_id), id_punto_venta, nombre_producto, int(categoria_id), int(precio), int(stock), disponibilidad, Gimagen_file}")
+        updated = editar_producto(int(product_id), id_punto_venta, nombre_producto, int(categoria_id), int(precio), int(stock), disponibilidad, Gimagen_file)
         if updated:
             flash("Producto actualizado con éxito", "success")
             return redirect(url_for('perfilvend'))
