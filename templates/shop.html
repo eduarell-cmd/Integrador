@@ -122,19 +122,7 @@
                                     <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
                                 </div>
                             </div>
-                            <div class="col-6"></div>
-                            <div class="col-xl-3">
-                                <div class="bg-light ps-3 py-3 rounded d-flex justify-content-between mb-4">
-                                    <label for="fruits">Default Sorting:</label>
-                                    <select id="fruits" name="fruitlist" class="border-0 form-select-sm bg-light me-3" form="fruitform">
-                                        <option value="volvo">Nothing</option>
-                                        <option value="saab">Popularity</option>
-                                        <option value="opel">Organic</option>
-                                        <option value="audi">Fantastic</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
+                            
                         <div class="row g-4">
                             <div class="col-lg-3">
                                 <div class="row g-4">
@@ -144,32 +132,20 @@
                                             <ul class="list-unstyled fruite-categorie">
                                                 <li>
                                                     <div class="d-flex justify-content-between fruite-name">
-                                                        <a href="#"><i class="fas fa-apple-alt me-2"></i>Apples</a>
-                                                        <span>(3)</span>
+                                                        <a href="{{url_for('shop')}}"><i class="fas fa-apple-alt me-2"></i>All</a>
+                                                       
                                                     </div>
                                                 </li>
                                                 <li>
                                                     <div class="d-flex justify-content-between fruite-name">
-                                                        <a href="#"><i class="fas fa-apple-alt me-2"></i>Oranges</a>
-                                                        <span>(5)</span>
+                                                        <a href="{{url_for('shopfrutas')}}"><i class="fas fa-apple-alt me-2"></i>Fruits</a>
+                                                    
                                                     </div>
                                                 </li>
                                                 <li>
                                                     <div class="d-flex justify-content-between fruite-name">
-                                                        <a href="#"><i class="fas fa-apple-alt me-2"></i>Strawbery</a>
-                                                        <span>(2)</span>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="d-flex justify-content-between fruite-name">
-                                                        <a href="#"><i class="fas fa-apple-alt me-2"></i>Banana</a>
-                                                        <span>(8)</span>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="d-flex justify-content-between fruite-name">
-                                                        <a href="#"><i class="fas fa-apple-alt me-2"></i>Pumpkin</a>
-                                                        <span>(5)</span>
+                                                        <a href="{{url_for('shopverduras')}}"><i class="fas fa-apple-alt me-2"></i>Vegetables</a>
+                                                        
                                                     </div>
                                                 </li>
                                             </ul>
@@ -208,7 +184,7 @@
                                                 <p>Vendido por: {{ Producto[3] }}</p>
                                                 <div class="d-flex justify-content-between flex-lg-wrap">
                                                     <p class="text-dark fs-5 fw-bold mb-0">${{ Producto[4] }} / kg</p>                                
-                                                    <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                                   
                                                 </div>
                                                 <br>
                                                 <a href="{{ url_for('ubicacion_pv') }}?productid={{ loop.index0 }}" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fas fa-map-marker-alt me-2 text-secondary"></i>Ubicación</a>

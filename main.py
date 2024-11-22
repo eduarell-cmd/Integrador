@@ -429,6 +429,24 @@ def shop():
     rows=cursor.fetchall()
     return render_template('shop.html',Productos=rows)
 
+@app.route('/shop/frutas')
+def shopfrutas():
+    conn=connection
+    cursor = conn.cursor()
+    query = "EXEC OnlyFrutas"
+    cursor.execute(query)
+    rows=cursor.fetchall()
+    return render_template('shop.html',Productos=rows)
+
+@app.route('/shop/verduras')
+def shopverduras():
+    conn=connection
+    cursor = conn.cursor()
+    query = "EXEC OnlyVerduras"
+    cursor.execute(query)
+    rows=cursor.fetchall()
+    return render_template('shop.html',Productos=rows)
+
 
 @app.route('/perfil')
 def perfil():
