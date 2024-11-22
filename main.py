@@ -21,6 +21,7 @@ from conexionsql import connection
 from profilee import update_user_name
 from mail import *
 from admin import *
+import pyodbc
 admin_key = os.getenv("ADMIN_KEY")
 client_id = os.getenv("GOOGLE_CLIENT_ID")
 client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
@@ -320,7 +321,7 @@ def add_product():
 
         extensionimg = get_extension_for_img(imagenpr)
         user = get_user_by_id(session['user_id'])
-        Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}/{product[3], product[4]}_Imgproduct.{extensionimg['product_extension']}")
+        Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}/{"product[3]", "product[4]"}_Imgproduct.{extensionimg['product_extension']}")
         product = get_products_by_point_id(point_id)
 
         id_punto_venta = get_point_by_id(seller_id)
@@ -387,11 +388,17 @@ def edit_product():
 
 @app.route('/delproduct', methods=['POST'])
 def delete_product():
-    product_id = request.form['product_id']
-    if eliminar_producto(product_id):
-        flash("Producto eliminado con éxito", "success")
-    else:
-        flash("Error al eliminar el producto", "error")
+    conn=connection
+    cursor = conn.cursor()
+    id_producto = request.form.get('ID_Producto')
+    try:
+        cursor.execute("DELETE FROM Producto WHERE ID_Producto = ?", (id_producto))
+        conn.commit()
+        print("Registro eliminado exitosamente.")
+        flash(f"Registro eliminado exitosamente.")
+    except pyodbc.Error as error:
+        print("Error al eliminar el registro:", error)
+        flash(f"Error al eliminar el registro: {str(error)}")
     return redirect(url_for('perfilvend'))
 
     

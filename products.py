@@ -1,6 +1,7 @@
 from conexionsql import get_db_connection, connection
 import logging
 
+
 def add_producto(nombre_producto, punto_venta, categoria_id, precio, stock, disponibilidad, imagen):    
     conn = connection
     cursor = conn.cursor()
@@ -129,8 +130,4 @@ def get_location_by_product():
     cursor = connection.cursor()
     query = "SELECT ID_Producto,"
 
-def eliminar_producto():
-    cursor = connection.cursor()
-    query = "DELETE from Producto where ID_Producto = ?"
-    cursor.execute(query)
     
