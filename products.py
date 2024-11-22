@@ -87,29 +87,15 @@ def get_products_by_point_id(point_id):
 
     return products
 
-def editar_producto(product_id, nombre_producto, categoria_id, precio, stock, disponibilidad, imagen):
+def editar_producto(product_id, nombre_producto, id_punto_venta, categoria_id, precio, stock, disponibilidad, imagen):
     conn = connection
     cursor = conn.cursor()
     try:
-        if categoria_id == 'frutas':
-            categoria_id = 1
-        elif categoria_id == 'verduras':
-            categoria_id = 2
-        else:
-            categoria_id = None
-
-        if disponibilidad == '1':
-            disponibilidad = 1
-        elif disponibilidad == '2':
-            disponibilidad = 0
-        else:   
-            disponibilidad = None
-
         if categoria_id and disponibilidad is not None:
-            update_product_query = "EXEC Editar_Producto ?, ?, ?, ?, ?, ?, ?"
-            cursor.execute(update_product_query,(product_id, nombre_producto, categoria_id, precio, stock, disponibilidad, imagen))
+            update_product_query = "EXEC Editar_Producto ?, ?, ?, ?, ?, ?, ?, ?"
+            cursor.execute(update_product_query,(product_id, nombre_producto, id_punto_venta, categoria_id, precio, stock, disponibilidad, imagen))
             result = cursor.fetchone()
-
+            print(f"El resultado del SP:{result}")
             if result and result[0] == 0:
                 conn.commit()
                 logging.info("Producto actualizado con éxito")
