@@ -128,3 +128,9 @@ def editar_producto(product_id, nombre_producto, categoria_id, precio, stock, di
 def get_location_by_product():
     cursor = connection.cursor()
     query = "SELECT ID_Producto,"
+
+def eliminar_producto():
+    cursor = connection.cursor()
+    query = "DELETE from Producto where ID_Producto = ?"
+    cursor.execute(query)
+    

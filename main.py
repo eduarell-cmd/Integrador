@@ -365,9 +365,11 @@ def edit_product():
         print(f"El valor de imagen{imagenpr}")
         extensionimg = get_extension_for_img(imagenpr)
         # Subir imagen si se proporciona
-        Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}/{product[3], product[4]}_Imgproduct.{extensionimg['product_extension']}")
+        if imagenpr:
+            Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}/producto_Imgproduct.{extensionimg['product_extension']}")
+            updated = editar_producto(product_id, nombre_producto, categoria_id, precio, stock, disponibilidad, Gimagen_file)
         # Actualizar producto
-        updated = editar_producto(product_id, nombre_producto, categoria_id, precio, stock, disponibilidad, Gimagen_file)
+        updated = editar_producto(product_id, nombre_producto, categoria_id, precio, stock, disponibilidad, )
         if updated:
             flash("Producto actualizado con éxito", "success")
             return redirect(url_for('profilevend'))
@@ -382,15 +384,15 @@ def edit_product():
         #print(product)
     return render_template('edit-product.html', user=user, products=product)
 
-#@app.route('/delproduct', methods=['POST'])
-#def delete_product():
-    #product_id = request.form['product_id']
-    #if eliminar_producto(product_id):
-        #flash("Producto eliminado con éxito", "success")
-    #else:
-        #flash("Error al eliminar el producto", "error")
-    #return redirect(url_for('perfilvend'))
 
+@app.route('/delproduct', methods=['POST'])
+def delete_product():
+    product_id = request.form['product_id']
+    if eliminar_producto(product_id):
+        flash("Producto eliminado con éxito", "success")
+    else:
+        flash("Error al eliminar el producto", "error")
+    return redirect(url_for('perfilvend'))
 
     
 @app.route('/cart')
