@@ -120,7 +120,7 @@
                     <form action="{{ url_for('edit_product') }}" method="POST" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label for="nombre" class="form-label">ID Producto: {{products.id}}</label>
-                            <input type="hidden" class="form-control" id="product_id" name="product_id" required>
+                            <input type="hidden" class="form-control" id="product_id" name="product_id" value="{{products.id}}" required>
                         </div>
                         <div class="mb-3">
                             <label for="nombre" class="form-label">Nombre del Producto</label>
@@ -130,8 +130,8 @@
                             <label for="categoria" class="form-label">Categoría</label>
                             <select name="categoria" id="categoria" class="form-control" required>
                                 <option value="">Selecciona una categoría</option>
-                                <option value="frutas">Fruta</option>
-                                <option value="verduras">Verdura</option>
+                                <option value=1>Fruta</option>
+                                <option value=2>Verdura</option>
                             </select>
                         </div>
                         <div class="mb-3">
@@ -154,8 +154,8 @@
                         <div class="mb-3">
                             <label for="disponible" class="form-label">Disponible</label>
                             <select name="disponible" id="disponible" class="form-control" required>
-                                <option value="1">Si</option>
-                                <option value="2">No</option>
+                                <option value="True">Si</option>
+                                <option value="False">No</option>
                             </select>
                         </div>
                         <div class="mb-3">
