@@ -146,9 +146,10 @@
                                         <td>{{ product['stock'] }}</td>
                                         <td>
                                             <a href="{{ url_for('edit_product', product_id=product['id']) }}" class="btn btn-sm btn-warning">Editar</a>
-                                            <form action="" method="" style="display:inline;">
-                                                <input type="hidden" name="product_id" value="{{ product['id'] }}">
+                                            <form action="/delproduct" method="POST" style="display:inline;">
+                                                <input type="hidden" name="ID_Producto" value="{{ product['id'] }}">
                                                 <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                                                
                                             </form>
                                         </td>
                                     </tr>
