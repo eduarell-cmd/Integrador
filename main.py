@@ -373,7 +373,7 @@ def edit_product():
         if imagenpr and imagenpr.filename != '':
             # Obtener extensión y subir la nueva imagen
             extensionimg = get_extension_for_img(imagenpr)
-            Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}/{product[3], product[4]}_Imgproduct.{extensionimg['product_extension']}")
+            Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}/{"product[3], product[4]"}_Imgproduct.{extensionimg['product_extension']}")
         else:
             conn = connection
             cursor = conn.cursor()
@@ -423,32 +423,37 @@ def delete_product():
 def carro():
     return render_template('cart.html')
 
-@app.route('/shop')
+@app.route('/shop', methods=['GET'])
 def shop():
     conn=connection
     cursor = conn.cursor()
-    query = "EXEC MuestraTienda"
-    cursor.execute(query)
+    consulta = request.args.get('q', None) or ''
+    query = "EXEC MuestraTienda @consulta = ?"
+    cursor.execute(query, (consulta,))
     rows=cursor.fetchall()
-    return render_template('shop.html',Productos=rows)
+    return render_template('shop.html',Productos=rows,consulta=consulta)
 
 @app.route('/shop/frutas')
 def shopfrutas():
     conn=connection
     cursor = conn.cursor()
-    query = "EXEC OnlyFrutas"
-    cursor.execute(query)
+    consulta = request.args.get('q', None) or ''
+    query = "EXEC OnlyFrutas @consulta = ?"
+    cursor.execute(query, (consulta,))
     rows=cursor.fetchall()
-    return render_template('shop.html',Productos=rows)
+    return render_template('shop.html',Productos=rows,consulta=consulta)
 
 @app.route('/shop/verduras')
 def shopverduras():
     conn=connection
     cursor = conn.cursor()
-    query = "EXEC OnlyVerduras"
-    cursor.execute(query)
+    consulta = request.args.get('q', None) or ''
+    query = "EXEC OnlyVerduras @consulta = ?"
+    cursor.execute(query, (consulta,))
     rows=cursor.fetchall()
-    return render_template('shop.html',Productos=rows)
+    return render_template('shop.html',Productos=rows,consulta=consulta)
+
+
 
 
 @app.route('/perfil')
