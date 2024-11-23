@@ -372,7 +372,7 @@ def edit_product():
         if imagenpr and imagenpr.filename != '':
             # Obtener extensión y subir la nueva imagen
             extensionimg = get_extension_for_img(imagenpr)
-            Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}/{product[3], product[4]}_Imgproduct.{extensionimg['product_extension']}")
+            Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}/{"product[3], product[4]"}_Imgproduct.{extensionimg['product_extension']}")
         else:
             conn = connection
             cursor = conn.cursor()
