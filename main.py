@@ -438,7 +438,7 @@ def shopfrutas():
     conn=connection
     cursor = conn.cursor()
     consulta = request.args.get('q', None) or ''
-    query = "EXEC MuestraTienda @consulta = ?"
+    query = "EXEC OnlyFrutas @consulta = ?"
     cursor.execute(query, (consulta,))
     rows=cursor.fetchall()
     return render_template('shop.html',Productos=rows,consulta=consulta)
@@ -448,7 +448,7 @@ def shopverduras():
     conn=connection
     cursor = conn.cursor()
     consulta = request.args.get('q', None) or ''
-    query = "EXEC MuestraTienda @consulta = ?"
+    query = "EXEC OnlyVerduras @consulta = ?"
     cursor.execute(query, (consulta,))
     rows=cursor.fetchall()
     return render_template('shop.html',Productos=rows,consulta=consulta)
