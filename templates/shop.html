@@ -116,25 +116,17 @@
                 <div class="row g-4">
                     <div class="col-lg-12">
                         <div class="row g-4">
-                            <div class="col-xl-3">
-                                <div class="input-group w-100 mx-auto d-flex">
-                                    <input type="search" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1">
-                                    <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
+                            <form action="" method="GET">
+                                <div class="col-xl-3">
+                                    <div class="input-group w-100 mx-auto d-flex">
+                                        <form action="" method="GET">
+                                            <input type="search" class="form-control p-3" placeholder="Busca tu producto" aria-describedby="search-icon-1"
+                                            name="q"
+                                            value="{{ consulta }}">
+                                            <button id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></button>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-6"></div>
-                            <div class="col-xl-3">
-                                <div class="bg-light ps-3 py-3 rounded d-flex justify-content-between mb-4">
-                                    <label for="fruits">Default Sorting:</label>
-                                    <select id="fruits" name="fruitlist" class="border-0 form-select-sm bg-light me-3" form="fruitform">
-                                        <option value="volvo">Nothing</option>
-                                        <option value="saab">Popularity</option>
-                                        <option value="opel">Organic</option>
-                                        <option value="audi">Fantastic</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
+                            </form>
                         <div class="row g-4">
                             <div class="col-lg-3">
                                 <div class="row g-4">
@@ -144,32 +136,20 @@
                                             <ul class="list-unstyled fruite-categorie">
                                                 <li>
                                                     <div class="d-flex justify-content-between fruite-name">
-                                                        <a href="#"><i class="fas fa-apple-alt me-2"></i>Apples</a>
-                                                        <span>(3)</span>
+                                                        <a href="{{url_for('shop')}}"><i class="fas fa-apple-alt me-2"></i>All</a>
+                                                       
                                                     </div>
                                                 </li>
                                                 <li>
                                                     <div class="d-flex justify-content-between fruite-name">
-                                                        <a href="#"><i class="fas fa-apple-alt me-2"></i>Oranges</a>
-                                                        <span>(5)</span>
+                                                        <a href="{{url_for('shopfrutas')}}"><i class="fas fa-apple-alt me-2"></i>Fruits</a>
+                                                    
                                                     </div>
                                                 </li>
                                                 <li>
                                                     <div class="d-flex justify-content-between fruite-name">
-                                                        <a href="#"><i class="fas fa-apple-alt me-2"></i>Strawbery</a>
-                                                        <span>(2)</span>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="d-flex justify-content-between fruite-name">
-                                                        <a href="#"><i class="fas fa-apple-alt me-2"></i>Banana</a>
-                                                        <span>(8)</span>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="d-flex justify-content-between fruite-name">
-                                                        <a href="#"><i class="fas fa-apple-alt me-2"></i>Pumpkin</a>
-                                                        <span>(5)</span>
+                                                        <a href="{{url_for('shopverduras')}}"><i class="fas fa-apple-alt me-2"></i>Vegetables</a>
+                                                        
                                                     </div>
                                                 </li>
                                             </ul>
@@ -196,6 +176,8 @@
                             </div>
                             <div class="col-lg-9">
                                 <div class="row g-4 justify-content-center">
+                                
+                                {% if Productos %}
                                     {% for Producto in Productos %}
                                     <div class="col-md-6 col-lg-6 col-xl-4">
                                         <div class="rounded position-relative fruite-item">
@@ -208,7 +190,7 @@
                                                 <p>Vendido por: {{ Producto[3] }}</p>
                                                 <div class="d-flex justify-content-between flex-lg-wrap">
                                                     <p class="text-dark fs-5 fw-bold mb-0">${{ Producto[4] }} / kg</p>                                
-                                                    <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                                   
                                                 </div>
                                                 <br>
                                                 <a href="{{ url_for('ubicacion_pv') }}?productid={{ loop.index0 }}" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fas fa-map-marker-alt me-2 text-secondary"></i>Ubicación</a>
@@ -216,17 +198,9 @@
                                         </div> 
                                     </div>
                                     {% endfor %}
-                                    <div class="col-12">
-                                        <div class="pagination d-flex justify-content-center mt-5">
-                                            <a href="#" class="rounded">&laquo;</a>
-                                            <a href="#" class="active rounded">1</a>
-                                            <a href="#" class="rounded">2</a>
-                                            <a href="#" class="rounded">3</a>
-                                            <a href="#" class="rounded">4</a>
-                                            <a href="#" class="rounded">5</a>
-                                            <a href="#" class="rounded">6</a>
-                                            <a href="#" class="rounded">&raquo;</a>
-                                        </div>
+                                {% else %}
+                                        <h1 class="display-4">No se encontraron resultados para tu busqueda</h1>
+                                {% endif %}
                                     </div>
                                 </div>
                             </div>
