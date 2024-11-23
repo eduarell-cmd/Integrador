@@ -423,32 +423,37 @@ def delete_product():
 def carro():
     return render_template('cart.html')
 
-@app.route('/shop')
+@app.route('/shop', methods=['GET'])
 def shop():
     conn=connection
     cursor = conn.cursor()
-    query = "EXEC MuestraTienda"
-    cursor.execute(query)
+    consulta = request.args.get('q', None) or ''
+    query = "EXEC MuestraTienda @consulta = ?"
+    cursor.execute(query, (consulta,))
     rows=cursor.fetchall()
-    return render_template('shop.html',Productos=rows)
+    return render_template('shop.html',Productos=rows,consulta=consulta)
 
 @app.route('/shop/frutas')
 def shopfrutas():
     conn=connection
     cursor = conn.cursor()
-    query = "EXEC OnlyFrutas"
-    cursor.execute(query)
+    consulta = request.args.get('q', None) or ''
+    query = "EXEC MuestraTienda @consulta = ?"
+    cursor.execute(query, (consulta,))
     rows=cursor.fetchall()
-    return render_template('shop.html',Productos=rows)
+    return render_template('shop.html',Productos=rows,consulta=consulta)
 
 @app.route('/shop/verduras')
 def shopverduras():
     conn=connection
     cursor = conn.cursor()
-    query = "EXEC OnlyVerduras"
-    cursor.execute(query)
+    consulta = request.args.get('q', None) or ''
+    query = "EXEC MuestraTienda @consulta = ?"
+    cursor.execute(query, (consulta,))
     rows=cursor.fetchall()
-    return render_template('shop.html',Productos=rows)
+    return render_template('shop.html',Productos=rows,consulta=consulta)
+
+
 
 
 @app.route('/perfil')
