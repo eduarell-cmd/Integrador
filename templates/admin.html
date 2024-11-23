@@ -28,6 +28,7 @@
     <link rel="icon" href="{{ url_for('static',filename='img/LOGO.png') }}" type="image/x-icon">
 </head>
 <body>
+    
     <div class="container py-5">
         <div class="text-center mb-5">
             <h1 class="display-4">Panel de Administración</h1>
@@ -36,33 +37,43 @@
 
         <div class="row">
             {% for Solicitud in solicitudes %}
+            <form action="{{url_for('accept_request_seller')}}" method="post">
             <div class="col-md-6 mb-4">
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title">Solicitud de Registro - Agricultor</h5>
-                        <p class="card-text"><strong>ID:</strong> {{ Solicitud[0]}}</p>
-                        <p class="card-text"><strong>Nombre:</strong>{{Solicitud [1]}} {{Solicitud[2]}} {{}} </p>
-                        <p class="card-text"><strong>Teléfono:</strong> +52 123 456 7890</p>
+                        <p class="card-text" name="ID_Persona"><strong>ID de Solicitud:</strong> {{ Solicitud['ID_Solicitud']}}</p>
+                        <p class="card-text"><strong>Nombre:</strong>{{Solicitud ['Nombre']}} {{Solicitud['Apellido']}}</p>
+                        <p class="card-text"><strong>Teléfono:</strong>{{ Solicitud['Telefono'] }}</p>
 
                         <div class="documents mb-3">
                             <h6>Documentos Subidos</h6>
                             <ul class="list-unstyled">
-                                <li><strong>INE:</strong> <a href="/path/to/ine.pdf" target="_blank" class="text-decoration-none"><i class="fas fa-file-pdf text-danger"></i> Ver Documento</a></li>
-                                <li><strong>Comprobante de Domicilio:</strong> <a href="/path/to/comprobante.pdf" target="_blank" class="text-decoration-none"><i class="fas fa-file-pdf text-danger"></i> Ver Documento</a></li>
-                                <li><strong>Comprobante de tenencia de la tierra:</strong> <a href="/path/to/comprobante.pdf" target="_blank" class="text-decoration-none"><i class="fas fa-file-pdf text-danger"></i> Ver Documento</a></li>
-                                <li><strong>Licencia de Agricultor:</strong> <a href="/path/to/licencia.pdf" target="_blank" class="text-decoration-none"><i class="fas fa-file-pdf text-danger"></i> Ver Documento</a></li>
+                                <li><strong>INE:</strong> <a href="{{ Solicitud['INE'] }}" target="_blank" class="text-decoration-none"><i class="fas fa-file-pdf text-danger"></i> Ver Documento</a></li>
+                                <li><strong>Comprobante de Domicilio:</strong> <a href="{{ Solicitud['Comprobante_D'] }}" target="_blank" class="text-decoration-none"><i class="fas fa-file-pdf text-danger"></i> Ver Documento</a></li>
+                                <li><strong>Comprobante de tenencia de la tierra:</strong> <a href="{{Solicitud['Tenencia']}}" target="_blank" class="text-decoration-none"><i class="fas fa-file-pdf text-danger"></i> Ver Documento</a></li>
+                                <li><strong>Licencia de Agricultor:</strong> <a href="{{ Solicitud['Licencia_A'] }}" target="_blank" class="text-decoration-none"><i class="fas fa-file-pdf text-danger"></i> Ver Documento</a></li>
                             </ul>
                         </div>
-
+                        <div class="documents mb-3">
+                            <h6>Documentos Subidos</h6>
+                            <ul class="list-unstyled">
+                                <p class="list-unstyled"><strong>Estado_Solicitud: {{Solicitud['Estado_Solicitud']}}</strong></p>
+                                <p class="list-unstyled"><strong>Fecha solicitud: {{Solicitud['Fecha']}}</strong></p>
+                                <p class="list-unstyled"><strong>Comentario:</strong> <input type="text" id="comentario" name="comentario" class="form-control" value="{{Solicitud['Comentario']}}">  
+    
+                            </ul>
+                        </div>
                         
                         <div class="d-flex justify-content-between">
-                            <button class="btn btn-success" onclick="approveRequest('juan_perez_id')"><i class="fas fa-check-circle"></i> Aprobar</button>
-                            <button class="btn btn-danger" onclick="rejectRequest('juan_perez_id')"><i class="fas fa-times-circle"></i> Rechazar</button>
+                            <button class="btn btn-success" href="url"><i class="fas fa-check-circle"></i> Aprobar</button>
+                            <button class="btn btn-danger"><i class="fas fa-times-circle"></i> Rechazar</button>
                         </div>
                     </div>
                 </div>
             </div>
-
+            </form>
+            {% endfor %}
             
         </div>
     </div>

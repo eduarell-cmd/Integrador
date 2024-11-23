@@ -350,7 +350,7 @@ def edit_product():
     if not point_id:
         flash("No tienes productos asignados a un punto de venta.", "error")
         return redirect(url_for('perfilvend'))
-
+    image = get_product_images_by_point_id(point_id)
     # Obtener los productos del punto de venta
     product = get_products_by_point_id(point_id)
     if request.method == 'POST':
@@ -363,8 +363,13 @@ def edit_product():
         disponibilidad = request.form['disponible']
         imagenpr = request.files.get('imagenpr')
         print(f"El valor de imagen{imagenpr}")
+        
         extensionimg = get_extension_for_img(imagenpr)
         # Subir imagen si se proporciona
+        if not imagenpr:
+            imagenpr = image
+            updated = editar_producto(product_id, nombre_producto, categoria_id, precio, stock, disponibilidad, imagenpr)
+            return redirect(url_for('perfil'))
         Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}/{product[3], product[4]}_Imgproduct.{extensionimg['product_extension']}")
         # Actualizar producto
         updated = editar_producto(product_id, nombre_producto, categoria_id, precio, stock, disponibilidad, Gimagen_file)
@@ -375,12 +380,12 @@ def edit_product():
             flash("Error al actualizar el producto", "error")
         return redirect(url_for('edit_product'))
     if request.args.get("product_id"):
-        for producto in product:
-            if(producto['id'] == int(request.args.get("product_id"))):
-                product = producto
+            for producto in product:
+                if(producto['id'] == int(request.args.get("product_id"))):
+                    product = producto
         #        print(product['id'])
         #print(product)
-    return render_template('edit-product.html', user=user, products=product)
+    return render_template('edit-product.html', user=user, products=product, image=image)
 
 #@app.route('/delproduct', methods=['POST'])
 #def delete_product():
@@ -423,10 +428,8 @@ def perfil():
     consumer_id = get_consumer_by_id(user_id)
     request = get_request_by_consumer(consumer_id)
     print(f"El valor de request:{request}")
-    if not request or request == 0:
-        return render_template('profile.html',user=user)
         
-    return render_template('profile.html', user=user,request=request)
+    return render_template('profile.html', user=user, request=request)
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
 def edit_profile():
@@ -467,9 +470,11 @@ def admin_dashboard():
     if not admin:
         print("No hay admin")
         return redirect(url_for('index'))
-    allrequests = get_all_requests()
+    requests = get_pending_requests()
+    
 
-    return render_template('admin.html', admin=admin, solicitudes=allrequests)
+    return render_template('admin.html', admin=admin, solicitudes=requests)
+
 
 @app.route('/register_seller', methods=['GET','POST'])
 def register_seller():
@@ -516,7 +521,7 @@ def register_seller():
             GlicenceA = upload_file_to_bucket(licenceA, f"docs/Licencia Agricultor/{user['name'], user['lastname'], user['slastname']}_licenseA.{extension['license_A_extension']}")
             GlicenceT = upload_file_to_bucket(licenceT, f"docs/Licencia Tenencia/{user['name'], user['lastname'], user['slastname']}_licenseT.{extension['license_T_extension']}")
             if send_request_seller(phone, birthdate, estado, ciudad, Gine_file, Gaddress_prof, GlicenceA, GlicenceT, ID_Consumer):
-                flash('Vendedor registrado exitosamente!', 'success')
+                flash('¡Solicitud enviada!', 'success')
                 return redirect(url_for('perfilvend'))
             else:
                 flash('Ha habido un error, el telefono ya está en uso')
@@ -530,6 +535,27 @@ def register_seller():
                 return redirect(url_for('register_seller'))
         
     return render_template('register_seller.html',estados=rowstates)
+
+
+@app.route((f'/{admin_key}/accept_request_seller'), methods=['GET', 'POST'])
+def accept_request_seller():
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('login'))
+    admin = get_admin_by_id(user_id)
+    if not admin:
+        print("No hay admin")
+        return redirect(url_for('index'))
+    
+    ID_Solicitud = request.args.get('   ID_Solicitud')
+    if request.method == 'POST':
+        comentario = request.form['comentario']
+        accept = accept_seller_request_db(ID_Solicitud,comentario,admin)
+        if not accept:
+            flash("No se pudo aceptar la solicitud")
+            return False
+    return render_template('admin.html', admin=admin)
+
 
 @app.route('/get_cities') 
 def get_cities(): 

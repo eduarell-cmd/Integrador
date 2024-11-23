@@ -12,28 +12,36 @@ def get_admin_by_id(session_id):
         return admin
     except Exception as e:
         logging.error(f"Error durante la busqueda de un administrador:{e}")
-    finally:
-            connection.close()
+    
 
-def get_all_requests():
+def get_pending_requests():
     cursor = connection.cursor()
-    query = "EXEC MuestraSolicitudes"
+    query = "EXEC MostrarSolicitudesPendientes"
     cursor.execute(query)
     requests = cursor.fetchall()
-    #requestlol = []
-    #for row in requests:
-        #request = {
-         #   'ID_Solicitud': row[0],
-          #  'Nombre': row[2],
-           # 'Apelldo': row[3],
-            #'Telefono': row[4],
-            #'INE': row[5],
-            #'Comprobante_D': row[6],
-            #'Licencia_A': row[7],
-            #'Tenencia': row[8],
-            #'Estado_Solicitud': row[9],
-            #'Fecha': row[10],
-            #'Comentario': row[11]
-       # }
-        #requestlol.append(request)
-    return requests
+    requestlol = []
+    for row in requests:
+        request = {
+            'ID_Solicitud': row[0],
+            'Nombre': row[1],
+            'Apelldo': row[2],
+            'Telefono': row[3],
+            'INE': row[4],
+            'Comprobante_D': row[5],
+            'Licencia_A': row[6],
+            'Tenencia': row[7],
+            'Estado_Solicitud': row[8],
+            'Fecha': row[9],
+            'Comentario': row[10]
+        }
+        requestlol.append(request)
+ 
+    return requestlol
+
+def accept_seller_request_db(IDSolicitud,Comentario_Admin,AdminID):
+    cursor = connection.cursor()
+    query = "EXEC AceptarSolicitudVendedor ?,?,?"
+    parameters = IDSolicitud, Comentario_Admin, AdminID
+    cursor.execute(query, (parameters))
+    result = cursor.fetchone()
+    return result

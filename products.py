@@ -64,7 +64,7 @@ def get_products_by_point_id(point_id):
         cursor = connection.cursor()
         
         # Consulta para obtener los productos del punto de venta específico
-        query = "SELECT ID_Producto, Punto_Venta_ID_Punto_Venta, Nombre_Producto, Categoria_ID_Categoria, Precio, Stock, Disponible FROM Producto WHERE Punto_Venta_ID_Punto_Venta = ?"
+        query = "SELECT ID_Producto, Punto_Venta_ID_Punto_Venta, Nombre_Producto, Categoria_ID_Categoria, Precio, Stock, Disponible, Foto_Producto FROM Producto WHERE Punto_Venta_ID_Punto_Venta = ?"
         cursor.execute(query, (point_id,))
         
         results = cursor.fetchall()
@@ -78,13 +78,35 @@ def get_products_by_point_id(point_id):
                 'category': row[3], #Categoria
                 'price': row[4],  # Precio
                 'stock': row[5],  # Stock
-                'disponible': row[6] #Disponibilidad
+                'disponible': row[6],
+                'foto': row[7] #Disponibilidad
             }
+            print(product)
             products.append(product)
     except Exception as e:
         print(f"Error al recuperar productos: {e}")
 
     return products
+
+def get_product_images_by_point_id(point_id):
+    conn = None
+    images = []
+    try:
+        cursor = connection.cursor()
+        
+        # Consulta para obtener las imágenes de los productos del punto de venta específico
+        query = "SELECT Foto_Producto FROM Producto WHERE Punto_Venta_ID_Punto_Venta = ?"
+        cursor.execute(query, (point_id,))
+        
+        results = cursor.fetchall()
+        
+        # Extraer solo las imágenes de los resultados
+        for row in results:
+            images.append(row[0])
+    except Exception as e:
+        print(f"Error al recuperar imágenes de productos: {e}")
+
+    return images
 
 def editar_producto(product_id, nombre_producto, categoria_id, precio, stock, disponibilidad, imagen):
     conn = connection
@@ -107,7 +129,9 @@ def editar_producto(product_id, nombre_producto, categoria_id, precio, stock, di
         if categoria_id and disponibilidad is not None:
             update_product_query = "EXEC Editar_Producto ?, ?, ?, ?, ?, ?, ?"
             cursor.execute(update_product_query,(product_id, nombre_producto, categoria_id, precio, stock, disponibilidad, imagen))
+            
             result = cursor.fetchone()
+            print(result)
 
             if result and result[0] == 0:
                 conn.commit()

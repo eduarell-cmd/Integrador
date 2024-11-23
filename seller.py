@@ -150,6 +150,7 @@ def get_request_by_consumer(consumer_id):
         if not request_rechazada:
             print("No se encontró ninguna solicitud")
             return 0
+        request_rechazada = -2
         return request_rechazada
     request_pendiente = -1
     return request_pendiente
