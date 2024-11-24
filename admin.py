@@ -1,4 +1,5 @@
 from conexionsql import connection
+import pyodbc
 import logging
 def get_admin_by_id(session_id):
     cursor = connection.cursor()
@@ -39,9 +40,53 @@ def get_pending_requests():
     return requestlol
 
 def accept_seller_request_db(IDSolicitud,Comentario_Admin,AdminID):
-    cursor = connection.cursor()
-    query = "EXEC AceptarSolicitudVendedor ?,?,?"
-    parameters = IDSolicitud, Comentario_Admin, AdminID
-    cursor.execute(query, (parameters))
-    result = cursor.fetchone()
-    return result
+    try:
+        cursor = connection.cursor()
+        query = "EXEC AceptarSolicitudVendedor ?,?,?"
+    
+        print(f"Gracias por los parametrines{IDSolicitud,Comentario_Admin,AdminID}")
+        cursor.execute(query, (IDSolicitud, Comentario_Admin, AdminID))
+        print("Esto imprimió el query")
+        result = cursor.fetchone()
+        if result and result[0] == 1:
+            connection.commit()
+            logging.info("Vendedor registrado con éxito.")
+            return True
+        elif result and result[0] == -1:
+            connection.rollback()
+            print("Error critico")
+            return False
+        else:
+            print("Error inesperado.")
+            return False
+    except Exception as e:
+        logging.error(f"Error durante la creacion del vendedor: {e}")
+        connection.rollback()
+        return False
+        
+    except pyodbc.Error as e:
+        return False
+    
+def reject_seller_request_db(IDSolicitud,Comentario_Admin,AdminID):
+    try:
+        cursor = connection.cursor()
+        query = "EXEC RechazarSolicitudVendedor ?,?,?"
+        cursor.execute(query, (IDSolicitud, Comentario_Admin, AdminID))
+        connection.commit()
+        logging.error("Solicitud rechazada con exito")
+        #result = cursor.fetchone()
+        #if result and result[0] == 0:
+            #connection.commit()
+            #logging.info("Solicitud rechazada con éxito.")
+            #return True
+        #elif result and result[0] == -1:
+           # connection.rollback()
+            #print("Error critico")
+            #return False
+        #else:
+         #   print("Erro inesperado")
+          #  return False
+    except Exception as e:
+        logging.error(f"Error durante el rechazo del vendedor:{e}")
+        connection.rollback()
+        return False

@@ -23,7 +23,7 @@ from mail import *
 from admin import *
 import pyodbc
 admin_key = os.getenv("ADMIN_KEY")
-client_id = os.getenv("GOOGLE_CLIENT_ID")
+client_id = os.getenv("GOOGLE_CLIENT_ID", "admin_dashboard")
 client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
 app = Flask(__name__)
 app.secret_key = "AvVoMrDAFRBiPNO8o9guscemWcgP"  
@@ -352,7 +352,6 @@ def edit_product():
     if not point_id:
         flash("No tienes productos asignados a un punto de venta.", "error")
         return redirect(url_for('perfilvend'))
-    image = get_product_images_by_point_id(point_id)
     # Obtener los productos del punto de venta
     product = get_products_by_point_id(point_id)
     if request.method == 'POST':
@@ -400,7 +399,7 @@ def edit_product():
                     product = producto
         #        print(product['id'])
         #print(product)
-    return render_template('edit-product.html', user=user, products=product, image=image)
+    return render_template('edit-product.html', user=user, products=product)
 
 
 @app.route('/delproduct', methods=['POST'])
@@ -504,7 +503,7 @@ def edit_profile():
     user = get_user_by_id(user_id)
     return render_template('edit-profile.html', user=user)
 
-@app.route(f'/{admin_key}')
+@app.route(f'/{admin_key}', methods=['GET', 'POST'])
 def admin_dashboard():
     
     user_id = session.get('user_id')
@@ -515,10 +514,64 @@ def admin_dashboard():
         print("No hay admin")
         return redirect(url_for('index'))
     requests = get_pending_requests()
-    
+    if request.method == 'POST':
+        ID_Solicitud = request.form.get('ID_Solicitud')
+        
+        comentario = request.form.get('comentario')
+        
+        accion = request.form.get('accion')
+        print(f"Vaya cagada:{ID_Solicitud}{comentario}{accion}")
+        parametros =(int(ID_Solicitud),comentario,admin[0])
+
+        
+        if accion == 'rechazar':
+            reject = reject_seller_request_db(*parametros)
+            if reject:
+                flash("Soliciud rechazada")
+        elif accion == 'aceptar':
+            accept = accept_request_seller(*parametros)
+            if not accept:
+                flash("No se pudo aceptar")
+        return redirect(url_for('admin_dashboard'))
 
     return render_template('admin.html', admin=admin, solicitudes=requests)
+@app.route(f'/{admin_key}/reject_seller', methods=['POST'])
+def reject_seller():
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('login'))
+    admin = get_admin_by_id(user_id)
+    if not admin:
+        print("No hay admin")
+        return redirect(url_for('index'))
+    
+    
+    return redirect (url_for('admin_dashboard'))
 
+
+@app.route(f'/{admin_key}/accept_seller', methods=['POST'])
+def accept_seller():
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('login'))
+    admin = get_admin_by_id(user_id)
+    if not admin:
+        print("No hay admin")
+        return redirect(url_for('index'))
+    
+    if request.method == 'POST':
+        ID_Solicitud = request.form.get('ID_Solicitud')
+        
+        comentario = request.form.get('comentario')
+        
+        print(f"Vaya cagada:{ID_Solicitud}{comentario}")
+        parametros =(int(ID_Solicitud),comentario,admin[0])
+
+        accept = accept_request_seller(*parametros)
+        if not accept:
+            flash("Error no se pudo acept solicitud")
+        flash("Soliciud aceptada")
+    return redirect (url_for('admin_dashboard'))
 
 @app.route('/register_seller', methods=['GET','POST'])
 def register_seller():
@@ -591,15 +644,8 @@ def accept_request_seller():
         print("No hay admin")
         return redirect(url_for('index'))
     
-    ID_Solicitud = request.args.get('   ID_Solicitud')
-    if request.method == 'POST':
-        comentario = request.form['comentario']
-        accept = accept_seller_request_db(ID_Solicitud,comentario,admin)
-        if not accept:
-            flash("No se pudo aceptar la solicitud")
-            return False
-    return render_template('admin.html', admin=admin)
-
+    
+    
 
 @app.route('/get_cities') 
 def get_cities(): 
