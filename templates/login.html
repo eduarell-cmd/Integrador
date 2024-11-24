@@ -37,7 +37,7 @@
     <link rel="icon" href="{{ url_for('static', filename='img/LOGO.png')}}" type="image/x-icon">
     <script src="https://www.google.com/recaptcha/api.js"></script>
 </head>
-<body style="background-color: #b4ff9a;">
+<body style="background-color: white">
   {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
       <ul class="alert alert-warning">
@@ -47,6 +47,13 @@
       </ul>
   {% endif %}
 {% endwith %}
+<div style="position: relative; height: 106vh;background: linear-gradient(to right, 
+rgb(254, 126, 0), 
+rgb(245, 179, 0), 
+rgb(186, 210, 0), 
+rgb(119, 230, 0), 
+rgb(3, 247, 0));">
+<div style="position: absolute;top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 90%; width: 600px; background-color: white; padding: 30px; text-align: center; border-radius: 10px;">
 <form action="{{ url_for('login') }}" method="post">
   <div class="container min-vh-100 d-flex justify-content-center align-items-center">
   <div id="alinear">
@@ -67,11 +74,11 @@
     <br>
     <div>
       <div class="col-md-12" style="text-align: center;">
-        <button type="submit" class="btn btn-primary" href="{{ url_for('login') }} ">Log in</button>
+        <button type="submit" class="btn border border-secondary rounded-pill px-3 text-primary" href="{{ url_for('login') }} ">Log in</button>
       </div>
       <br>  
       <div class = "col.md-4" style="text-align: center;">
-        <a href="{{ url_for('signup_google') }}" class="btn btn-danger">Sign Up with Google</a>
+        <a href="{{ url_for('signup_google') }}" class="btn border border-secondary rounded-pill px-3 text-primary">Sign Up with Google</a>
     </div>
     </div>
     <br>
@@ -86,6 +93,8 @@
   </div>
   </div>
 </form>   
+</div>
+</div>
 </body>
 <script src="https://apis.google.com/js/platform.js" async defer></script>
 

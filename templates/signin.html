@@ -36,7 +36,7 @@
     </script>
     
 </head>
-<body style="background-color: #b4ff9a;">
+<body style="background-color: white;">
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
         <ul class="alert alert-warning">
@@ -46,9 +46,17 @@
         </ul>
     {% endif %}
   {% endwith %}
+  <div style="position: relative; height: 106vh;background: linear-gradient(to right, 
+rgb(254, 126, 0), 
+rgb(245, 179, 0), 
+rgb(186, 210, 0), 
+rgb(119, 230, 0), 
+rgb(3, 247, 0));">
+<div style="position: absolute;top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 90%; width: 600px; background-color: white; padding: 30px; text-align: center; border-radius: 10px;">
 <form action="{{ url_for('signup') }}" method="POST" onsubmit="return validatePassword()">
+    <h1 class="text-primary mb-0" style="text-align: center;">Farm-to-Table </h1>
+    <h2>Sign up</h2>
     <div class="container mt-5">
-        <h1 class="text-primary mb-0" style="text-align: center;">Farm-to-Table</h1> 
         <div id="divsignup" class="row g-3">
             <div class="col-md-6">
                 <label for="Email" class="form-label">Email</label>
@@ -78,15 +86,16 @@
                 <div class="g-recaptcha" data-sitekey="6LdSIWwqAAAAAI4hs5hE33Y_-vH_aRy79pbX6xzo"></div>
             </div>
             <div class="col-lg-12 text-center mt-3">
-                <button type="submit" class="btn btn-primary" href="{{url_for('signup')}}">Sign Up</button>
+                <button type="submit" class="btn border border-secondary rounded-pill px-3 text-primary" href="{{url_for('signup')}}">Sign Up</button>
             </div>
         </div>
     </div>
 </form>
 <div class="container text-center mt-3">
-    <a href="{{ url_for('signup_google') }}" class="btn btn-danger">Sign Up with Google</a>
+    <a href="{{ url_for('signup_google') }}" class="btn border border-secondary rounded-pill px-3 text-primary">Sign Up with Google</a>
 </div>
-
+</div>
+</div>
 <script src="https://apis.google.com/js/platform.js" async defer></script>
 </body>
 </html>
