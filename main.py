@@ -239,7 +239,7 @@ def reset_password(token):
 @app.route('/')
 def index():
     conn=connection
-    cursor = connection.cursor()
+    cursor = conn.cursor()
     query = "Exec Vendedormuestra"
     cursor.execute(query)
     rows=cursor.fetchall()
