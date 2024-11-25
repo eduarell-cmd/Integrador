@@ -12,7 +12,7 @@ from google.oauth2 import id_token
 import google.auth.transport.requests
 from pip._vendor import cachecontrol 
 from flask_mail import Message
-from profilee import update_user_name
+from profilee import update_user_name, update_user_vend
 from seller import *
 from products import *
 from werkzeug.security import generate_password_hash
@@ -272,14 +272,12 @@ def ubicacion_pv():
     return render_template('seller_location.html', productos=rows, Producto=producto_seleccionado)
 
 
-
 @app.route('/perfilvend', methods=['GET', 'POST'])
 def perfilvend():
     user_id = session.get('user_id')
     seller_id = get_seller_by_id(user_id)
     point_id = get_point_by_id(seller_id)
     products = get_products_by_point_id(point_id)
-    phone = get_phone_by_seller_id(seller_id)
 
     if not user_id:
         return redirect(url_for('login'))  # Redirige a login si no hay usuario en sesión
@@ -291,8 +289,18 @@ def perfilvend():
         return redirect(url_for('login'))
     if not point_id:
         flash("No tienes productos asignados a un punto de venta.",)
+        
+    conn = connection
+    cursor = conn.cursor()
+    query = "EXEC MuestraTienda"
+    cursor.execute(query)
+    rows = cursor.fetchall()
 
-    return render_template('profile-vendedor.html', user=user, products=products, phone=phone)
+    # Obtener el índice del producto desde el parámetro de consulta
+    productid = int(request.args.get('productid', 0))  # Por defecto, 0
+    producto_seleccionado = rows[productid]
+
+    return render_template('profile-vendedor.html', user=user, products=products, Producto=producto_seleccionado)
 
 @app.route('/addproduct', methods=['GET', 'POST'])
 def add_product():
@@ -497,6 +505,46 @@ def edit_profile():
     # Si es una solicitud GET, carga los datos del usuario
     user = get_user_by_id(user_id)
     return render_template('edit-profile.html', user=user)
+
+@app.route('/edit_profilevend', methods=['GET', 'POST'])
+def edit_profilevend():
+    user_id = session.get('user_id')
+    seller_id = get_seller_by_id(user_id)
+    if not seller_id:
+        return redirect(url_for('perfil'))
+    if not user_id:
+         return redirect(url_for('login'))
+    
+    if request.method == 'POST':
+        # Recibe los datos del formulario
+        nombre = request.form.get('Name')
+        primer_apellido = request.form.get('PrimerApellido')
+        segundo_apellido = request.form.get('SegundoApellido')
+        telefono = request.form.get('Telefono')
+        
+        # Llama a la función para actualizar los datos en la base de datos
+        success = update_user_vend(user_id, nombre, primer_apellido, segundo_apellido, user_id, telefono)
+        
+        # Si la actualización es exitosa, redirige o muestra un mensaje
+        if success:
+            flash('Perfil actualizado con éxito', 'success')
+            return redirect(url_for('perfil'))
+        else:
+            flash('Error al actualizar el perfil', 'error')
+    
+    # Si es una solicitud GET, carga los datos del usuario
+    user = get_user_by_id(user_id)
+    conn = connection
+    cursor = conn.cursor()
+    query = "EXEC MuestraTienda"
+    cursor.execute(query)
+    rows = cursor.fetchall()
+
+    # Obtener el índice del producto desde el parámetro de consulta
+    productid = int(request.args.get('productid', 0))  # Por defecto, 0
+    telefono = rows[productid]
+
+    return render_template('edit-profilevend.html', user=user, info=rows, Producto=telefono)
 
 @app.route(f'/{admin_key}', methods=['GET', 'POST'])
 def admin_dashboard():

@@ -96,10 +96,10 @@
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title">Información del Vendedor</h4>
-                            <p><strong>Nombre:</strong> {{ user.name }}</p>
-                            <p><strong>Email:</strong> {{ user.email }}</p>
-                            <p><strong>Teléfono:</strong> {{ phone if phone else "No disponible" }}</p>
-                            <a href="{{url_for('edit_profile')}}" class="btn btn-primary">Editar Perfil</a>
+                            <p><strong>Nombre:</strong> {{ Producto[3] }}</p>
+                            <p><strong>Email:</strong> {{ Producto[7] }}</p>
+                            <p><strong>Teléfono:</strong> {{ Producto[8] }}</p>
+                            <a href="{{url_for('edit_profilevend')}}" class="btn btn-primary">Editar Perfil</a>
                             <a href="{{ url_for('logout') }}" class="btn btn-md btn-danger">Cerrar sesión</a>
                         </div>
                     </div>
