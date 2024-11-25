@@ -143,18 +143,53 @@ def get_request_by_consumer(consumer_id):
     cursor.execute(query, (consumer_id))
     request_pendiente = cursor.fetchone()
     if not request_pendiente:
-        querynot = "SELECT ID_Solicitud_Vendedor, Comentario_Admin FROM Solicitud_Vendedor WHERE Consumidor_ID_Consumidor = ? AND Estado_Solicitud = 'Rechazada'"
+        querynot = "SELECT ID_Solicitud_Vendedor, Comentario_Admin FROM Solicitud_Vendedor WHERE Consumidor_ID_Consumidor = ? AND Estado_Solicitud = 'Rechazado'"
         cursor.execute(querynot, (consumer_id))
         request_rechazada = cursor.fetchone()
         print (request_rechazada)
         if not request_rechazada:
             print("No se encontró ninguna solicitud")
             return 0
-        request_rechazada = -2
+        request_rechazada = {
+            'result': -2,
+            'comentario' : request_rechazada[1]
+        }
         return request_rechazada
     request_pendiente = -1
     return request_pendiente
 
+def get_temporary_by_consumer_id(consumer_id):
+    cursor = connection.cursor()
+    query = "SELECT Temporal_Registro_ID_Temporal_Registro FROM Solicitud_Vendedor WHERE Consumidor_ID_Consumidor = ?"
+    cursor.execute(query,(consumer_id))
+    temporary_id = cursor.fetchone()
+    if not temporary_id:
+        print("No se encontro temporary")
+        return False
+    return temporary_id
+def get_info_request_by_temporary_id(temporary_id):
+    try:
+        cursor = connection.cursor()
+
+        query = "SELECT TelefonoT, Fecha_NacimientoT, INET, Comprobante_DomicilioT, Licencia_AgricultorT, Tenencia_TierraT, Estado_ID_Estado, Ciudad_ID_Ciudad FROM Temporal_Registro_Vendedor WHERE ID_Temporal_Registro = ?" 
+        
+        cursor.execute(query, (temporary_id))
+        
+        result = cursor.fetchone()
+        if result:
+            request = {
+                'phone': result[0],  # Nombre del producto
+                'birthdate': result[1],  # Punto de venta
+                'ine': result[2],  # Categoría
+                'comprobante': result[3],  # Precio
+                'LicenciaA': result[4],  # Disponibilidad
+                'Tenencia': result[5],  # Foto del producto
+                'Estado': result[6],
+                'Ciudad': result[7]
+            }
+        return request
+    except Exception as e:
+        print(f"Ocurrió un error al obtener el producto: {e}")
 
 def send_request_seller(phone, birthdate, estado, ciudad, INE, ComprobanteDomicilio, LicenciaA, LicenciaT, IDConsumer):
     cursor = connection.cursor()
@@ -184,5 +219,32 @@ def send_request_seller(phone, birthdate, estado, ciudad, INE, ComprobanteDomici
         logging.error(f"Error durante la inserción de solicitud: {e}")
         return False
     
+def edit_request_seller(phone, birthdate, estado, ciudad, INE, ComprobanteDomicilio, LicenciaA, LicenciaT, IDConsumer):
+    cursor = connection.cursor()
+    query = "EXEC Editar_Solicitud_Vendedor ?,?,?,?,?,?,?,?,?"
+    try:
+        cursor.execute(query,(phone, birthdate, estado, ciudad, INE, ComprobanteDomicilio, LicenciaA, LicenciaT, IDConsumer))
+        result = cursor.fetchone()
+        if not result:
+            print("No se encontró resultado")
+        print (result)
+        if result and result[0] == 0:
+            connection.commit()
+            logging.info("Solicitud actualizada con éxito.")
+            return True
+        elif result and result[0] == -1:
+            connection.rollback()
+            print("Error dentro del procedimiento.")
+            return False
+        elif result and result[0] == -2:
+            connection.rollback()
+            print("El telefono ya está en uso o no existe una solicitud")
+            return False
+        else:
+            print("Error en el registro de la solicitud o resultado inesperado.")
+            return False
+    except Exception as e:
+        logging.error(f"Error durante la inserción de solicitud: {e}")
+        return False
 
       
