@@ -530,6 +530,7 @@ def admin_dashboard():
         return redirect(url_for('admin_dashboard'))
 
     return render_template('admin.html', admin=admin, solicitudes=requests)
+
 @app.route(f'/{admin_key}/reject_seller', methods=['POST'])
 def reject_seller():
     user_id = session.get('user_id')
@@ -573,17 +574,23 @@ def register_seller():
     #DATA 
     print("Register ruta")
     user_id = session.get('user_id')
+    if not user_id:
+         return redirect(url_for('login'))
     seller_id = get_seller_by_id(user_id)
     if seller_id:
         return redirect(url_for('perfilvend'))
-    if not user_id:
-         return redirect(url_for('login'))
+    
     ID_Consumer = get_consumer_by_id(user_id)
     Seller_Point = get_request_by_consumer(ID_Consumer)
+    rowstates = get_all_states()
+    Temporary_ID = get_temporary_by_consumer_id(ID_Consumer)
+    info_request = get_info_request_by_temporary_id(Temporary_ID)
+    if info_request:
+        return redirect (url_for('edit_request_seller'))
     if Seller_Point == -1:
         flash("Ya tienes una solicitud pendiente, espera a que sea aceptada o rechazada")
         return redirect(url_for('perfil'))
-    rowstates = get_all_states()
+    
     try:
         if request.method == 'POST':
             print("Estoy en POST (registerseller)")
@@ -626,9 +633,71 @@ def register_seller():
                 flash(f'Ocurrió un error: {str(e)}', 'error')  # Manejo de otros errores
                 return redirect(url_for('register_seller'))
         
-    return render_template('register_seller.html',estados=rowstates)
+    return render_template('register_seller.html',estados=rowstates, infotemporary=info_request)
 
 
+@app.route('/edit_request_seller', methods=['GET','POST'])
+def edit_request_seller():
+    print("Register ruta")
+    user_id = session.get('user_id')
+    seller_id = get_seller_by_id(user_id)
+    if seller_id:
+        return redirect(url_for('perfilvend'))
+    if not user_id:
+         return redirect(url_for('login'))
+    ID_Consumer = get_consumer_by_id(user_id)
+    request = get_request_by_consumer(ID_Consumer)
+    Temporary_ID = get_temporary_by_consumer_id(ID_Consumer)
+    info_request = get_info_request_by_temporary_id(Temporary_ID)
+    rowstates = get_all_states()
+    if request == -1:
+
+        try:
+            if request.method == 'POST':
+                print("Estoy en POST (registerseller)")
+                #DATOS
+                phone = request.form['phone']
+                birthdate = request.form['birthdate']
+                estado = request.form['estado']
+                ciudad = request.form['ciudad']
+                #FILES
+                ine_file = request.files['ine']
+                address_prof = request.files['comprobante']
+                licenceA = request.files['licenciaA']
+                licenceT = request.files['licenciaT']
+                
+                print(f"Registrando: {phone}, {birthdate}, {ine_file}, {address_prof}, {licenceA}, {licenceT}")
+                user = get_user_by_id(session['user_id'])
+                #Google Cloud Storage (Upload)
+                if not user:
+                    print("Error no agarro user")
+                print(user['name'])
+                print("Si agarro el user")
+                
+                extension = get_extension(ine_file, address_prof, licenceA, licenceT)
+                print("Esta en extension")
+                Gine_file = upload_file_to_bucket(ine_file, f"docs/INE/{user['name'], user['lastname'], user['slastname']}_INE.{extension['ine_extension']}")
+                Gaddress_prof = upload_file_to_bucket(address_prof, f"docs/Comprobante Domicilio/{user['name'], user['lastname'], user['slastname']}_addressprof.{extension['addres_prof_extension']}")
+                GlicenceA = upload_file_to_bucket(licenceA, f"docs/Licencia Agricultor/{user['name'], user['lastname'], user['slastname']}_licenseA.{extension['license_A_extension']}")
+                GlicenceT = upload_file_to_bucket(licenceT, f"docs/Licencia Tenencia/{user['name'], user['lastname'], user['slastname']}_licenseT.{extension['license_T_extension']}")
+                if edit_request_seller(phone, birthdate, estado, ciudad, Gine_file, Gaddress_prof, GlicenceA, GlicenceT, ID_Consumer):
+                    flash('¡Solicitud enviada!', 'success')
+                    return redirect(url_for('perfilvend'))
+                else:
+                    flash('Ha habido un error, el telefono ya está en uso')
+                    
+                return redirect(url_for('perfilvend'))  # Va a redirigir al perfil o seccion de solicitudes pendientes nc
+        except ValueError as e:
+                    flash(str(e), 'error')  # Manejo de error si el tipo de archivo no es válido
+                    return redirect(url_for('register_seller'))
+        except Exception as e:
+                    flash(f'Ocurrió un error: {str(e)}', 'error')  # Manejo de otros errores
+                    return redirect(url_for('register_seller'))
+            
+    return render_template('edit_request_seller.html',estados=rowstates, infotemporary=info_request, request=request)    
+        
+
+    
 @app.route((f'/{admin_key}/accept_request_seller'), methods=['GET', 'POST'])
 def accept_request_seller():
     user_id = session.get('user_id')
