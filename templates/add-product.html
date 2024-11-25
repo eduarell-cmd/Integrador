@@ -116,13 +116,13 @@
                             <label for="precio" class="form-label">Precio</label>
                             <div class="input-group">
                                 <span class="input-group-text">$</span>
-                                <input type="number" min="0" step="1.00" class="form-control" id="precio" name="precio" required>
+                                <input type="number" min="0.01" step="0.01" class="form-control" id="precio" name="precio" required>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="stock" class="form-label">Stock</label>
                             <div class="input-group">
-                            <input type="number" min="0" step="1.00" class="form-control" id="stock" name="stock" required>
+                            <input type="number" min="0.01" step="0.01" class="form-control" id="stock" name="stock" required>
                             <select class="form-control" name="unidad" id="unidad">
                                 <option value="kg">Kg</option>
                                 <option value="unidades">Unidades</option>
@@ -174,8 +174,7 @@
                             <div class="col-lg-4 col-md-6 ms-auto">
                                 <div class="d-flex flex-column text-end footer-item">
                                     <h4 class="text-light mb-3">Account</h4>
-                                    <a class="btn-link" href="">My Account</a>
-                                    <a class="btn-link" href="">Shopping Cart</a>
+                                    <a class="btn-link" href="{{url_for('perfil')}}">My Account</a>
                                 </div>
                             </div>
                         </div>
