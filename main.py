@@ -272,15 +272,15 @@ def ubicacion_pv():
     return render_template('seller_location.html', productos=rows, Producto=producto_seleccionado)
 
 
-    return render_template('seller_location.html', productos=rows, Producto=producto_seleccionado)
-
-
-
 
 @app.route('/perfilvend', methods=['GET', 'POST'])
 def perfilvend():
     user_id = session.get('user_id')
     seller_id = get_seller_by_id(user_id)
+    point_id = get_point_by_id(seller_id)
+    products = get_products_by_point_id(point_id)
+    phone = get_phone_by_seller_id(seller_id)
+
     if not user_id:
         return redirect(url_for('login'))  # Redirige a login si no hay usuario en sesión
     if not seller_id:
@@ -289,15 +289,10 @@ def perfilvend():
     user = get_user_by_id(session['user_id'])
     if not user:
         return redirect(url_for('login'))
-
-    point_id = get_point_by_id(seller_id)
     if not point_id:
         flash("No tienes productos asignados a un punto de venta.",)
 
-    # Obtener los productos del punto de venta
-    products = get_products_by_point_id(point_id)
-
-    return render_template('profile-vendedor.html', user=user, products=products)
+    return render_template('profile-vendedor.html', user=user, products=products, phone=phone)
 
 @app.route('/addproduct', methods=['GET', 'POST'])
 def add_product():

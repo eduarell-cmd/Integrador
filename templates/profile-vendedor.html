@@ -98,7 +98,7 @@
                             <h4 class="card-title">Información del Vendedor</h4>
                             <p><strong>Nombre:</strong> {{ user.name }}</p>
                             <p><strong>Email:</strong> {{ user.email }}</p>
-                            <p><strong>Teléfono:</strong> {{ user.phone }}</p>
+                            <p><strong>Teléfono:</strong> {{ phone if phone else "No disponible" }}</p>
                             <a href="{{url_for('edit_profile')}}" class="btn btn-primary">Editar Perfil</a>
                             <a href="{{ url_for('logout') }}" class="btn btn-md btn-danger">Cerrar sesión</a>
                         </div>
