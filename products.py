@@ -81,6 +81,7 @@ def get_products_by_point_id(point_id):
                 'disponible': row[6], #Disponibilidad
                 'img': row[7] #Imagen
             }
+            print(product)
             products.append(product)
     except Exception as e:
         print(f"Error al recuperar productos: {e}")

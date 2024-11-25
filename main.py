@@ -23,7 +23,7 @@ from mail import *
 from admin import *
 import pyodbc
 admin_key = os.getenv("ADMIN_KEY")
-client_id = os.getenv("GOOGLE_CLIENT_ID")
+client_id = os.getenv("GOOGLE_CLIENT_ID", "admin_dashboard")
 client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
 app = Flask(__name__)
 app.secret_key = "AvVoMrDAFRBiPNO8o9guscemWcgP"  
@@ -352,7 +352,6 @@ def edit_product():
     if not point_id:
         flash("No tienes productos asignados a un punto de venta.", "error")
         return redirect(url_for('perfilvend'))
-
     # Obtener los productos del punto de venta
     product = get_products_by_point_id(point_id)
     if request.method == 'POST':
@@ -395,9 +394,9 @@ def edit_product():
             flash("Error al actualizar el producto", "error")
         return redirect(url_for('edit_product'))
     if request.args.get("product_id"):
-        for producto in product:
-            if(producto['id'] == int(request.args.get("product_id"))):
-                product = producto
+            for producto in product:
+                if(producto['id'] == int(request.args.get("product_id"))):
+                    product = producto
         #        print(product['id'])
         #print(product)
     return render_template('edit-product.html', user=user, products=product)
@@ -472,10 +471,8 @@ def perfil():
     consumer_id = get_consumer_by_id(user_id)
     request = get_request_by_consumer(consumer_id)
     print(f"El valor de request:{request}")
-    if not request or request == 0:
-        return render_template('profile.html',user=user)
         
-    return render_template('profile.html', user=user,request=request)
+    return render_template('profile.html', user=user, request=request)
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
 def edit_profile():
@@ -506,7 +503,7 @@ def edit_profile():
     user = get_user_by_id(user_id)
     return render_template('edit-profile.html', user=user)
 
-@app.route(f'/{admin_key}')
+@app.route(f'/{admin_key}', methods=['GET', 'POST'])
 def admin_dashboard():
     
     user_id = session.get('user_id')
@@ -516,9 +513,65 @@ def admin_dashboard():
     if not admin:
         print("No hay admin")
         return redirect(url_for('index'))
-    allrequests = get_all_requests()
+    requests = get_pending_requests()
+    if request.method == 'POST':
+        ID_Solicitud = request.form.get('ID_Solicitud')
+        
+        comentario = request.form.get('comentario')
+        
+        accion = request.form.get('accion')
+        print(f"Vaya cagada:{ID_Solicitud}{comentario}{accion}")
+        parametros =(int(ID_Solicitud),comentario,admin[0])
 
-    return render_template('admin.html', admin=admin, solicitudes=allrequests)
+        
+        if accion == 'rechazar':
+            reject = reject_seller_request_db(*parametros)
+            if reject:
+                flash("Soliciud rechazada")
+        elif accion == 'aceptar':
+            accept = accept_request_seller(*parametros)
+            if not accept:
+                flash("No se pudo aceptar")
+        return redirect(url_for('admin_dashboard'))
+
+    return render_template('admin.html', admin=admin, solicitudes=requests)
+@app.route(f'/{admin_key}/reject_seller', methods=['POST'])
+def reject_seller():
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('login'))
+    admin = get_admin_by_id(user_id)
+    if not admin:
+        print("No hay admin")
+        return redirect(url_for('index'))
+    
+    
+    return redirect (url_for('admin_dashboard'))
+
+
+@app.route(f'/{admin_key}/accept_seller', methods=['POST'])
+def accept_seller():
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('login'))
+    admin = get_admin_by_id(user_id)
+    if not admin:
+        print("No hay admin")
+        return redirect(url_for('index'))
+    
+    if request.method == 'POST':
+        ID_Solicitud = request.form.get('ID_Solicitud')
+        
+        comentario = request.form.get('comentario')
+        
+        print(f"Vaya cagada:{ID_Solicitud}{comentario}")
+        parametros =(int(ID_Solicitud),comentario,admin[0])
+
+        accept = accept_request_seller(*parametros)
+        if not accept:
+            flash("Error no se pudo acept solicitud")
+        flash("Soliciud aceptada")
+    return redirect (url_for('admin_dashboard'))
 
 @app.route('/register_seller', methods=['GET','POST'])
 def register_seller():
@@ -565,7 +618,7 @@ def register_seller():
             GlicenceA = upload_file_to_bucket(licenceA, f"docs/Licencia Agricultor/{user['name'], user['lastname'], user['slastname']}_licenseA.{extension['license_A_extension']}")
             GlicenceT = upload_file_to_bucket(licenceT, f"docs/Licencia Tenencia/{user['name'], user['lastname'], user['slastname']}_licenseT.{extension['license_T_extension']}")
             if send_request_seller(phone, birthdate, estado, ciudad, Gine_file, Gaddress_prof, GlicenceA, GlicenceT, ID_Consumer):
-                flash('Vendedor registrado exitosamente!', 'success')
+                flash('¡Solicitud enviada!', 'success')
                 return redirect(url_for('perfilvend'))
             else:
                 flash('Ha habido un error, el telefono ya está en uso')
@@ -579,6 +632,20 @@ def register_seller():
                 return redirect(url_for('register_seller'))
         
     return render_template('register_seller.html',estados=rowstates)
+
+
+@app.route((f'/{admin_key}/accept_request_seller'), methods=['GET', 'POST'])
+def accept_request_seller():
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('login'))
+    admin = get_admin_by_id(user_id)
+    if not admin:
+        print("No hay admin")
+        return redirect(url_for('index'))
+    
+    
+    
 
 @app.route('/get_cities') 
 def get_cities(): 
