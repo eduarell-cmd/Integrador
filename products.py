@@ -58,7 +58,6 @@ def get_point_by_id(point_id):
 
 
 def get_products_by_point_id(point_id):
-    conn = None
     products = []
     try:
         cursor = connection.cursor()
