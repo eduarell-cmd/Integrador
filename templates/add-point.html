@@ -28,6 +28,14 @@
     <!-- Template Stylesheet -->
     <link href="{{url_for('static',filename='css/style.css')}}" rel="stylesheet">
     <link rel="icon" href="{{url_for('static',filename='img/LOGO.png')}}" type="image/x-icon">
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ googlekey }}&callback=initMap" async defer></script>
+    <style>
+        #map {
+            height: 500px;
+            width: 100%;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
 <body>
@@ -94,6 +102,9 @@
             <div class="row justify-content-center">
                 <div class="col-md-6">
                     <form action="{{ url_for('add_point') }}" method="POST" enctype="multipart/form-data">
+                        <div id="map"></div>
+                        <p id="coordinates"></p>    
+
                         <div class="mb-3">
                             <label for="nombre" class="form-label">Descripción de tu punto de venta</label>
                             <textarea rows="3" class="form-control" id="descripcionpv" name="descripcionpv" required></textarea>
@@ -177,6 +188,33 @@
     <script src="{{url_for('static',filename='lib/waypoints/waypoints.min.js')}}"></script>
     <script src="{{url_for('static',filename='lib/lightbox/js/lightbox.min.js')}}"></script>
     <script src="{{url_for('static',filename='lib/owlcarousel/owl.carousel.min.js')}}"></script>
+    <script> function initMap() {
+        var initialPosition = {lat: 19.432608, lng: -99.133209}; // Mexico City coordinates for example
+
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 5,
+            center: initialPosition
+        });
+
+        var marker = new google.maps.Marker({
+            position: initialPosition,
+            map: map,
+            draggable: true
+        });
+
+        google.maps.event.addListener(map, 'click', function(event) {
+            marker.setPosition(event.latLng);
+            document.getElementById('coordinates').innerText = 'Lat: ' + event.latLng.lat() + ', Lng: ' + event.latLng.lng();
+        });
+
+        marker.addListener('dragend', function(event) {
+            document.getElementById('coordinates').innerText = 'Lat: ' + event.latLng.lat() + ', Lng: ' + event.latLng.lng();
+        });
+    }
+
+    // Load the map
+    window.onload = initMap;
+    </script>
 
     <!-- Template Javascript -->
     <script src="{{url_for('static',filename='js/main.js')}}"></script></body>

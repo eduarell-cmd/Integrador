@@ -26,6 +26,7 @@ client_id = os.getenv("GOOGLE_CLIENT_ID", "admin_dashboard")
 client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
 app = Flask(__name__)
 app.secret_key = "AvVoMrDAFRBiPNO8o9guscemWcgP"
+api_key=os.getenv("API_KEY")
 
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
@@ -437,7 +438,7 @@ def add_point():
         else:
             flash("Ocurrió un error al agregar el punto de venta.", "danger")
     
-    return render_template('add-point.html', user=user)
+    return render_template('add-point.html', user=user,googlekey=api_key)
     
 @app.route('/cart')
 def carro():
