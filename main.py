@@ -607,50 +607,14 @@ def admin_dashboard():
             if reject:
                 flash("Soliciud rechazada")
         elif accion == 'aceptar':
-            accept = accept_request_seller(*parametros)
+            accept = accept_seller_request_db(*parametros)
             if not accept:
                 flash("No se pudo aceptar")
         return redirect(url_for('admin_dashboard'))
 
     return render_template('admin.html', admin=admin, solicitudes=requests)
 
-@app.route(f'/{admin_key}/reject_seller', methods=['POST'])
-def reject_seller():
-    user_id = session.get('user_id')
-    if not user_id:
-        return redirect(url_for('login'))
-    admin = get_admin_by_id(user_id)
-    if not admin:
-        print("No hay admin")
-        return redirect(url_for('index'))
-    
-    
-    return redirect (url_for('admin_dashboard'))
 
-
-@app.route(f'/{admin_key}/accept_seller', methods=['POST'])
-def accept_seller():
-    user_id = session.get('user_id')
-    if not user_id:
-        return redirect(url_for('login'))
-    admin = get_admin_by_id(user_id)
-    if not admin:
-        print("No hay admin")
-        return redirect(url_for('index'))
-    
-    if request.method == 'POST':
-        ID_Solicitud = request.form.get('ID_Solicitud')
-        
-        comentario = request.form.get('comentario')
-        
-        print(f"Vaya cagada:{ID_Solicitud}{comentario}")
-        parametros =(int(ID_Solicitud),comentario,admin[0])
-
-        accept = accept_request_seller(*parametros)
-        if not accept:
-            flash("Error no se pudo acept solicitud")
-        flash("Soliciud aceptada")
-    return redirect (url_for('admin_dashboard'))
 
 @app.route('/register_seller', methods=['GET','POST'])
 def register_seller():
@@ -667,6 +631,8 @@ def register_seller():
     Seller_Point = get_request_by_consumer(ID_Consumer)
     rowstates = get_all_states()
     Temporary_ID = get_temporary_by_consumer_id(ID_Consumer)
+    if Temporary_ID:
+        return redirect(url_for('edit_request_seller'))
     if Seller_Point == -1:
         flash("Ya tienes una solicitud pendiente, espera a que sea aceptada o rechazada")
         return redirect(url_for('perfil'))
@@ -710,6 +676,7 @@ def register_seller():
 
 @app.route('/edit_request_seller', methods=['GET','POST'])
 def edit_request_seller():
+    cursor = connection.cursor()
     print("Register ruta")
     user_id = session.get('user_id')
     seller_id = get_seller_by_id(user_id)
@@ -721,7 +688,8 @@ def edit_request_seller():
     Request = get_request_by_consumer(ID_Consumer)
     menos2 = Request['result']
     print(menos2)
-    Temporary_ID = get_temporary_by_consumer_id(ID_Consumer)
+    Row_Temporary_ID = get_temporary_by_consumer_id(ID_Consumer)
+    Temporary_ID = Row_Temporary_ID[0]
     print(Temporary_ID)
     info_request = get_info_request_by_temporary_id(Temporary_ID)
     rowstates = get_all_states()
@@ -731,6 +699,7 @@ def edit_request_seller():
     if request.method == 'POST':
         print("Estoy en POST (edit request seller)")
         #DATOS
+        id_solicitud = request.form['ID_Solicitud']
         phone = request.form['phone']
         birthdate = request.form['birthdate']
         estado = request.form['estado']
@@ -754,24 +723,32 @@ def edit_request_seller():
         if ine_file:
             Gine_file = upload_file_to_bucket(ine_file, f"docs/INE/{user['name'], user['lastname'], user['slastname']}_INE.{extension['ine_extension']}")
         else:
-            cursor = connection.cursor()
-            cursor.execute("SELECT INET FROM Temporal_Registro_Vendedor WHERE ID_Temporal_Registro = ?",(Temporary_ID,))
+            cursor.execute("SELECT INET FROM Temporal_Registro_Vendedor WHERE ID_Temporal_Registro = ?",int(Temporary_ID,))
             result = cursor.fetchone()
             if result:
                 Gine_file = result[0]
         if address_prof:
             Gaddress_prof = upload_file_to_bucket(address_prof, f"docs/Comprobante Domicilio/{user['name'], user['lastname'], user['slastname']}_addressprof.{extension['addres_prof_extension']}")
         else:
-            cursor = connection.cursor()
-            cursor.execute("SELECT Comprobante_DomicilioT FROM Temporal_Registro_Vendedor WHERE ID_Temporal_Registro = ?",(Temporary_ID,))
+            cursor.execute("SELECT Comprobante_DomicilioT FROM Temporal_Registro_Vendedor WHERE ID_Temporal_Registro = ?",int(Temporary_ID,))
             result = cursor.fetchone()
             if result:
                 Gaddress_prof = result[0]
         if licenceA:
             GlicenceA = upload_file_to_bucket(licenceA, f"docs/Licencia Agricultor/{user['name'], user['lastname'], user['slastname']}_licenseA.{extension['license_A_extension']}")
+        else:
+            cursor.execute("SELECT Licencia_AgricultorT FROM Temporal_Registro_Vendedor WHERE ID_Temporal_Registro = ?",int(Temporary_ID,))
+            result = cursor.fetchone()
+            if result:
+                GlicenceA = result[0]
         if licenceT:
             GlicenceT = upload_file_to_bucket(licenceT, f"docs/Licencia Tenencia/{user['name'], user['lastname'], user['slastname']}_licenseT.{extension['license_T_extension']}")
-        if edit_request_seller(phone, birthdate, estado, ciudad, Gine_file, Gaddress_prof, GlicenceA, GlicenceT, ID_Consumer):
+        else:
+            cursor.execute("SELECT Tenencia_TierraT FROM Temporal_Registro_Vendedor WHERE ID_Temporal_Registro = ?",int(Temporary_ID,))
+            result = cursor.fetchone()
+            if result:
+                GlicenceT = result[0]
+        if edit_request_seller_db(id_solicitud,phone, birthdate, estado, ciudad, Gine_file, Gaddress_prof, GlicenceA, GlicenceT, ID_Consumer):
             flash('¡Solicitud enviada!', 'success')
             return redirect(url_for('perfilvend'))
         else:
@@ -780,22 +757,7 @@ def edit_request_seller():
         return redirect(url_for('perfilvend'))  # Va a redirigir al perfil o seccion de solicitudes pendientes nc
             
     return render_template('edit_request_seller.html',estados=rowstates, infotemporary=info_request, request=Request)    
-        
-#ES NULO EL ARCHIVO
-    
-@app.route((f'/{admin_key}/accept_request_seller'), methods=['GET', 'POST'])
-def accept_request_seller():
-    user_id = session.get('user_id')
-    if not user_id:
-        return redirect(url_for('login'))
-    admin = get_admin_by_id(user_id)
-    if not admin:
-        print("No hay admin")
-        return redirect(url_for('index'))
-    
-    
-    
-
+            
 @app.route('/get_cities') 
 def get_cities(): 
     estado_id = request.args.get('estado_id') 
