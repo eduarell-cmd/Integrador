@@ -85,18 +85,6 @@ def register_user(Nombre, PrimerApellido, SegundoApellido, Email, Password):
     finally:
         conn.close()
 
-def verify_user(Email, password):
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    query = "SELECT Contraseña FROM Usuario WHERE Email = ?"
-    cursor.execute(query, (Email,))
-    result = cursor.fetchone()
-
-    if result and  check_password_hash(result[0], password):
-        return True
-    conn.close()
-    return False
-
 def is_human(captcha_response):
     
     secret = "6LdSIWwqAAAAAAyR8FoP1i0-21eU5iNC0A6FxVnq"

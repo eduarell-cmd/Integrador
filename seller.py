@@ -152,6 +152,7 @@ def get_request_by_consumer(consumer_id):
             return 0
         request_rechazada = {
             'result': -2,
+            'id': request_rechazada[0],
             'comentario' : request_rechazada[1]
         }
         print(f"Request rechazada{request_rechazada }")
@@ -220,11 +221,11 @@ def send_request_seller(phone, birthdate, estado, ciudad, INE, ComprobanteDomici
         logging.error(f"Error durante la inserción de solicitud: {e}")
         return False
     
-def edit_request_seller(phone, birthdate, estado, ciudad, INE, ComprobanteDomicilio, LicenciaA, LicenciaT, IDConsumer):
+def edit_request_seller_db(id_solicitud,phone, birthdate, estado, ciudad, INE, ComprobanteDomicilio, LicenciaA, LicenciaT, IDConsumer):
     cursor = connection.cursor()
-    query = "EXEC Editar_Solicitud_Vendedor ?,?,?,?,?,?,?,?,?"
+    query = "EXEC Editar_Solicitud_Vendedor ?,?,?,?,?,?,?,?,?,?"
     try:
-        cursor.execute(query,(phone, birthdate, estado, ciudad, INE, ComprobanteDomicilio, LicenciaA, LicenciaT, IDConsumer))
+        cursor.execute(query,(id_solicitud, phone, birthdate, estado, ciudad, INE, ComprobanteDomicilio, LicenciaA, LicenciaT, IDConsumer))
         result = cursor.fetchone()
         if not result:
             print("No se encontró resultado")
