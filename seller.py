@@ -248,17 +248,17 @@ def edit_request_seller_db(id_solicitud,phone, birthdate, estado, ciudad, INE, C
     except Exception as e:
         logging.error(f"Error durante la inserción de solicitud: {e}")
         return False
-def get_phone_by_seller_id(seller_id):
+def get_sellerinfo_by_user_id(user_id):
     try:
         cursor = connection.cursor()
-        query= "SELECT Telefono FROM Vendedor WHERE ID_Vendedor = ?"
+        query= "EXEC MostrarInfoVendedor ?"
 
-        cursor.execute(query, (seller_id,))
+        cursor.execute(query, (user_id,))
         
         result = cursor.fetchone()
         print(f"Telefono:{result}")
         if result:
-            return result[0]
+            return result
         return None
     except Exception as e:
         print(f"Ocurrió un error al obtener el telefono: {e}")

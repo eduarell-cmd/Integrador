@@ -26,6 +26,7 @@ client_id = os.getenv("GOOGLE_CLIENT_ID", "admin_dashboard")
 client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
 app = Flask(__name__)
 app.secret_key = "AvVoMrDAFRBiPNO8o9guscemWcgP"
+api_key=os.getenv("API_KEY")
 
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
@@ -286,31 +287,34 @@ def ubicacion_pv():
 @app.route('/perfilvend', methods=['GET', 'POST'])
 def perfilvend():
     user_id = session.get('user_id')
-    seller_id = get_seller_by_id(user_id)
-    point_id = get_point_by_id(seller_id)
-    products = get_products_by_point_id(point_id)
     if not user_id:
         return redirect(url_for('login'))  # Redirige a login si no hay usuario en sesión
+    print(f"Userid:{user_id}")
+    seller_id = get_seller_by_id(user_id)
     if not seller_id:
         return redirect(url_for('perfil'))
+    print(f"Seller_id:{seller_id}")
+    point_id = get_point_by_id(seller_id)
+    if not point_id:
+        flash("No tienes productos asignados a un punto de venta.",)
+    products = get_products_by_point_id(point_id)
+    if not products:
+        print("No se encontraron productos")    
     # Consulta los datos del usuario desde la base de datos
     user = get_user_by_id(session['user_id'])
     if not user:
         return redirect(url_for('login'))
-    if not point_id:
-        flash("No tienes productos asignados a un punto de venta.",)
+    
         
-    conn = connection
-    cursor = conn.cursor()
-    query = "EXEC MuestraTienda"
-    cursor.execute(query)
-    rows = cursor.fetchall()
+    Sellerinfo = get_sellerinfo_by_user_id(user_id)
+    if not Sellerinfo:
+        print("No se encontro la informacion")
 
-    # Obtener el índice del producto desde el parámetro de consulta
-    productid = int(request.args.get('productid', 0))  # Por defecto, 0
-    producto_seleccionado = rows[productid]
+    # Obtener el índice del producto desde el parámetr
 
-    return render_template('profile-vendedor.html', user=user, products=products, Producto=producto_seleccionado)
+    
+
+    return render_template('profile-vendedor.html', user=user, products=products,info=Sellerinfo )
 
 @app.route('/addproduct', methods=['GET', 'POST'])
 def add_product():
@@ -463,7 +467,7 @@ def add_point():
         else:
             flash("Ocurrió un error al agregar el punto de venta.", "danger")
     
-    return render_template('add-point.html', user=user)
+    return render_template('add-point.html', user=user,googlekey=api_key)
     
 @app.route('/cart')
 def carro():
