@@ -44,10 +44,10 @@
     {% endif %}
   {% endwith %}
         <a href="{{ url_for('logout')}}">Cerrar sesion</a>
-        <div class="row">
+        <div class="row col-md-12">
             {% for Solicitud in solicitudes %}
             <form action="{{url_for('admin_dashboard')}}" method="POST">
-            <div class="col-md-6 mb-4">
+            <div class="col-md-6">
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title">Solicitud de Registro - Agricultor</h5>
@@ -76,7 +76,7 @@
                         <input type="hidden" name="ID_Solicitud" value="{{Solicitud['ID_Solicitud']}}">
                         <input type="hidden" name="accion" id="accion" value="">
                         <div class="d-flex justify-content-between">
-                            <button type="submit" class="btn btn-primary" onclick="document.getElementById('accion').value='aceptar'" ><i class="fas fa-check-circle"></i> Aprobar</button>
+                            <button type="submit" class="btn btn-primary" onclick="document.getElementById('accion').value='aceptar'" ><i class="fas fa-check-circle"></i>Aprobar</button>
                             <button type="subtmit" class="btn btn-primary" onclick="document.getElementById('accion').value='rechazar'"><i class="fas fa-check-circle"></i>Rechazar</button>
                         </div>
                     </div>
