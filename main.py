@@ -19,6 +19,7 @@ from werkzeug.security import generate_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from conexionsql import connection
 from profilee import update_user_name
+from point import add_punto_venta, get_direccion_by_id
 from mail import *
 from admin import *
 import pyodbc
@@ -420,6 +421,40 @@ def delete_product():
         flash(f"Error al eliminar el registro: {str(error)}")
     return redirect(url_for('perfilvend'))
 
+@app.route('/addpoint', methods=['GET', 'POST'])
+def add_point():
+    user = session.get('user_id')
+    seller_id = get_seller_by_id(user)
+    if not seller_id:
+        return redirect(url_for('perfil'))
+    point_id = get_point_by_id(seller_id)
+    if point_id:
+        return redirect(url_for('perfil'))
+
+    direccion_id = get_direccion_by_id(seller_id)
+    if request.method == 'POST':
+        descripcionpv = request.form['descripcionpv']
+        tipo = request.form['tipo']
+        hora_inicio = request.form['hora_inicio']
+        hora_fin = request.form['hora_fin']
+        estado = request.form['estado']
+
+        horario = hora_inicio + ' - ' + hora_fin
+        
+        if isinstance(seller_id, pyodbc.Row):
+            seller_id = seller_id[0]
+
+        # Aquí llamamos a una función para registrar el nuevo punto de venta
+        nuevo_pv = add_punto_venta(int(seller_id), int(direccion_id), descripcionpv, int(tipo), horario, int(estado))
+        print(f"Registrando: {seller_id, direccion_id, descripcionpv, tipo, horario, estado}")
+
+        if nuevo_pv:
+            flash("Punto de venta agregado exitosamente.", "success")
+            return redirect(url_for('perfil'))
+        else:
+            flash("Ocurrió un error al agregar el punto de venta.", "danger")
+    
+    return render_template('add-point.html', user=user)
     
 @app.route('/cart')
 def carro():

@@ -31,7 +31,15 @@
 </head>
 
 <body>
-
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <ul class="alert alert-warning">
+            {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+  {% endwith %}
         <!-- Spinner Start -->
         <div id="spinner" class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50  d-flex align-items-center justify-content-center">
             <div class="spinner-grow text-primary" role="status"></div>
@@ -60,9 +68,9 @@
                             <a href="{{url_for('index')}}" class="nav-item nav-link">Home</a>
                             <a href="{{url_for('shop')}}" class="nav-item nav-link">Shop</a>
                             <a href="{{url_for('contacto')}}" class="nav-item nav-link">Contact</a>
-                            <a href="{{url_for('perfil')}}" class="nav-item nav-link active">Profile</a>
                         </div>
                         <div class="d-flex m-3 me-0">
+                            
                             
                             <a href="{{url_for('perfil')}}" class="my-auto">
                                 <i class="fas fa-user fa-2x"></i>
@@ -76,111 +84,91 @@
 
 
         <!-- Modal Search Start -->
-
+   
         <!-- Modal Search End -->
 
 
         <!-- Single Page Header start -->
         <div class="container-fluid page-header py-5">
-            <h1 class="text-center text-white display-6">My Profile</h1>
+            <h1 class="text-center text-white display-6">Mi Punto de Venta</h1>
         </div>
         <!-- Single Page Header End -->
 
 
         <div class="container mt-5 pt-5">
-            <h1 class="text-center mb-4">Perfil del Vendedor</h1>
-    
-            <div class="row">
-                <!-- Información del Vendedor -->
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card-title">Información del Vendedor</h4>
-                            <p><strong>Nombre:</strong> {{ Producto[3] }}</p>
-                            <p><strong>Email:</strong> {{ Producto[7] }}</p>
-                            <p><strong>Teléfono:</strong> {{ Producto[8] }}</p>
-                            <a href="{{url_for('edit_profilevend')}}" class="btn btn-primary">Editar Perfil</a>
-                            <a href="{{ url_for('logout') }}" class="btn btn-md btn-danger">Cerrar sesión</a>
+            <h2 class="text-center mb-4">Nuevo Punto de Venta</h2>
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <form action="{{ url_for('add_point') }}" method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Descripción de tu punto de venta</label>
+                            <textarea rows="3" class="form-control" id="descripcionpv" name="descripcionpv" required></textarea>
                         </div>
-                    </div>
-                </div>
-    
-                <!-- Productos a la Venta -->
-                <div class="col-md-8">
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <a href="{{url_for('add_point')}}" class="btn btn-secondary col-md-8">Agregar Punto de Venta</a>
-                            <h4 class="card-title">Productos a la Venta</h4>
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Producto</th>
-                                        <th>Precio</th>
-                                        <th>Stock</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for product in products %}
-                                    <tr>
-                                        <td>{{ product['name'] }}</td>
-                                        <td>${{ product['price'] }}</td>
-                                        <td>{{ product['stock'] }}</td>
-                                        <td>
-                                            <a href="{{ url_for('edit_product', product_id=product['id']) }}" class="btn btn-sm btn-warning">Editar</a>
-                                            <form action="/delproduct" method="POST" style="display:inline;">
-                                                <input type="hidden" name="ID_Producto" value="{{ product['id'] }}">
-                                                <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
-                                                
-                                            </form>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                            <a href="{{url_for('add_product')}}" class="btn btn-success">Agregar Nuevo Producto</a>
+                        <div class="mb-3">
+                            <label for="categoria" class="form-label">Tipo de punto de venta</label>
+                            <select name="tipo" id="tipo" class="form-control" required>
+                                <option value="">Selecciona un tipo</option>
+                                <option value="1">Puesto</option>
+                                <option value="2">Pick-Up</option>
+                                <option value="3">Camioneta</option>
+                            </select>
                         </div>
-                    </div>
-    
-                    <!-- Historial de Ventas -->
-                    <div class="card">
-                    </div>
+                        <div class="mb-3">
+                            <label for="horario" class="form-label">Selecciona un horario</label>
+                            <div class="input-group">
+                                <input type="time" min="00:00" max="23:59" class="form-control" id="hora_inicio" name="hora_inicio" required>
+                                <span class="input-group-text">-</span>
+                                <input type="time" min="00:00" max="23:59" class="form-control" id="hora_fin" name="hora_fin" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="disponible" class="form-label">Estado (Abierto o Cerrado)</label>
+                            <select name="estado" id="estado" class="form-control" required>
+                                <option value="1">Abierto</option>
+                                <option value="0">Cerrado</option>
+                            </select>
+                        </div>
+                        <div class="text-center">
+                        <button type="submit" class="btn btn-primary w-100">Agregar Punto de Venta</button>
+                        <h1></h1>
+                        <a href="{{ url_for('perfil') }}" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
 
-        <!-- Footer Start -->
-        <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
-            <div class="container py-4">
-                <div class="pb-4 mb-4" style="border-bottom: 1px solid rgba(226, 175, 24, 0.5) ;">
-                    <div class="row g-4">
-                        <div class="col-lg-6">
-                            <a href="#">
-                                <h1 class="text-primary mb-0">Farm-to-table</h1>
-                                <p class="text-secondary mb-0">Fresh products</p>
-                            </a>
+<!-- Footer Start -->
+                <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
+                    <div class="container py-4">
+                        <div class="pb-4 mb-4" style="border-bottom: 1px solid rgba(226, 175, 24, 0.5) ;">
+                            <div class="row g-4">
+                                <div class="col-lg-6">
+                                    <a href="#">
+                                        <h1 class="text-primary mb-0">Farm-to-table</h1>
+                                        <p class="text-secondary mb-0">Fresh products</p>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-5">
+                            <div class="col-lg-4 col-md-6">
+                                <div class="footer-item">
+                                    <h4 class="text-light mb-3">Por que comprar con nosotros?</h4>
+                                    <p class="mb-4">Compra, andale di q si</p>
+                                    <a href="{{url_for('contacto')}}" class="btn border-secondary py-2 px-4 rounded-pill text-primary">Read More</a>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6 ms-auto">
+                                <div class="d-flex flex-column text-end footer-item">
+                                    <h4 class="text-light mb-3">Account</h4>
+                                    <a class="btn-link" href="{{url_for('perfil')}}">My Account</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="row g-5">
-                    <div class="col-lg-4 col-md-6">
-                        <div class="footer-item">
-                            <h4 class="text-light mb-3">Por que comprar con nosotros?</h4>
-                            <p class="mb-4">Compra, andale di q si</p>
-                            <a href="{{url_for('contacto')}}" class="btn border-secondary py-2 px-4 rounded-pill text-primary">Read More</a>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 ms-auto">
-                        <div class="d-flex flex-column text-end footer-item">
-                            <h4 class="text-light mb-3">Account</h4>
-                            <a class="btn-link" href="{{url_for('perfil')}}">My Account</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Footer End -->
-
+                <!-- Footer End -->
 
 
 
