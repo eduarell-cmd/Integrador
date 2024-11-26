@@ -142,14 +142,15 @@ def signup():
         SegundoApellido   = request.form['SegundoApellido']
         Email       = request.form['Email']
         Password  = request.form['Password']
+        Keyword = request.form['claveRec']
         captcha_response = request.form['g-recaptcha-response']
-        print(f"Registrando: {Name}, {PrimerApellido}, {SegundoApellido}, {Email},")
-        if register_user(Name, PrimerApellido, SegundoApellido, Email, Password,) and is_human(captcha_response): #Nomas para que me deje pushear
+        print(f"Registrando: {Name}, {PrimerApellido}, {SegundoApellido}, {Email}, {Keyword},")
+        if register_user(Name, PrimerApellido, SegundoApellido, Email, Password, Keyword) and is_human(captcha_response): #Nomas para que me deje pushear
             flash("¡Se ha registrado exitosamente! Ahora puede iniciar sesion.", "success")
             return redirect(url_for('login'))
         else:
             flash("Ha habido un error durante el registro, el correo ya está en uso.","error")
-    return render_template('signin.html',)
+    return render_template('signup.html',)
     
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -206,8 +207,18 @@ def reset_request():
         return redirect(url_for("reset_request"))
     return render_template('reset_request.html')
 
-@app.route('/reset_password')
+@app.route('/reset_password', methods=['GET','POST'])
 def reset_password():
+    if request.method == 'POST':
+        Email      = request.form['email']
+        Keyword   = request.form['clave']
+        NuevaContraseña   = request.form['newPassword']
+        print(f"Registrando: {Email}, {Keyword}, {NuevaContraseña},")
+        if update_password(Email, Keyword, NuevaContraseña):
+            flash("¡Se ha registrado exitosamente! Ahora puede iniciar sesion.", "success")
+            return redirect(url_for('login'))
+        else:
+            flash("Ha habido un error durante la actualizacion.","error")
     return render_template('reset_password.html')
 
 @app.route('/')
