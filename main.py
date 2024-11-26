@@ -258,10 +258,14 @@ def contacto():
 def checkout():
     return render_template('chackout.html')
 
+from flask import Flask, render_template, request
+
 @app.route('/locationvp', methods=['GET'])
 def ubicacion_pv():
     conn = connection
     cursor = conn.cursor()
+
+    # Ejecutar el procedimiento almacenado
     query = "EXEC MuestraTienda"
     cursor.execute(query)
     rows = cursor.fetchall()
@@ -270,7 +274,9 @@ def ubicacion_pv():
     productid = int(request.args.get('productid', 0))  # Por defecto, 0
     producto_seleccionado = rows[productid]
 
+    # Pasar todos los productos y el producto seleccionado al template
     return render_template('seller_location.html', productos=rows, Producto=producto_seleccionado)
+
 
 
 @app.route('/perfilvend', methods=['GET', 'POST'])
