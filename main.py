@@ -12,13 +12,14 @@ from google.oauth2 import id_token
 import google.auth.transport.requests
 from pip._vendor import cachecontrol 
 from flask_mail import Message
-from profilee import update_user_name
+from profilee import update_user_name, update_user_vend
 from seller import *
 from products import *
 from werkzeug.security import generate_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from conexionsql import connection
 from profilee import update_user_name
+from point import add_punto_venta, get_direccion_by_id
 from mail import *
 from admin import *
 import pyodbc
@@ -272,15 +273,13 @@ def ubicacion_pv():
     return render_template('seller_location.html', productos=rows, Producto=producto_seleccionado)
 
 
-    return render_template('seller_location.html', productos=rows, Producto=producto_seleccionado)
-
-
-
-
 @app.route('/perfilvend', methods=['GET', 'POST'])
 def perfilvend():
     user_id = session.get('user_id')
     seller_id = get_seller_by_id(user_id)
+    point_id = get_point_by_id(seller_id)
+    products = get_products_by_point_id(point_id)
+
     if not user_id:
         return redirect(url_for('login'))  # Redirige a login si no hay usuario en sesión
     if not seller_id:
@@ -289,15 +288,20 @@ def perfilvend():
     user = get_user_by_id(session['user_id'])
     if not user:
         return redirect(url_for('login'))
-
-    point_id = get_point_by_id(seller_id)
     if not point_id:
         flash("No tienes productos asignados a un punto de venta.",)
+        
+    conn = connection
+    cursor = conn.cursor()
+    query = "EXEC MuestraTienda"
+    cursor.execute(query)
+    rows = cursor.fetchall()
 
-    # Obtener los productos del punto de venta
-    products = get_products_by_point_id(point_id)
+    # Obtener el índice del producto desde el parámetro de consulta
+    productid = int(request.args.get('productid', 0))  # Por defecto, 0
+    producto_seleccionado = rows[productid]
 
-    return render_template('profile-vendedor.html', user=user, products=products)
+    return render_template('profile-vendedor.html', user=user, products=products, Producto=producto_seleccionado)
 
 @app.route('/addproduct', methods=['GET', 'POST'])
 def add_product():
@@ -417,6 +421,40 @@ def delete_product():
         flash(f"Error al eliminar el registro: {str(error)}")
     return redirect(url_for('perfilvend'))
 
+@app.route('/addpoint', methods=['GET', 'POST'])
+def add_point():
+    user = session.get('user_id')
+    seller_id = get_seller_by_id(user)
+    if not seller_id:
+        return redirect(url_for('perfil'))
+    point_id = get_point_by_id(seller_id)
+    if point_id:
+        return redirect(url_for('perfil'))
+
+    direccion_id = get_direccion_by_id(seller_id)
+    if request.method == 'POST':
+        descripcionpv = request.form['descripcionpv']
+        tipo = request.form['tipo']
+        hora_inicio = request.form['hora_inicio']
+        hora_fin = request.form['hora_fin']
+        estado = request.form['estado']
+
+        horario = hora_inicio + ' - ' + hora_fin
+        
+        if isinstance(seller_id, pyodbc.Row):
+            seller_id = seller_id[0]
+
+        # Aquí llamamos a una función para registrar el nuevo punto de venta
+        nuevo_pv = add_punto_venta(int(seller_id), int(direccion_id), descripcionpv, int(tipo), horario, int(estado))
+        print(f"Registrando: {seller_id, direccion_id, descripcionpv, tipo, horario, estado}")
+
+        if nuevo_pv:
+            flash("Punto de venta agregado exitosamente.", "success")
+            return redirect(url_for('perfil'))
+        else:
+            flash("Ocurrió un error al agregar el punto de venta.", "danger")
+    
+    return render_template('add-point.html', user=user)
     
 @app.route('/cart')
 def carro():
@@ -502,6 +540,46 @@ def edit_profile():
     # Si es una solicitud GET, carga los datos del usuario
     user = get_user_by_id(user_id)
     return render_template('edit-profile.html', user=user)
+
+@app.route('/edit_profilevend', methods=['GET', 'POST'])
+def edit_profilevend():
+    user_id = session.get('user_id')
+    seller_id = get_seller_by_id(user_id)
+    if not seller_id:
+        return redirect(url_for('perfil'))
+    if not user_id:
+         return redirect(url_for('login'))
+    
+    if request.method == 'POST':
+        # Recibe los datos del formulario
+        nombre = request.form.get('Name')
+        primer_apellido = request.form.get('PrimerApellido')
+        segundo_apellido = request.form.get('SegundoApellido')
+        telefono = request.form.get('Telefono')
+        
+        # Llama a la función para actualizar los datos en la base de datos
+        success = update_user_vend(user_id, nombre, primer_apellido, segundo_apellido, user_id, telefono)
+        
+        # Si la actualización es exitosa, redirige o muestra un mensaje
+        if success:
+            flash('Perfil actualizado con éxito', 'success')
+            return redirect(url_for('perfil'))
+        else:
+            flash('Error al actualizar el perfil', 'error')
+    
+    # Si es una solicitud GET, carga los datos del usuario
+    user = get_user_by_id(user_id)
+    conn = connection
+    cursor = conn.cursor()
+    query = "EXEC MuestraTienda"
+    cursor.execute(query)
+    rows = cursor.fetchall()
+
+    # Obtener el índice del producto desde el parámetro de consulta
+    productid = int(request.args.get('productid', 0))  # Por defecto, 0
+    telefono = rows[productid]
+
+    return render_template('edit-profilevend.html', user=user, info=rows, Producto=telefono)
 
 @app.route(f'/{admin_key}', methods=['GET', 'POST'])
 def admin_dashboard():

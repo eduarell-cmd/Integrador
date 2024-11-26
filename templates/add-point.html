@@ -84,110 +84,91 @@
 
 
         <!-- Modal Search Start -->
-
+   
         <!-- Modal Search End -->
 
 
         <!-- Single Page Header start -->
         <div class="container-fluid page-header py-5">
-            <h1 class="text-center text-white display-6">My Products</h1>
+            <h1 class="text-center text-white display-6">Mi Punto de Venta</h1>
         </div>
         <!-- Single Page Header End -->
 
 
         <div class="container mt-5 pt-5">
-            <h2 class="text-center mb-4">Editar Producto</h2>
+            <h2 class="text-center mb-4">Nuevo Punto de Venta</h2>
             <div class="row justify-content-center">
                 <div class="col-md-6">
-                    <form action="{{ url_for('edit_product') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ url_for('add_point') }}" method="POST" enctype="multipart/form-data">
                         <div class="mb-3">
-                            <label for="nombre" class="form-label">ID Producto: {{products.id}}</label>
-                            <input type="hidden" class="form-control" id="product_id" name="product_id" value="{{products.id}}" required>
+                            <label for="nombre" class="form-label">Descripción de tu punto de venta</label>
+                            <textarea rows="3" class="form-control" id="descripcionpv" name="descripcionpv" required></textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="nombre" class="form-label">Nombre del Producto</label>
-                            <input type="text" class="form-control" id="nombre" name="nombre" required value="{{products.name}}">
-                        </div>
-                        <div class="mb-3">
-                            <label for="categoria" class="form-label">Categoría</label>
-                            <select name="categoria" id="categoria" class="form-control" required>
-                                <option value="">Selecciona una categoría</option>
-                                <option value=1>Fruta</option>
-                                <option value=2>Verdura</option>
+                            <label for="categoria" class="form-label">Tipo de punto de venta</label>
+                            <select name="tipo" id="tipo" class="form-control" required>
+                                <option value="">Selecciona un tipo</option>
+                                <option value="1">Puesto</option>
+                                <option value="2">Pick-Up</option>
+                                <option value="3">Camioneta</option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            
-                            <label for="precio" class="form-label">Precio</label>
+                            <label for="horario" class="form-label">Selecciona un horario</label>
                             <div class="input-group">
-                                <span class="input-group-text">$</span>
-                                <input type="number" min="0.01" step="0.01" class="form-control" id="precio" name="precio" value="{{products.price}}" required>
+                                <input type="time" min="00:00" max="23:59" class="form-control" id="hora_inicio" name="hora_inicio" required>
+                                <span class="input-group-text">-</span>
+                                <input type="time" min="00:00" max="23:59" class="form-control" id="hora_fin" name="hora_fin" required>
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="stock" class="form-label">Stock</label>
-                            <div class="input-group">
-                            <input type="number" min="0.01" step="0.01" class="form-control" id="stock" name="stock" value="{{products.stock}}" required>
-                            <select class="form-control" name="unidad" id="unidad">
-                                <option value="kg">Kg</option>
-                                <option value="unidades">Unidades</option>
+                            <label for="disponible" class="form-label">Estado (Abierto o Cerrado)</label>
+                            <select name="estado" id="estado" class="form-control" required>
+                                <option value="1">Abierto</option>
+                                <option value="0">Cerrado</option>
                             </select>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="disponible" class="form-label">Disponible</label>
-                            <select name="disponible" id="disponible" class="form-control" required>
-                                <option value="True">Si</option>
-                                <option value="False">No</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            
-                            <label for="imagenpr" class="form-label">Imagen del producto</label>
-                            <input type="file" id="imagenpr" name="imagenpr" class="form-control" accept=".jpg,.jpeg,.png">
                         </div>
                         <div class="text-center">
-                        <button type="submit" class="btn btn-primary w-100">Actualizar Producto</button>
+                        <button type="submit" class="btn btn-primary w-100">Agregar Punto de Venta</button>
                         <h1></h1>
-                        <a href="{{ url_for('perfilvend') }}" class="btn btn-secondary">Cancelar</a>
+                        <a href="{{ url_for('perfil') }}" class="btn btn-secondary">Cancelar</a>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
 
-        <!-- Footer Start -->
-        <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
-            <div class="container py-4">
-                <div class="pb-4 mb-4" style="border-bottom: 1px solid rgba(226, 175, 24, 0.5) ;">
-                    <div class="row g-4">
-                        <div class="col-lg-6">
-                            <a href="#">
-                                <h1 class="text-primary mb-0">Farm-to-table</h1>
-                                <p class="text-secondary mb-0">Fresh products</p>
-                            </a>
+<!-- Footer Start -->
+                <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
+                    <div class="container py-4">
+                        <div class="pb-4 mb-4" style="border-bottom: 1px solid rgba(226, 175, 24, 0.5) ;">
+                            <div class="row g-4">
+                                <div class="col-lg-6">
+                                    <a href="#">
+                                        <h1 class="text-primary mb-0">Farm-to-table</h1>
+                                        <p class="text-secondary mb-0">Fresh products</p>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-5">
+                            <div class="col-lg-4 col-md-6">
+                                <div class="footer-item">
+                                    <h4 class="text-light mb-3">Por que comprar con nosotros?</h4>
+                                    <p class="mb-4">Compra, andale di q si</p>
+                                    <a href="{{url_for('contacto')}}" class="btn border-secondary py-2 px-4 rounded-pill text-primary">Read More</a>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6 ms-auto">
+                                <div class="d-flex flex-column text-end footer-item">
+                                    <h4 class="text-light mb-3">Account</h4>
+                                    <a class="btn-link" href="{{url_for('perfil')}}">My Account</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="row g-5">
-                    <div class="col-lg-4 col-md-6">
-                        <div class="footer-item">
-                            <h4 class="text-light mb-3">Por que comprar con nosotros?</h4>
-                            <p class="mb-4">Compra, andale di q si</p>
-                            <a href="{{url_for('contacto')}}" class="btn border-secondary py-2 px-4 rounded-pill text-primary">Read More</a>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 ms-auto">
-                        <div class="d-flex flex-column text-end footer-item">
-                            <h4 class="text-light mb-3">Account</h4>
-                            <a class="btn-link" href="{{url_for('perfil')}}">My Account</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Footer End -->
-
+                <!-- Footer End -->
 
 
 

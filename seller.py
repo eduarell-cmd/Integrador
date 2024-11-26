@@ -247,5 +247,18 @@ def edit_request_seller(phone, birthdate, estado, ciudad, INE, ComprobanteDomici
     except Exception as e:
         logging.error(f"Error durante la inserción de solicitud: {e}")
         return False
+def get_phone_by_seller_id(seller_id):
+    try:
+        cursor = connection.cursor()
+        query= "SELECT Telefono FROM Vendedor WHERE ID_Vendedor = ?"
 
-      
+        cursor.execute(query, (seller_id,))
+        
+        result = cursor.fetchone()
+        print(f"Telefono:{result}")
+        if result:
+            return result[0]
+        return None
+    except Exception as e:
+        print(f"Ocurrió un error al obtener el telefono: {e}")
+        return None
