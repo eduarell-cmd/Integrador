@@ -1,7 +1,6 @@
 from flask import Flask, request, redirect, url_for, render_template, flash, session, abort
 from auth import *
 from dotenv import load_dotenv
-import mail
 load_dotenv()
 import os
 import requests
@@ -11,7 +10,7 @@ from google_auth_oauthlib.flow import Flow
 from google.oauth2 import id_token
 import google.auth.transport.requests
 from pip._vendor import cachecontrol 
-from flask_mail import Message
+from flask_mail import Message, Mail
 from profilee import update_user_name, update_user_vend
 from seller import *
 from products import *
@@ -20,14 +19,23 @@ from itsdangerous import URLSafeTimedSerializer
 from conexionsql import connection
 from profilee import update_user_name
 from point import add_punto_venta, get_direccion_by_id
-from mail import *
 from admin import *
 import pyodbc
 admin_key = os.getenv("ADMIN_KEY")
 client_id = os.getenv("GOOGLE_CLIENT_ID", "admin_dashboard")
 client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
 app = Flask(__name__)
-app.secret_key = "AvVoMrDAFRBiPNO8o9guscemWcgP"  
+app.secret_key = "AvVoMrDAFRBiPNO8o9guscemWcgP"
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = 'farmtable79@gmail.com'
+app.config['MAIL_PASSWORD'] = 'saqd joaj qzop jbae'
+app.config['MAIL_DEFAULT_SENDER'] = 'farmtable79@gmail.com'
+
+mail = Mail(app)
 gmaps = googlemaps.Client(key='AIzaSyCtOf_oaXQJd9iO83RzKtdWBsRk8R3EqYA')
 s = URLSafeTimedSerializer(app.secret_key)
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1" #permite que haya trafico al local dev
@@ -179,63 +187,10 @@ def logout():
 
 @app.route('/reset_request')
 def reset_request():
-    conn=connection 
-    cursor = conn.cursor()
-    Mail()
-    if request.args.get("Email"):
-        Email = request.args.get('Email')
-        sqlquery= "SELECT Password FROM Persona WHERE Email = '"+Email+"'"
-        user = cursor.execute(sqlquery)
-        if user:
-            token = s.dumps(Email, salt='password-reset-salt')
-            link = url_for('reset_password', token=token, _external=True)
-            class _MailMixin:
-                def send(self,Message):
-                    print("ya estoy lleno")
-                    msg = Message(subject="Password Reset Request",
-                          sender="farmtable79@gmail.com",
-                          recipients=[Email],
-                          body=f'Click the link to reset your password: {link}')
-                    with app.app_context():
-                        try:
-                            mail.send(msg)
-                           
-                        except Exception as e:
-                            print(e)
-
-                flash('An email with instructions to reset your password has been sent.', 'info')
-            return render_template('login.html')
-
-        flash('This email is not registered with us.', 'danger')
-
     return render_template('reset_request.html')
 
-@app.route('/reset_request/<token>', methods=['GET', 'POST'])
-def reset_password(token):
-    conn=connection
-    try:
-        # Validar el token y obtener el correo electrónico
-        Email = s.loads(token, salt='password-reset-salt', max_age=3600)  # 1 hora de validez
-    except:
-        flash('The reset link is invalid or has expired.', 'danger')
-        return redirect(url_for('forgot_password'))
-
-    if request.method == 'POST':
-        cursor = conn.cursor()
-        Password = request.form['Password']
-        user = "SELECT Contraseña FROM Usuario WHERE Email = ?"
-        cursor.execute(user, (Password,Email))
-        if user:
-            # Cambiar la contraseña del usuario
-            query = "UPDATE Persona SET Password = ? WHERE Email = ?"
-            user.password = generate_password_hash(Password)
-            params = (user.password, Email)
-            cursor.execute(query, (params))
-            conn.session.commit()
-
-            flash('Your password has been updated!', 'success')
-            return redirect(url_for('login'))
-
+@app.route('/reset_password')
+def reset_password():
     return render_template('reset_password.html')
 
 @app.route('/')
@@ -251,8 +206,27 @@ def index():
 def protected_area():
     return "Protected!"
 
-@app.route('/contactus')
+@app.route('/contactus', methods=['GET','POST'])
 def contacto():
+    if request.method == "POST":
+        name = request.form.get("namec")
+        email = request.form.get("emailc")
+        message = request.form.get("messagec")
+
+        try:
+            # Crear y enviar el correo
+            msg = Message(
+                subject="Nuevo mensaje de contacto",
+                recipients=["farmtable79@gmail.com"],
+                body=f"Nombre: {name}\nCorreo: {email}\n\nMensaje:\n{message}",
+            )
+        
+            mail.send(msg)
+            flash("Mensaje enviado correctamente", "success")
+        except Exception as e:
+            flash(f"Error al enviar el correo: {e}", "error")
+        
+        return redirect(url_for("contacto"))
     return render_template('contact.html')
 
 @app.route('/checkout')
