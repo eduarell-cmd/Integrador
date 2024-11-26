@@ -132,7 +132,7 @@ def get_consumer_by_id(user_id):
     cursor.execute(query, (user_id))
     consumer_id = cursor.fetchone()
     if not consumer_id:
-        print("No se encontro usuario")
+        print("No se encontro consumidor")
         return False
     print(consumer_id)
     return consumer_id[0]
@@ -154,6 +154,7 @@ def get_request_by_consumer(consumer_id):
             'result': -2,
             'comentario' : request_rechazada[1]
         }
+        print(f"Request rechazada{request_rechazada }")
         return request_rechazada
     request_pendiente = -1
     return request_pendiente
