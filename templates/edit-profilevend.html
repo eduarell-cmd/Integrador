@@ -30,7 +30,8 @@
 </head>
 
 <body>
-        <!-- Spinner End -->
+
+    <!-- Spinner End -->
 
      <!-- Navbar start -->
      <div class="container-fluid fixed-top">
@@ -50,13 +51,13 @@
                 </button>
                 <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
                     <div class="navbar-nav mx-auto">
-                        <a href="{{url_for('index')}}" class="nav-item nav-link">Home</a>
+                        <a href="{{url_for('index')}}" class="nav-item nav-link active">Home</a>
                         <a href="{{url_for('shop')}}" class="nav-item nav-link">Shop</a>
                         <a href="{{url_for('contacto')}}" class="nav-item nav-link">Contact</a>
-                        <a href="{{url_for('perfil')}}" class="nav-item nav-link active">Profile</a>
                     </div>
                     <div class="d-flex m-3 me-0">
-                    
+                        
+                        
                         <a href="{{url_for('perfil')}}" class="my-auto">
                             <i class="fas fa-user fa-2x"></i>
                         </a>
@@ -68,7 +69,7 @@
     <!-- Navbar End -->
 
     <!-- Modal Search Start -->
-
+    
     <!-- Modal Search End -->
 
     <!-- Single Page Header start -->
@@ -76,107 +77,50 @@
         <h1 class="text-center text-white display-6">My Profile</h1>
     </div>
     <!-- Single Page Header End -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-        <ul class="alert alert-warning">
-            {% for category, message in messages %}
-                <li class="{{ category }}">{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-     {% endwith %}
-    <!-- Contact Start -->
+                    
+    <!-- Profile Edit Start -->
     <div class="container-fluid contact py-5">
         <div class="container py-5">
             <div class="p-5 bg-light rounded">
-                <div class="row g-4">
-                    <div class="col-12">
-                        <div class="text-center mx-auto" style="max-width: 700px;">
-                            <h1 class="text-primary">Perfil de Usuario</h1>
-                        </div>
+                <div class="text-center mb-4">
+                    <h1 class="text-primary">Editar Perfil</h1>
+                </div>
+                <form action="{{ url_for('edit_profilevend') }}" method="POST">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name:</label>
+                        <input type="text" class="form-control" id="Name" name="Name" value="{{ user.name }}" required>
                     </div>
-                          
-                    <!-- Perfil de Usuario -->
-                    <div class="container mt-5 pt-5">
-                        <div class="row">
-                            <!-- Información del Usuario -->
-                            <div class="col-md-4">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h4 class="card-title">Información del Usuario</h4>
-                                        <span>Bienvenido, {{ user.name }}!</span>
-                                        <p><strong>Email:</strong> {{ user.email }}</p>
-                                        <a href="{{url_for('edit_profile')}}" class="btn btn-primary">Editar Perfil</a>
-                                        <a href="{{ url_for('logout') }}" class="btn btn-md btn-danger">Cerrar sesión</a>
-                                    </div>
-                                </div>
-                                <br>
-                                {%if request == 0 %}
-                                <div class="col-md-12">
-                                    <div class="card">
-                                        <div class="card-body" >
-                                            <h4 class="card-title">¿Quieres vender con nosotros?</h4>
-                                            <a href="{{url_for('register_seller')}}" class="btn btn-primary">¡Registrate aqui!</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                {%elif request == -1 %}
-                                <br>
-                                <div class="col-md-12">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <h4 class="card-title">¡Tu solicitud esta siendo revisada!</h4>
-                                            <a >Estado de Solicitud: 'Pendiente'</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                {% elif request.result == -2 %}
-                                <div class="col-md-12">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <h4 class="card-title">Corrige los datos de tu solicitud</h4>
-                                            <a href="{{url_for('edit_request_seller')}}" class="btn btn-primary">¡Corrige aqui!</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <br>
-                                <div class="col-md-12">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <h4 class="card-title">¡Tu solicitud ha sido rechazada!</h4>
-                                            <a >Estado de Solicitud: 'Rechazada'</a><br>
-                                            <a >Motivo de rechazo: {{ request.comentario }}</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endif %}
-                            </div>
-
-                            <!-- Historial de Pedidos -->
-                            <div class="col-md-8">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h4 class="card-title">Productos Favoritos</h4>
-                                        <ul class="list-group">
-                                            <li class="list-group-item">Manzana Orgánica</li>
-                                            <li class="list-group-item">Lechuga Hidropónica</li>
-                                            <li class="list-group-item">Tomates Cherry</li>
-                                            <!-- Más productos... -->
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>                
+                    <div class="mb-3">
+                        <label for="name" class="form-label">First Lastname:</label>
+                        <input type="text" class="form-control" id="PrimerApellido" name="PrimerApellido" value="{{ user.lastname }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Second Lastname:</label>
+                        <input type="text" class="form-control" id="SegundoApellido" name="SegundoApellido" value="{{ user.slastname }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Correo Electrónico:</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Telefono:</label>
+                        <input type="tel" class="form-control" id="Telefono" name="Telefono" pattern="^\+?[1-9]\d{9,14}$" value="{{ Producto[8] }}" required>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                        <a href="{{ url_for('perfil') }}" class="btn btn-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Profile Edit End -->                
                 </div>
             </div>
         </div>
     </div>
-    </div>
-    </div>
-    
-        <!-- Footer Start -->
+
+    <!-- Footer Start -->
         <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
             <div class="container py-4">
                 <div class="pb-4 mb-4" style="border-bottom: 1px solid rgba(226, 175, 24, 0.5) ;">

@@ -60,7 +60,7 @@
                             <a href="{{url_for('index')}}" class="nav-item nav-link">Home</a>
                             <a href="{{url_for('shop')}}" class="nav-item nav-link">Shop</a>
                             <a href="{{url_for('contacto')}}" class="nav-item nav-link">Contact</a>
-                            
+                            <a href="{{url_for('perfil')}}" class="nav-item nav-link active">Profile</a>
                         </div>
                         <div class="d-flex m-3 me-0">
                             
@@ -96,10 +96,10 @@
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title">Información del Vendedor</h4>
-                            <p><strong>Nombre:</strong> {{ user.name }}</p>
-                            <p><strong>Email:</strong> {{ user.email }}</p>
-                            <p><strong>Teléfono:</strong> {{ user.phone }}</p>
-                            <a href="{{url_for('edit_profile')}}" class="btn btn-primary">Editar Perfil</a>
+                            <p><strong>Nombre:</strong> {{ Producto[3] }}</p>
+                            <p><strong>Email:</strong> {{ Producto[7] }}</p>
+                            <p><strong>Teléfono:</strong> {{ Producto[8] }}</p>
+                            <a href="{{url_for('edit_profilevend')}}" class="btn btn-primary">Editar Perfil</a>
                             <a href="{{ url_for('logout') }}" class="btn btn-md btn-danger">Cerrar sesión</a>
                         </div>
                     </div>
@@ -109,6 +109,7 @@
                 <div class="col-md-8">
                     <div class="card mb-4">
                         <div class="card-body">
+                            <a href="{{url_for('add_point')}}" class="btn btn-secondary col-md-8">Agregar Punto de Venta</a>
                             <h4 class="card-title">Productos a la Venta</h4>
                             <table class="table">
                                 <thead>
@@ -172,8 +173,7 @@
                     <div class="col-lg-4 col-md-6 ms-auto">
                         <div class="d-flex flex-column text-end footer-item">
                             <h4 class="text-light mb-3">Account</h4>
-                            <a class="btn-link" href="">My Account</a>
-                            <a class="btn-link" href="">Shopping Cart</a>
+                            <a class="btn-link" href="{{url_for('perfil')}}">My Account</a>
                         </div>
                     </div>
                 </div>
