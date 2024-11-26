@@ -163,6 +163,7 @@ def login():
             flash("¡Inicio de sesión fallido! Porfavor revisa que tu Email y Contraseña sean correctas")
         return render_template('login.html', sitekey=sitekey)
     return render_template('login.html', sitekey=sitekey)
+
 @app.route('/logout')
 def logout():
     ID_Persona = session.get('user_id')
@@ -285,7 +286,6 @@ def perfilvend():
     seller_id = get_seller_by_id(user_id)
     point_id = get_point_by_id(seller_id)
     products = get_products_by_point_id(point_id)
-
     if not user_id:
         return redirect(url_for('login'))  # Redirige a login si no hay usuario en sesión
     if not seller_id:
@@ -607,6 +607,7 @@ def admin_dashboard():
         print(f"Vaya cagada:{ID_Solicitud}{comentario}{accion}")
         parametros =(int(ID_Solicitud),comentario,admin[0])
 
+        print(f"Valor de los parametros{parametros}")
         
         if accion == 'rechazar':
             reject = reject_seller_request_db(*parametros)

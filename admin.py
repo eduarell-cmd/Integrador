@@ -44,7 +44,7 @@ def accept_seller_request_db(IDSolicitud,Comentario_Admin,AdminID):
         cursor = connection.cursor()
         query = "EXEC AceptarSolicitudVendedor ?,?,?"
     
-        print(f"Gracias por los parametrines{IDSolicitud,Comentario_Admin,AdminID}")
+        print(f"Parametros acceptseller{IDSolicitud,Comentario_Admin,AdminID}")
         cursor.execute(query, (IDSolicitud, Comentario_Admin, AdminID))
         print("Esto imprimió el query")
         result = cursor.fetchone()
@@ -73,7 +73,7 @@ def reject_seller_request_db(IDSolicitud,Comentario_Admin,AdminID):
         query = "EXEC RechazarSolicitudVendedor ?,?,?"
         cursor.execute(query, (IDSolicitud, Comentario_Admin, AdminID))
         connection.commit()
-        logging.error("Solicitud rechazada con exito")
+        print("Solicitud rechazada con exito")
         #result = cursor.fetchone()
         #if result and result[0] == 0:
             #connection.commit()
