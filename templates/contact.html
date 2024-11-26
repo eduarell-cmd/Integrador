@@ -84,6 +84,15 @@
 
         <!-- Contact Start -->
         <div class="container-fluid contact py-5">
+            {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+                <ul>
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
             <div class="container py-5">
                 <div class="p-5 bg-light rounded">
                     <div class="row g-4">
@@ -95,10 +104,10 @@
                         </div>
                         
                         <div class="col-lg-7">
-                            <form action="" class="">
-                                <input type="text" class="w-100 form-control border-0 py-3 mb-4" placeholder="Your Name">
-                                <input type="email" class="w-100 form-control border-0 py-3 mb-4" placeholder="Enter Your Email">
-                                <textarea class="w-100 form-control border-0 mb-4" rows="5" cols="10" placeholder="Your Message"></textarea>
+                            <form action="{{ url_for('contacto') }}" method="POST">
+                                <input type="text" name="namec" id="namec" class="w-100 form-control border-0 py-3 mb-4" placeholder="Your Name" required>
+                                <input type="email" name="emailc" id="emailc" class="w-100 form-control border-0 py-3 mb-4" placeholder="Enter Your Email" required>
+                                <textarea name="messagec" id="messagec" class="w-100 form-control border-0 mb-4" rows="5" cols="10" placeholder="Your Message" required></textarea>
                                 <button class="w-100 btn form-control border-secondary py-3 bg-white text-primary " type="submit">Submit</button>
                             </form>
                         </div>
