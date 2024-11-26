@@ -73,7 +73,7 @@ def reject_seller_request_db(IDSolicitud,Comentario_Admin,AdminID):
         query = "EXEC RechazarSolicitudVendedor ?,?,?"
         cursor.execute(query, (IDSolicitud, Comentario_Admin, AdminID))
         connection.commit()
-        logging.error("Solicitud rechazada con exito")
+        print("Solicitud rechazada con exito")
         #result = cursor.fetchone()
         #if result and result[0] == 0:
             #connection.commit()

@@ -609,7 +609,7 @@ def admin_dashboard():
 
         print(f"Valor de los parametros{parametros}")
         
-        if not accion == 'rechazar':
+        if accion == 'rechazar':
             reject = reject_seller_request_db(*parametros)
             if reject:
                 flash("Soliciud rechazada")
