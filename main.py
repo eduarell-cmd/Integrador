@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, url_for, render_template, flash, session, abort
+from flask import Flask, request, redirect, url_for, render_template, flash, session, abort, render_template_string
 from auth import *
 from dotenv import load_dotenv
 load_dotenv()
@@ -142,14 +142,15 @@ def signup():
         SegundoApellido   = request.form['SegundoApellido']
         Email       = request.form['Email']
         Password  = request.form['Password']
+        Keyword = request.form['claveRec']
         captcha_response = request.form['g-recaptcha-response']
-        print(f"Registrando: {Name}, {PrimerApellido}, {SegundoApellido}, {Email},")
-        if register_user(Name, PrimerApellido, SegundoApellido, Email, Password,) and is_human(captcha_response): #Nomas para que me deje pushear
+        print(f"Registrando: {Name}, {PrimerApellido}, {SegundoApellido}, {Email}, {Keyword},")
+        if register_user(Name, PrimerApellido, SegundoApellido, Email, Password, Keyword) and is_human(captcha_response): #Nomas para que me deje pushear
             flash("¡Se ha registrado exitosamente! Ahora puede iniciar sesion.", "success")
             return redirect(url_for('login'))
         else:
             flash("Ha habido un error durante el registro, el correo ya está en uso.","error")
-    return render_template('signin.html',)
+    return render_template('signup.html',)
     
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -185,12 +186,40 @@ def logout():
     flash("Has cerrado sesión exitosamente", "info")
     return redirect(url_for('index'))     
 
-@app.route('/reset_request')
+@app.route('/reset_request', methods=['GET','POST'])
 def reset_request():
+    if request.method == "POST":
+        email = request.form.get("Email")
+        try:
+
+            body =  render_template_string("Da click <a href='http://127.0.0.1:5000/reset_password'>aquí</a> para ingresar tu nueva contraseña")
+
+            msg = Message(
+                subject="Restablecer Contraseña",
+                recipients=[email],
+                body=body,
+                html=body
+            )
+            mail.send(msg)
+            flash("Mensaje enviado correctamente", "success")
+        except Exception as e:
+            flash(f"Error al enviar el correo: {e}", "error")
+        
+        return redirect(url_for("reset_request"))
     return render_template('reset_request.html')
 
-@app.route('/reset_password')
+@app.route('/reset_password', methods=['GET','POST'])
 def reset_password():
+    if request.method == 'POST':
+        Email      = request.form['email']
+        Keyword   = request.form['clave']
+        NuevaContraseña   = request.form['newPassword']
+        print(f"Registrando: {Email}, {Keyword}, {NuevaContraseña},")
+        if update_password(Email, Keyword, NuevaContraseña):
+            flash("¡Se ha registrado exitosamente! Ahora puede iniciar sesion.", "success")
+            return redirect(url_for('login'))
+        else:
+            flash("Ha habido un error durante la actualizacion.","error")
     return render_template('reset_password.html')
 
 @app.route('/')
