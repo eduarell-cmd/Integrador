@@ -29,7 +29,7 @@
 </head>
 
 <body>
-    <form action="{{ url_for('reset_request')}}" >
+    <form action="{{ url_for('reset_request')}}" method="POST">
     <!-- Spinner Start -->
     <div id="spinner" class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50 d-flex align-items-center justify-content-center">
         <div class="spinner-grow text-primary" role="status"></div>
@@ -38,6 +38,15 @@
 
     <!-- Forgot Password Start -->
     <div class="container mt-5 pt-5">
+        {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            <ul>
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="card p-4 shadow">
@@ -47,7 +56,7 @@
                             <label for="Email" class="form-label">Ingresa tu correo</label>
                             <input type="email" class="form-control" id="Email" name="Email" required>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100" href="{{ url_for('reset_password')}}">Enviar correo</button>
+                        <button type="submit" class="btn btn-primary w-100">Enviar correo</button>
                     </form>
                 </div>
             </div>

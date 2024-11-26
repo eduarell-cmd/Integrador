@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, url_for, render_template, flash, session, abort
+from flask import Flask, request, redirect, url_for, render_template, flash, session, abort, render_template_string
 from auth import *
 from dotenv import load_dotenv
 load_dotenv()
@@ -184,8 +184,26 @@ def logout():
     flash("Has cerrado sesión exitosamente", "info")
     return redirect(url_for('index'))     
 
-@app.route('/reset_request')
+@app.route('/reset_request', methods=['GET','POST'])
 def reset_request():
+    if request.method == "POST":
+        email = request.form.get("Email")
+        try:
+
+            body =  render_template_string("Da click <a href='http://127.0.0.1:5000/reset_password'>aquí</a> para ingresar tu nueva contraseña")
+
+            msg = Message(
+                subject="Restablecer Contraseña",
+                recipients=[email],
+                body=body,
+                html=body
+            )
+            mail.send(msg)
+            flash("Mensaje enviado correctamente", "success")
+        except Exception as e:
+            flash(f"Error al enviar el correo: {e}", "error")
+        
+        return redirect(url_for("reset_request"))
     return render_template('reset_request.html')
 
 @app.route('/reset_password')
