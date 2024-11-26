@@ -60,7 +60,6 @@
                             <a href="{{url_for('index')}}" class="nav-item nav-link">Home</a>
                             <a href="{{url_for('shop')}}" class="nav-item nav-link">Shop</a>
                             <a href="{{url_for('contacto')}}" class="nav-item nav-link">Contact</a>
-                            <a href="{{url_for('perfil')}}" class="nav-item nav-link active">Profile</a>
                         </div>
                         <div class="d-flex m-3 me-0">
                             
@@ -97,13 +96,15 @@
                             <a href="{{ url_for('logout') }}" class="btn btn-md btn-danger">Cerrar sesión</a>
                         </div>
                     </div>
+                    <br>
+                    <a href="{{url_for('add_point')}}" class="btn btn-secondary col-md-12">Agregar Punto de Venta</a>
                 </div>
+                
     
                 <!-- Productos a la Venta -->
                 <div class="col-md-8">
                     <div class="card mb-4">
                         <div class="card-body">
-                            <a href="{{url_for('add_point')}}" class="btn btn-secondary col-md-8">Agregar Punto de Venta</a>
                             <h4 class="card-title">Productos a la Venta</h4>
                             <table class="table">
                                 <thead>
