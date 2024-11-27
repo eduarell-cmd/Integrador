@@ -343,14 +343,13 @@ def add_product():
         extensionimg = get_extension_for_img(imagenpr)
         user = get_user_by_id(session['user_id'])
         Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}/{"product[3]", "product[4]"}_Imgproduct.{extensionimg['product_extension']}")
-        product = get_products_by_point_id(point_id)
 
         id_punto_venta = get_point_by_id(seller_id)
-        added_product = add_producto(nombre_producto, id_punto_venta, categoria_id, precio, stock, disponibilidad, Gimagen_file)
+        added_product = add_producto(nombre_producto, int(id_punto_venta), categoria_id, precio, int(stock), disponibilidad, Gimagen_file)
         if added_product:
             print("Se ha añadido punto de venta")
-            return redirect(url_for('add_product'))
-        return redirect (url_for('add_product'))
+            return redirect(url_for('perfilvend'))
+        return redirect (url_for('perfilevend'))
     return render_template('add-product.html', user=user)
 
 @app.route('/editproduct', methods=['GET','POST'])
