@@ -151,7 +151,7 @@ def signup():
             return redirect(url_for('login'))
         else:
             flash("Ha habido un error durante el registro, el correo ya está en uso.","error")
-    return render_template('signup.html',)
+    return render_template('signup.html',google_id=client_id)
     
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -226,11 +226,7 @@ def reset_password():
 
 @app.route('/')
 def index():
-    conn=connection
-    cursor = conn.cursor()
-    query = "Exec Vendedormuestra"
-    cursor.execute(query)
-    rows=cursor.fetchall()
+    rows = exec_sp()
     return render_template('index.html',Vendedores=rows)
 
 @app.route('/protectedarea')
@@ -278,14 +274,14 @@ def ubicacion_pv():
     rows = cursor.fetchall()
 
     # Obtener el índice del producto desde el parámetro de consulta
-    productid = int(request.args.get('productid', 0))  # Por defecto, 0
-    producto_seleccionado = rows[productid]
-    pointid = producto_seleccionado[12]
+    productid = int(request.args.get('productid',))  # Por defecto, 0
+    producto_seleccionado = rows[productid-1]
+    pointid = producto_seleccionado[1]
     print(f"Pointid:{pointid}")
     products = get_products_by_point_id(pointid)
 
     # Pasar todos los productos y el producto seleccionado al template
-    return render_template('seller_location.html', productos=rows, Producto=producto_seleccionado,productseller=products)
+    return render_template('seller_location.html', productos=rows, Producto=producto_seleccionado,productseller=products,)
 
 
 
@@ -318,6 +314,7 @@ def perfilvend():
     # Obtener el índice del producto desde el parámetr
 
     
+    
 
     return render_template('profile-vendedor.html', user=user, products=products,info=Sellerinfo,seller_point=point_id )
 
@@ -343,7 +340,7 @@ def add_product():
 
         extensionimg = get_extension_for_img(imagenpr)
         user = get_user_by_id(session['user_id'])
-        Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}/{"product[3]", "product[4]"}_Imgproduct.{extensionimg['product_extension']}")
+        Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}/{nombre_producto, categoria_id}_Imgproduct.{extensionimg['product_extension']}")
 
         id_punto_venta = get_point_by_id(seller_id)
         added_product = add_producto(nombre_producto, int(id_punto_venta), categoria_id, precio, int(stock), disponibilidad, Gimagen_file)
@@ -390,10 +387,11 @@ def edit_product():
         imagenpr = request.files.get('imagenpr')
         print(f"El valor de imagen{imagenpr}")
         
+        product_id_ex = get_product_by_id(product_id)
         if imagenpr and imagenpr.filename != '':
             # Obtener extensión y subir la nueva imagen
             extensionimg = get_extension_for_img(imagenpr)
-            Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}/{"product[3], product[4]"}_Imgproduct.{extensionimg['product_extension']}")
+            Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}/{product_id_ex['name'], product_id['category']}_Imgproduct.{extensionimg['product_extension']}")
         else:
             conn = connection
             cursor = conn.cursor()
@@ -489,6 +487,9 @@ def shop():
     query = "EXEC MuestraTienda @consulta = ?"
     cursor.execute(query, (consulta,))
     rows=cursor.fetchall()
+    #if consulta:
+        #productid=rows
+        #render_template('shop.html',Productos=rows,consulta=consulta, productid=productid)
     print(f"Rows:{rows}")
     return render_template('shop.html',Productos=rows,consulta=consulta)
 

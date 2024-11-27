@@ -113,3 +113,9 @@ def editar_producto(product_id, nombre_producto, id_punto_venta, categoria_id, p
         print(f"Error al actualizar producto: {e}")
         return False
 
+def exec_sp():
+    cursor = connection.cursor()
+    query = "Exec Vendedormuestra"
+    cursor.execute(query)
+    rows=cursor.fetchall()
+    return rows
