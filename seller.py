@@ -266,9 +266,17 @@ def get_sellerinfo_by_user_id(user_id):
     
 def exec_muestra():
     cursor = connection.cursor()
-
-    # Ejecutar el procedimiento almacenado
     query = "EXEC MuestraTienda"
     cursor.execute(query)
     rows = cursor.fetchall()
     return rows
+
+def get_info_pv(seller_id):
+    cursor = connection.cursor()
+    query = "EXEC VerPuntoVenta ?"
+
+    cursor.execute(query, (seller_id))
+
+    result = cursor.fetchone()
+    print(f"Info de punto de venta: {result}")
+    return result

@@ -104,9 +104,20 @@
                         <div class="card mb-4">
                             <div class="card-body">
                                 <h4 class="card-title">Mi Punto de Venta</h4>
-                                <p><strong>Descripción:</strong></p>
-                                <p><strong>Horario:</strong></p>
-                                <p><strong>Dirección exacta:</strong></p>
+                                <p><strong>Descripción:</strong> {{ pv[0] }}</p>
+                                <p><strong>Horario:</strong> {{ pv[1] }}</p>
+                                <p><strong>Dirección exacta:</strong> {{ pv[2] }}</p>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <iframe 
+                                        src="https://www.google.com/maps?q={{ pv[3] }},{{ pv[4] }}&z=15&output=embed"
+                                        width="350" 
+                                        height="350" 
+                                        style="border: 2px solid #92CA25; border-radius: 5px;" 
+                                        allowfullscreen="" 
+                                        loading="lazy" 
+                                        referrerpolicy="no-referrer-when-downgrade">
+                                    </iframe>
+                                </div>
                             </div>
                         </div>
         
