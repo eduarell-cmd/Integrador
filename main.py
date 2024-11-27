@@ -327,7 +327,6 @@ def add_product():
     point_id = get_point_by_id(seller_id)
     if not point_id:
         flash("No tienes productos asignados a un punto de venta.",)
-        return redirect(url_for('perfil'))
     if request.method == 'POST':
         nombre_producto = request.form['nombre']
         categoria_id = request.form['categoria']  # 'frutas' o 'verduras'
@@ -515,7 +514,7 @@ def perfil():
     seller_id = get_seller_by_id(user_id)
     admin = get_admin_by_id(user_id)
     if admin:
-        return redirect(url_for('admin-dashboard'))
+        return redirect(url_for('admin_dashboard'))
     if seller_id:
         return redirect(url_for('perfilvend'))
     
