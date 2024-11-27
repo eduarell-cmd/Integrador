@@ -22,7 +22,9 @@
     <link rel="icon" href="{{ url_for('static', filename='img/LOGO.png')}}" type="image/x-icon">
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <meta name="google-signin-client_id" content="293860019099-hn8qqiuee0ar7s9b04ppf8eh3a2plvh6.apps.googleusercontent.com">
-    
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="https://apis.google.com/js/platform.js?onload=init" async defer></script>
+    <meta name="google-signin-client_id" content="{{ google_id }}.apps.googleusercontent.com">
     <script>
         function validatePassword() {
             var password = document.getElementById("Password").value;
@@ -90,10 +92,18 @@ rgb(3, 247, 0));">
     </div>
 </form>
 <div class="container text-center mt-3">
+    <div id="signin"></div>
     <a href="{{ url_for('signup_google') }}" class="btn border border-secondary rounded-pill px-3 text-primary">Sign Up with Google</a>
 </div>
 </div>
 </div>
 <script src="https://apis.google.com/js/platform.js" async defer></script>
 </body>
+<script>
+    function init() {
+  gapi.load('auth2', function() {
+    /* Ready. Make a call to gapi.auth2.init or some other API */
+  });
+}
+</script>
 </html>

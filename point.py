@@ -56,6 +56,15 @@ def get_address_from_coordinates(latitude, longitude):
     else:
         return None
 
+
+def get_ubicacion_by_product_id_and_nombre_producto(product_id, nombre_producto):
+    cursor = connection.cursor()
+    query="SELECT ID_Producto FROM Producto WHERE ID_Producto AND Nombre_Producto"
+    cursor.execute(query,(product_id,nombre_producto))
+    result = cursor.fetchall()
+    if not result:
+         print("No se encontro la ubicacion por el producto")
+    return result
 # Ejemplo de uso
 #latitude = 19.432608
 #longitude = -99.133209
