@@ -109,7 +109,7 @@ def callback_google():
         else:
             flash("El usuario ya existe o hubo un error", "error")
             logging.error("Step 6: User registration failed.")
-            return render_template("signin.html")
+            return render_template("signup.html")
     
     except ValueError as e:
         logging.error(f"ValueError during ID token verification: {e}")
@@ -141,7 +141,7 @@ def signup():
             return redirect(url_for('login'))
         else:
             flash("Ha habido un error durante el registro, el correo ya está en uso.","error")
-    return render_template('signin.html',)
+    return render_template('signup.html')
     
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -506,8 +506,12 @@ def perfil():
         return redirect(url_for('login'))  # Redirige a login si no hay usuario en sesión
     
     seller_id = get_seller_by_id(user_id)
+    admin = get_admin_by_id(user_id)
+    if admin:
+        return redirect(url_for('admin-dashboard'))
     if seller_id:
         return redirect(url_for('perfilvend'))
+    
     # Consulta los datos del usuario desde la base de datos
     user = get_user_by_id(session['user_id'])
     if not user:
