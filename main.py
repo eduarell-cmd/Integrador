@@ -1,7 +1,6 @@
-from flask import Flask, request, redirect, url_for, render_template, flash, session, abort
+from flask import Flask, request, redirect, url_for, render_template, flash, session, abort, render_template_string
 from auth import *
 from dotenv import load_dotenv
-import mail
 load_dotenv()
 import os
 import requests
@@ -11,7 +10,7 @@ from google_auth_oauthlib.flow import Flow
 from google.oauth2 import id_token
 import google.auth.transport.requests
 from pip._vendor import cachecontrol 
-from flask_mail import Message
+from flask_mail import Message, Mail
 from profilee import update_user_name, update_user_vend
 from seller import *
 from products import *
@@ -20,14 +19,24 @@ from itsdangerous import URLSafeTimedSerializer
 from conexionsql import connection
 from profilee import update_user_name
 from point import add_punto_venta, get_direccion_by_id
-from mail import *
 from admin import *
 import pyodbc
 admin_key = os.getenv("ADMIN_KEY")
 client_id = os.getenv("GOOGLE_CLIENT_ID", "admin_dashboard")
 client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
 app = Flask(__name__)
-app.secret_key = "AvVoMrDAFRBiPNO8o9guscemWcgP"  
+app.secret_key = "AvVoMrDAFRBiPNO8o9guscemWcgP"
+api_key=os.getenv("API_KEY")
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = 'farmtable79@gmail.com'
+app.config['MAIL_PASSWORD'] = 'saqd joaj qzop jbae'
+app.config['MAIL_DEFAULT_SENDER'] = 'farmtable79@gmail.com'
+
+mail = Mail(app)
 gmaps = googlemaps.Client(key='AIzaSyCtOf_oaXQJd9iO83RzKtdWBsRk8R3EqYA')
 s = URLSafeTimedSerializer(app.secret_key)
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1" #permite que haya trafico al local dev
@@ -134,14 +143,15 @@ def signup():
         SegundoApellido   = request.form['SegundoApellido']
         Email       = request.form['Email']
         Password  = request.form['Password']
+        Keyword = request.form['claveRec']
         captcha_response = request.form['g-recaptcha-response']
-        print(f"Registrando: {Name}, {PrimerApellido}, {SegundoApellido}, {Email},")
-        if register_user(Name, PrimerApellido, SegundoApellido, Email, Password,) and is_human(captcha_response): #Nomas para que me deje pushear
+        print(f"Registrando: {Name}, {PrimerApellido}, {SegundoApellido}, {Email}, {Keyword},")
+        if register_user(Name, PrimerApellido, SegundoApellido, Email, Password, Keyword) and is_human(captcha_response): #Nomas para que me deje pushear
             flash("¡Se ha registrado exitosamente! Ahora puede iniciar sesion.", "success")
             return redirect(url_for('login'))
         else:
             flash("Ha habido un error durante el registro, el correo ya está en uso.","error")
-    return render_template('signin.html',)
+    return render_template('signup.html',)
     
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -177,65 +187,40 @@ def logout():
     flash("Has cerrado sesión exitosamente", "info")
     return redirect(url_for('index'))     
 
-@app.route('/reset_request')
+@app.route('/reset_request', methods=['GET','POST'])
 def reset_request():
-    conn=connection 
-    cursor = conn.cursor()
-    Mail()
-    if request.args.get("Email"):
-        Email = request.args.get('Email')
-        sqlquery= "SELECT Password FROM Persona WHERE Email = '"+Email+"'"
-        user = cursor.execute(sqlquery)
-        if user:
-            token = s.dumps(Email, salt='password-reset-salt')
-            link = url_for('reset_password', token=token, _external=True)
-            class _MailMixin:
-                def send(self,Message):
-                    print("ya estoy lleno")
-                    msg = Message(subject="Password Reset Request",
-                          sender="farmtable79@gmail.com",
-                          recipients=[Email],
-                          body=f'Click the link to reset your password: {link}')
-                    with app.app_context():
-                        try:
-                            mail.send(msg)
-                           
-                        except Exception as e:
-                            print(e)
+    if request.method == "POST":
+        email = request.form.get("Email")
+        try:
 
-                flash('An email with instructions to reset your password has been sent.', 'info')
-            return render_template('login.html')
+            body =  render_template_string("Da click <a href='http://127.0.0.1:5000/reset_password'>aquí</a> para ingresar tu nueva contraseña")
 
-        flash('This email is not registered with us.', 'danger')
-
+            msg = Message(
+                subject="Restablecer Contraseña",
+                recipients=[email],
+                body=body,
+                html=body
+            )
+            mail.send(msg)
+            flash("Mensaje enviado correctamente", "success")
+        except Exception as e:
+            flash(f"Error al enviar el correo: {e}", "error")
+        
+        return redirect(url_for("reset_request"))
     return render_template('reset_request.html')
 
-@app.route('/reset_request/<token>', methods=['GET', 'POST'])
-def reset_password(token):
-    conn=connection
-    try:
-        # Validar el token y obtener el correo electrónico
-        Email = s.loads(token, salt='password-reset-salt', max_age=3600)  # 1 hora de validez
-    except:
-        flash('The reset link is invalid or has expired.', 'danger')
-        return redirect(url_for('forgot_password'))
-
+@app.route('/reset_password', methods=['GET','POST'])
+def reset_password():
     if request.method == 'POST':
-        cursor = conn.cursor()
-        Password = request.form['Password']
-        user = "SELECT Contraseña FROM Usuario WHERE Email = ?"
-        cursor.execute(user, (Password,Email))
-        if user:
-            # Cambiar la contraseña del usuario
-            query = "UPDATE Persona SET Password = ? WHERE Email = ?"
-            user.password = generate_password_hash(Password)
-            params = (user.password, Email)
-            cursor.execute(query, (params))
-            conn.session.commit()
-
-            flash('Your password has been updated!', 'success')
+        Email      = request.form['email']
+        Keyword   = request.form['clave']
+        NuevaContraseña   = request.form['newPassword']
+        print(f"Registrando: {Email}, {Keyword}, {NuevaContraseña},")
+        if update_password(Email, Keyword, NuevaContraseña):
+            flash("¡Se ha registrado exitosamente! Ahora puede iniciar sesion.", "success")
             return redirect(url_for('login'))
-
+        else:
+            flash("Ha habido un error durante la actualizacion.","error")
     return render_template('reset_password.html')
 
 @app.route('/')
@@ -251,8 +236,27 @@ def index():
 def protected_area():
     return "Protected!"
 
-@app.route('/contactus')
+@app.route('/contactus', methods=['GET','POST'])
 def contacto():
+    if request.method == "POST":
+        name = request.form.get("namec")
+        email = request.form.get("emailc")
+        message = request.form.get("messagec")
+
+        try:
+            # Crear y enviar el correo
+            msg = Message(
+                subject="Nuevo mensaje de contacto",
+                recipients=["farmtable79@gmail.com"],
+                body=f"Nombre: {name}\nCorreo: {email}\n\nMensaje:\n{message}",
+            )
+        
+            mail.send(msg)
+            flash("Mensaje enviado correctamente", "success")
+        except Exception as e:
+            flash(f"Error al enviar el correo: {e}", "error")
+        
+        return redirect(url_for("contacto"))
     return render_template('contact.html')
 
 @app.route('/checkout')
@@ -283,31 +287,34 @@ def ubicacion_pv():
 @app.route('/perfilvend', methods=['GET', 'POST'])
 def perfilvend():
     user_id = session.get('user_id')
-    seller_id = get_seller_by_id(user_id)
-    point_id = get_point_by_id(seller_id)
-    products = get_products_by_point_id(point_id)
     if not user_id:
         return redirect(url_for('login'))  # Redirige a login si no hay usuario en sesión
+    print(f"Userid:{user_id}")
+    seller_id = get_seller_by_id(user_id)
     if not seller_id:
         return redirect(url_for('perfil'))
+    print(f"Seller_id:{seller_id}")
+    point_id = get_point_by_id(seller_id)
+    if not point_id:
+        flash("No tienes productos asignados a un punto de venta.",)
+    products = get_products_by_point_id(point_id)
+    if not products:
+        print("No se encontraron productos")    
     # Consulta los datos del usuario desde la base de datos
     user = get_user_by_id(session['user_id'])
     if not user:
         return redirect(url_for('login'))
-    if not point_id:
-        flash("No tienes productos asignados a un punto de venta.",)
+    
         
-    conn = connection
-    cursor = conn.cursor()
-    query = "EXEC MuestraTienda"
-    cursor.execute(query)
-    rows = cursor.fetchall()
+    Sellerinfo = get_sellerinfo_by_user_id(user_id)
+    if not Sellerinfo:
+        print("No se encontro la informacion")
 
-    # Obtener el índice del producto desde el parámetro de consulta
-    productid = int(request.args.get('productid', 0))  # Por defecto, 0
-    producto_seleccionado = rows[productid]
+    # Obtener el índice del producto desde el parámetr
 
-    return render_template('profile-vendedor.html', user=user, products=products, Producto=producto_seleccionado)
+    
+
+    return render_template('profile-vendedor.html', user=user, products=products,info=Sellerinfo )
 
 @app.route('/addproduct', methods=['GET', 'POST'])
 def add_product():
@@ -460,7 +467,7 @@ def add_point():
         else:
             flash("Ocurrió un error al agregar el punto de venta.", "danger")
     
-    return render_template('add-point.html', user=user)
+    return render_template('add-point.html', user=user,googlekey=api_key)
     
 @app.route('/cart')
 def carro():

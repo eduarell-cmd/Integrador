@@ -57,14 +57,14 @@ def register_usergoogle(GoogleID, Nombre, PrimerApellido, SegundoApellido):
     cursor = conn.cursor()
 
     
-def register_user(Nombre, PrimerApellido, SegundoApellido, Email, Password):
+def register_user(Nombre, PrimerApellido, SegundoApellido, Email, Password, Keyword):
     conn = get_db_connection()
     cursor = conn.cursor()
 
     password_hash = generate_password_hash(Password)
-    register_user = "EXEC Registrar_Usuario ?, ?, ?, ?, ?" 
+    register_user = "EXEC Registrar_Usuario ?, ?, ?, ?, ?, ?" 
     try:
-        cursor.execute(register_user, (Nombre, PrimerApellido, SegundoApellido, Email, password_hash,))
+        cursor.execute(register_user, (Nombre, PrimerApellido, SegundoApellido, Email, password_hash, Keyword, ))
         result = cursor.fetchone()
         print(f"Resultado del procedimiento almacenado: {result}")
         
@@ -164,3 +164,30 @@ def get_user_by_email(email):
         if conn:
                 conn.close()
 
+def update_password(Email, Keyword, NuevaContraseña):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    password_hash = generate_password_hash(NuevaContraseña)
+    register_user = "EXEC Restablecer_Contraseña ?, ?, ?" 
+
+    try:
+        cursor.execute(register_user, (Email, Keyword, password_hash, ))
+        result = cursor.fetchone()
+        print(f"Resultado del procedimiento almacenado: {result}")
+        
+        if result and result[0] == 0:
+            conn.commit()
+            logging.info("Contraseña actualizada con éxito.")
+            return True
+        elif result and result[0] == 1:
+            conn.rollback()
+            return False
+        else:
+            print("Error en la actualización de la contraseña o resultado inesperado.")
+            return False
+    except Exception as e:
+        logging.error(f"Error durante la actualización de la contraseña: {e}")
+        return False
+    finally:
+        conn.close()
