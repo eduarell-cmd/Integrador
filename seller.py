@@ -263,3 +263,20 @@ def get_sellerinfo_by_user_id(user_id):
     except Exception as e:
         print(f"Ocurrió un error al obtener el telefono: {e}")
         return None
+    
+def exec_muestra():
+    cursor = connection.cursor()
+    query = "EXEC MuestraTienda"
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    return rows
+
+def get_info_pv(seller_id):
+    cursor = connection.cursor()
+    query = "EXEC VerPuntoVenta ?"
+
+    cursor.execute(query, (seller_id))
+
+    result = cursor.fetchone()
+    print(f"Info de punto de venta: {result}")
+    return result

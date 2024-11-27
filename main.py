@@ -265,13 +265,7 @@ from flask import Flask, render_template, request
 @app.route('/locationvp', methods=['GET'])
 def ubicacion_pv():
     
-    conn = connection
-    cursor = conn.cursor()
-
-    # Ejecutar el procedimiento almacenado
-    query = "EXEC MuestraTienda"
-    cursor.execute(query)
-    rows = cursor.fetchall()
+    rows=exec_muestra()
 
     # Obtener el índice del producto desde el parámetro de consulta
     productid = int(request.args.get('productid',))  # Por defecto, 0
@@ -313,10 +307,10 @@ def perfilvend():
 
     # Obtener el índice del producto desde el parámetr
 
-    
-    
+    pv = get_info_pv(seller_id)
+    print('Seleccion rows', pv)
 
-    return render_template('profile-vendedor.html', user=user, products=products,info=Sellerinfo,seller_point=point_id )
+    return render_template('profile-vendedor.html', user=user, products=products,info=Sellerinfo,seller_point=point_id, pv=pv )
 
 @app.route('/addproduct', methods=['GET', 'POST'])
 def add_product():
