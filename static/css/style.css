@@ -317,7 +317,10 @@
     width: 100%;
     height: 300px;
     object-fit: cover;
-    object-position: center;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    padding: 10px;
 }
 
 .fruite .fruite-item .fruite-img img {
@@ -504,3 +507,18 @@
 }
 /*** Footer End ***/
 
+.vendedor-img {
+    width: 150px; 
+    height: 150px;
+    border-radius: 50%; 
+    object-fit: cover; 
+    display: block; 
+    margin: 0 auto; 
+}
+
+.product-img {
+    width: 200px; /* Ocupa todo el ancho disponible */
+    height: 200%; /* Altura fija para un tamaño consistente */
+    border-radius: 15px; /* Bordes redondeados */
+    object-fit: cover; /* Asegura que la imagen mantenga proporción y se recorte adecuadamente */
+}
