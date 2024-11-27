@@ -220,7 +220,8 @@ def reset_password():
             flash("¡Se ha registrado exitosamente! Ahora puede iniciar sesion.", "success")
             return redirect(url_for('login'))
         else:
-            flash("Ha habido un error durante la actualizacion.","error")
+            flash("Ha habido un error durante la actualizacion. Revisa tu correo o tu clave de recuperación","error")
+            return redirect(url_for('reset_password'))
     return render_template('reset_password.html')
 
 @app.route('/')
