@@ -18,7 +18,7 @@ from werkzeug.security import generate_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from conexionsql import connection
 from profilee import update_user_name
-from point import add_punto_venta, get_direccion_by_id
+from point import *
 from admin import *
 import pyodbc
 admin_key = os.getenv("ADMIN_KEY")
@@ -267,6 +267,7 @@ from flask import Flask, render_template, request
 
 @app.route('/locationvp', methods=['GET'])
 def ubicacion_pv():
+    
     conn = connection
     cursor = conn.cursor()
 
@@ -278,9 +279,12 @@ def ubicacion_pv():
     # Obtener el índice del producto desde el parámetro de consulta
     productid = int(request.args.get('productid', 0))  # Por defecto, 0
     producto_seleccionado = rows[productid]
+    pointid = producto_seleccionado[12]
+    print(f"Pointid:{pointid}")
+    products = get_products_by_point_id(pointid)
 
     # Pasar todos los productos y el producto seleccionado al template
-    return render_template('seller_location.html', productos=rows, Producto=producto_seleccionado)
+    return render_template('seller_location.html', productos=rows, Producto=producto_seleccionado,productseller=products)
 
 
 
@@ -314,7 +318,7 @@ def perfilvend():
 
     
 
-    return render_template('profile-vendedor.html', user=user, products=products,info=Sellerinfo )
+    return render_template('profile-vendedor.html', user=user, products=products,info=Sellerinfo,seller_point=point_id )
 
 @app.route('/addproduct', methods=['GET', 'POST'])
 def add_product():
@@ -327,6 +331,7 @@ def add_product():
     point_id = get_point_by_id(seller_id)
     if not point_id:
         flash("No tienes productos asignados a un punto de venta.",)
+        return redirect(url_for('perfil'))
     if request.method == 'POST':
         nombre_producto = request.form['nombre']
         categoria_id = request.form['categoria']  # 'frutas' o 'verduras'
@@ -450,24 +455,28 @@ def add_point():
         hora_inicio = request.form['hora_inicio']
         hora_fin = request.form['hora_fin']
         estado = request.form['estado']
-
+        latitude = request.form.get('latitude')
+        longitude = request.form.get('longitude')
+        print(f"Valor:{latitude}{longitude}")
         horario = hora_inicio + ' - ' + hora_fin
         
         if isinstance(seller_id, pyodbc.Row):
             seller_id = seller_id[0]
 
+        address = get_address_from_coordinates(latitude, longitude)
         # Aquí llamamos a una función para registrar el nuevo punto de venta
-        nuevo_pv = add_punto_venta(int(seller_id), int(direccion_id), descripcionpv, int(tipo), horario, int(estado))
-        print(f"Registrando: {seller_id, direccion_id, descripcionpv, tipo, horario, estado}")
+        nuevo_pv = add_punto_venta(int(seller_id), int(direccion_id), descripcionpv, int(tipo), horario, int(estado), latitude, longitude, address)
+        print(f"Registrando: {seller_id, direccion_id, descripcionpv, tipo, horario, estado, latitude, longitude, address}")
 
-        if nuevo_pv:
-            flash("Punto de venta agregado exitosamente.", "success")
-            return redirect(url_for('perfil'))
-        else:
+        if not nuevo_pv:
             flash("Ocurrió un error al agregar el punto de venta.", "danger")
+        flash("Punto de venta agregado exitosamente.", "success")
+        return redirect(url_for('perfil'))
+        
+            
     
-    return render_template('add-point.html', user=user,googlekey=api_key)
-    
+    return render_template('add-point.html', user=user,googlekey=api_keyLIAM)
+
 @app.route('/cart')
 def carro():
     return render_template('cart.html')
@@ -480,6 +489,7 @@ def shop():
     query = "EXEC MuestraTienda @consulta = ?"
     cursor.execute(query, (consulta,))
     rows=cursor.fetchall()
+    print(f"Rows:{rows}")
     return render_template('shop.html',Productos=rows,consulta=consulta)
 
 @app.route('/shop/frutas')
@@ -490,6 +500,7 @@ def shopfrutas():
     query = "EXEC OnlyFrutas @consulta = ?"
     cursor.execute(query, (consulta,))
     rows=cursor.fetchall()
+    print(f"Rows:{rows}")
     return render_template('shop.html',Productos=rows,consulta=consulta)
 
 @app.route('/shop/verduras')
