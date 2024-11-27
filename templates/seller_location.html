@@ -79,6 +79,8 @@
         </div>
    
         <div class="container mt-5 pt-5">
+            <input id="productid"name="productid" value="{{ productid }}" hidden>
+            <input id="productiact"name="productiact" value="{{ productiact }}" hidden>
             <div class="row">
                 <!-- Columna izquierda: Información del vendedor -->
                 <div class="col-md-4">
@@ -92,7 +94,7 @@
                                 Contactar por WhatsApp
                             </button>
                             <script>
-                                const whatsappNumber = "{{ Producto.Telefono }}";
+                                const whatsappNumber = "{{ Producto[8] }}";
                                 document.getElementById("whatsappButton").addEventListener("click", () => {
                                     window.location.href = `https://wa.me/${whatsappNumber}?text=Hola+me+gustaría+saber+más+información+sobre+el+producto:+{{ Producto[2] }}`;
                                 });

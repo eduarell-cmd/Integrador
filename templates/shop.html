@@ -152,7 +152,11 @@
                                                    
                                                 </div>
                                                 <br>
-                                                <a href="{{ url_for('ubicacion_pv') }}?productid={{ loop.index0 }}" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fas fa-map-marker-alt me-2 text-secondary"></i>Ubicación</a>
+                                                {% if productid %}
+                                                <a href="{{ url_for('ubicacion_pv') }}?productid={{ Producto[13] }}" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fas fa-map-marker-alt me-2 text-secondary"></i>Ubicación</a>
+                                                {% else %}
+                                                    <a href="{{ url_for('ubicacion_pv') }}?productid={{ Producto[13] }}" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fas fa-map-marker-alt me-2 text-secondary"></i>Ubicación</a>
+                                                {% endif%}
                                             </div>
                                         </div> 
                                     </div>
