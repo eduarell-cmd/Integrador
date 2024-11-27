@@ -118,7 +118,7 @@ def callback_google():
         else:
             flash("El usuario ya existe o hubo un error", "error")
             logging.error("Step 6: User registration failed.")
-            return render_template("signin.html")
+            return render_template("signup.html")
     
     except ValueError as e:
         logging.error(f"ValueError during ID token verification: {e}")
@@ -327,7 +327,6 @@ def add_product():
     point_id = get_point_by_id(seller_id)
     if not point_id:
         flash("No tienes productos asignados a un punto de venta.",)
-        return redirect(url_for('perfil'))
     if request.method == 'POST':
         nombre_producto = request.form['nombre']
         categoria_id = request.form['categoria']  # 'frutas' o 'verduras'
@@ -513,8 +512,12 @@ def perfil():
         return redirect(url_for('login'))  # Redirige a login si no hay usuario en sesión
     
     seller_id = get_seller_by_id(user_id)
+    admin = get_admin_by_id(user_id)
+    if admin:
+        return redirect(url_for('admin_dashboard'))
     if seller_id:
         return redirect(url_for('perfilvend'))
+    
     # Consulta los datos del usuario desde la base de datos
     user = get_user_by_id(session['user_id'])
     if not user:
