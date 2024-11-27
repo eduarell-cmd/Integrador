@@ -1,13 +1,16 @@
-from conexionsql import get_db_connection, connection
+from conexionsql import connection
 import logging
+import os
+import requests
 
-def add_punto_venta(VendedorID, DireccionID, DescripcionPunto, TipoPuntoVentaID, Horario, Estado):    
+api_keyLIAM=os.getenv("API_KEYLIAM")
+def add_punto_venta(VendedorID, DireccionID, DescripcionPunto, TipoPuntoVentaID, Horario, Estado, Latitud, Longitud, Direccion_Exacta):    
     conn = connection
     cursor = conn.cursor()
     try: 
-            add_punto_query = "EXEC Agregar_Punto_Venta ?, ?, ?, ?, ?, ?"
+            add_punto_query = "EXEC Agregar_Punto_Venta ?, ?, ?, ?, ?, ?, ?, ?, ?"
             # Llamada al procedimiento almacenado
-            cursor.execute(add_punto_query,(VendedorID, DireccionID, DescripcionPunto, TipoPuntoVentaID, Horario, Estado))
+            cursor.execute(add_punto_query,(VendedorID, DireccionID, DescripcionPunto, TipoPuntoVentaID, Horario, Estado, Latitud, Longitud, Direccion_Exacta))
             result = cursor.fetchone()
 
             if result and result[0] == 0:
@@ -39,3 +42,27 @@ def get_direccion_by_id(direccion_id):
         return direccion_id
     except Exception as e:
         print(f"Ocurrio un error al buscar dirección: {e}")
+
+
+def get_address_from_coordinates(latitude, longitude):
+    url = f"https://maps.googleapis.com/maps/api/geocode/json?latlng={latitude},{longitude}&key={api_keyLIAM}"
+    response = requests.get(url)
+    data = response.json()
+    print(f"Data de address:{data}")
+
+    if data['status'] == 'OK':
+        address = data['results'][0]['formatted_address']
+        return address
+    else:
+        return None
+
+# Ejemplo de uso
+#latitude = 19.432608
+#longitude = -99.133209
+#api_key=os.getenv("API_KEY")
+
+#address = get_address_from_coordinates(latitude, longitude, api_key)
+#if address:
+ #   print(f"La dirección es: {address}")
+#else:
+ #   print("No se pudo obtener la dirección.")

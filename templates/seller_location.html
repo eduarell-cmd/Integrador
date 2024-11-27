@@ -57,7 +57,7 @@
                     </button>
                     <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
                         <div class="navbar-nav mx-auto">
-                            <a href="{{url_for('index')}}" class="nav-item nav-link active">Home</a>
+                            <a href="{{url_for('index')}}" class="nav-item nav-link">Home</a>
                             <a href="{{url_for('shop')}}" class="nav-item nav-link">Shop</a>
                             <a href="{{url_for('contacto')}}" class="nav-item nav-link">Contact</a>
                         </div>
@@ -80,42 +80,97 @@
    
         <div class="container mt-5 pt-5">
             <div class="row">
-                <div class="col-md-4" style="display: flex; justify-content: center; align-items: center;">
-                    <div class="card">
+                <!-- Columna izquierda: Información del vendedor -->
+                <div class="col-md-4">
+                    <!-- Información del vendedor -->
+                    <div class="card mb-4">
                         <div class="card-body">
                             <h4 class="card-title">Información del Vendedor</h4>
                             <p><strong>Nombre:</strong> {{ Producto[3] }}</p>
                             <p><strong>Email:</strong> {{ Producto[7] }}</p>
-                            <button id="whatsappButton" style="padding: 10px 20px; background-color: #25D366; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                            <button id="whatsappButton" class="btn btn-success">
                                 Contactar por WhatsApp
                             </button>
                             <script>
-                                // Número dinámico pasado desde el backend
                                 const whatsappNumber = "{{ Producto.Telefono }}";
-                        
-                                // Evento para redirigir al chat de WhatsApp
                                 document.getElementById("whatsappButton").addEventListener("click", () => {
                                     window.location.href = `https://wa.me/${whatsappNumber}?text=Hola+me+gustaría+saber+más+información+sobre+el+producto:+{{ Producto[2] }}`;
                                 });
                             </script>
                         </div>
                     </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Información del Producto</h4>
+                            <div class="fruite-img text-center" >
+                                <img src="{{ Producto[0] }}" class="img-fluid product-img" alt=""></img>
+                            </div>
+                            <p></p>
+                            <p><strong>Producto: </strong>{{ Producto[2] }}</p>
+                            <p><strong>Precio: </strong>{{ Producto[4] }}$</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-8" style="display: flex; justify-content: center; align-items: center;">
-                    <div>
+                
+                <!-- Columna derecha: Información del punto de venta y mapa -->
+                <div class="col-md-8">
+                    <!-- Información del punto de venta -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h4 class="card-title">Información del Punto de Venta</h4>
+                            <p><strong>Descripción:</strong> {{ Producto[9] }}</p>
+                            <p><strong>Horario:</strong> {{ Producto[10] }}</p>
+                            <p><strong>Dirección exacta:</strong> {{ Producto[11] }}</p>
+                        </div>
+                    </div>
+        
+                    <!-- Mapa -->
+                    <div class="d-flex justify-content-center align-items-center">
                         <iframe 
-                        src="https://www.google.com/maps?q={{ Producto[5] }},{{ Producto[6] }}&z=15&output=embed"
-                        width="750" 
-                        height="450" 
-                        style="border:0;" 
-                        allowfullscreen="" 
-                        loading="lazy" 
-                        referrerpolicy="no-referrer-when-downgrade">
+                            src="https://www.google.com/maps?q={{ Producto[5] }},{{ Producto[6] }}&z=15&output=embed"
+                            width="850" 
+                            height="375" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
                         </iframe>
+                    </div>
+                    <br>
+                    <p></p>
+                </div>
+                <div class="col-md-12">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h4 class="card-title">Productos a la Venta de {{ Producto[3]}}</h4>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Precio</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for product in productseller %}
+                                    <tr>
+                                        <td>{{ product['name'] }}</td>
+                                        <td>${{ product['price'] }}</td>
+                                                
+                                        </form>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+    
+                    <!-- Historial de Ventas -->
+                    <div class="card">
                     </div>
                 </div>
             </div>
         </div>
+        
         <!-- Footer Start -->
         <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
             <div class="container py-4">
