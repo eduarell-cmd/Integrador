@@ -269,13 +269,7 @@ from flask import Flask, render_template, request
 @app.route('/locationvp', methods=['GET'])
 def ubicacion_pv():
     
-    conn = connection
-    cursor = conn.cursor()
-
-    # Ejecutar el procedimiento almacenado
-    query = "EXEC MuestraTienda"
-    cursor.execute(query)
-    rows = cursor.fetchall()
+    rows=exec_muestra()
 
     # Obtener el índice del producto desde el parámetro de consulta
     productid = int(request.args.get('productid', 0))  # Por defecto, 0
