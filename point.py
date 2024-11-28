@@ -65,13 +65,115 @@ def get_ubicacion_by_product_id_and_nombre_producto(product_id, nombre_producto)
     if not result:
          print("No se encontro la ubicacion por el producto")
     return result
-# Ejemplo de uso
-#latitude = 19.432608
-#longitude = -99.133209
-#api_key=os.getenv("API_KEY")
+def exec_mostar_tienda():
+    cursor = connection.cursor()
+    # Ejecutar el procedimiento almacenado
+    query = "EXEC MuestraTienda"
 
-#address = get_address_from_coordinates(latitude, longitude, api_key)
-#if address:
- #   print(f"La dirección es: {address}")
-#else:
- #   print("No se pudo obtener la dirección.")
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    productsar = []
+   
+    for row in rows:
+        product = {
+            'Foto': row[0],
+            'Categoria': row[1],
+            'Producto': row[2],
+            'Vendedor': row[3],
+            'Precio': row[4],
+            'Latitud': row[5],
+            'Longitud': row[6],
+            'Email': row[7],
+            'Telefono': row[8],
+            'Descripcion': row[9],
+            'Horario': row[10],
+            'Direccion': row[11],
+            'IDPV': row[12],
+            'IDP': row[13]
+
+        }
+        productsar.append(product)
+    
+    return productsar
+def exec_mostar_tienda_consulta(consulta):
+    cursor = connection.cursor()
+
+    
+    # Ejecutar el procedimiento almacenado
+    query = "EXEC MuestraTienda @consulta = ?"
+
+    cursor.execute(query,(consulta))
+    rows = cursor.fetchall()
+    productsar = []
+   
+    for row in rows:
+        product = {
+            'Foto': row[0],
+            'Categoria': row[1],
+            'Producto': row[2],
+            'Vendedor': row[3],
+            'Precio': row[4],
+            'Latitud': row[5],
+            'Longitud': row[6],
+            'Email': row[7],
+            'Telefono': row[8],
+            'Descripcion': row[9],
+            'Horario': row[10],
+            'Direccion': row[11],
+            'IDPV': row[12],
+            'IDP': row[13]
+
+        }
+        productsar.append(product)
+    
+    return productsar
+
+def exec_onlyfrutas(consulta):
+    cursor = connection.cursor()
+
+    
+    # Ejecutar el procedimiento almacenado
+    query = "EXEC OnlyFrutas @consulta = ?"
+
+    cursor.execute(query,(consulta))
+    rows = cursor.fetchall()
+    productsar = []
+   
+    for row in rows:
+        product = {
+            'Foto': row[0],
+            'Categoria': row[1],
+            'Producto': row[2],
+            'Vendedor': row[3],
+            'Precio': row[4],
+            'IDPV': row[5],
+            'IDP': row[6]
+        }
+        productsar.append(product)
+    
+    return productsar
+
+def exec_onlyverduras(consulta):
+    cursor = connection.cursor()
+
+    
+    # Ejecutar el procedimiento almacenado
+    query = "EXEC OnlyVerduras @consulta = ?"
+
+    cursor.execute(query,(consulta))
+    rows = cursor.fetchall()
+    productsar = []
+   
+    for row in rows:
+        product = {
+            'Foto': row[0],
+            'Categoria': row[1],
+            'Producto': row[2],
+            'Vendedor': row[3],
+            'Precio': row[4],
+            'IDPV': row[5],
+            'IDP': row[6]
+        }
+        productsar.append(product)
+    
+    return productsar

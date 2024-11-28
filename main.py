@@ -28,6 +28,8 @@ app = Flask(__name__)
 app.secret_key = "AvVoMrDAFRBiPNO8o9guscemWcgP"
 api_key=os.getenv("API_KEY")
 
+onlygoogleclient_id = os.getenv("GOOGLE_CLIENT_ID")
+
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
@@ -45,7 +47,7 @@ client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
 flow = Flow.from_client_config(
     client_config={
         "web": {
-            "client_id": client_id,
+            "client_id": onlygoogleclient_id,
             "client_secret": client_secret,
             "auth_uri": "https://accounts.google.com/o/oauth2/auth",
             "token_uri": "https://oauth2.googleapis.com/token",
@@ -65,11 +67,6 @@ flow = Flow.from_client_config(
     redirect_uri="http://localhost:5000/callback_google"  
 )
 
-@app.route("/signup_google")
-def signup_google():
-    authorization_url, state = flow.authorization_url(prompt='consent')
-    session["state"] = state
-    return redirect(authorization_url)
 
 @app.route("/callback_google")
 def callback_google():
@@ -151,7 +148,7 @@ def signup():
             return redirect(url_for('login'))
         else:
             flash("Ha habido un error durante el registro, el correo ya está en uso.","error")
-    return render_template('signup.html',google_id=client_id)
+    return render_template('signup.html',google_id=onlygoogleclient_id)
     
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -265,17 +262,24 @@ from flask import Flask, render_template, request
 @app.route('/locationvp', methods=['GET'])
 def ubicacion_pv():
     
-    rows=exec_muestra()
 
-    # Obtener el índice del producto desde el parámetro de consulta
-    productid = int(request.args.get('productid',))  # Por defecto, 0
-    producto_seleccionado = rows[productid-1]
-    pointid = producto_seleccionado[1]
+        # Obtener el índice del producto desde el parámetro de consulta
+    result = exec_mostar_tienda()
+    productid_str = request.args.get('productid')# Por defecto, 0
+    print(f"str{productid_str}")
+    productid = int(productid_str)
+    print(F"productid{productid}")
+    producto_seleccionado = next((prod for prod in result if prod['IDP'] == productid), None)
+    print(f"Producto Seleccionado:{producto_seleccionado}")
+    pointid = producto_seleccionado['IDPV']
     print(f"Pointid:{pointid}")
-    products = get_products_by_point_id(pointid)
+    intpointid = int(pointid)
+    print(f"again:{productid}")
+    
+    products = get_products_by_point_id(intpointid)
 
     # Pasar todos los productos y el producto seleccionado al template
-    return render_template('seller_location.html', productos=rows, Producto=producto_seleccionado,productseller=products,)
+    return render_template('seller_location.html',Producto=producto_seleccionado,productseller=products)
 
 
 
@@ -475,38 +479,36 @@ def carro():
 
 @app.route('/shop', methods=['GET'])
 def shop():
-    conn=connection
-    cursor = conn.cursor()
+    
     consulta = request.args.get('q', None) or ''
-    query = "EXEC MuestraTienda @consulta = ?"
-    cursor.execute(query, (consulta,))
-    rows=cursor.fetchall()
-    #if consulta:
-        #productid=rows
-        #render_template('shop.html',Productos=rows,consulta=consulta, productid=productid)
-    print(f"Rows:{rows}")
-    return render_template('shop.html',Productos=rows,consulta=consulta)
+    
+    result = exec_mostar_tienda_consulta(consulta)
+    #productid_str = request.args.get('productid')# Por defecto, 0
+    #productid = int(productid_str)
+    #producto_seleccionado = result[productid]
+    #pointid = producto_seleccionado['IDP']
+    #print(f"Pointid:{pointid}")
+    #intpointid = int(pointid)
+    return render_template('shop.html',Productos=result,consulta=consulta)
 
-@app.route('/shop/frutas')
+@app.route('/shop/frutas', methods=['GET'])
 def shopfrutas():
-    conn=connection
-    cursor = conn.cursor()
+
     consulta = request.args.get('q', None) or ''
-    query = "EXEC OnlyFrutas @consulta = ?"
-    cursor.execute(query, (consulta,))
-    rows=cursor.fetchall()
-    print(f"Rows:{rows}")
-    return render_template('shop.html',Productos=rows,consulta=consulta)
+
+    result = exec_onlyfrutas(consulta)
+
+    print(f"onlyfruits{result}")
+
+    return render_template('shop.html',ProductosFRUIT=result,consulta=consulta)
 
 @app.route('/shop/verduras')
 def shopverduras():
-    conn=connection
-    cursor = conn.cursor()
+    
     consulta = request.args.get('q', None) or ''
-    query = "EXEC OnlyVerduras @consulta = ?"
-    cursor.execute(query, (consulta,))
-    rows=cursor.fetchall()
-    return render_template('shop.html',Productos=rows,consulta=consulta)
+
+    result = exec_onlyverduras(consulta)
+    return render_template('shop.html',ProductosVERDURAS=result,consulta=consulta)
 
 
 
