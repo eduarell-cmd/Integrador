@@ -62,23 +62,35 @@ def get_products_by_point_id(point_id):
     try:
         cursor = connection.cursor()
         
-        # Consulta para obtener los productos del punto de venta específico
-        query = "SELECT ID_Producto, Punto_Venta_ID_Punto_Venta, Nombre_Producto, Categoria_ID_Categoria, Precio, Stock, Disponible, Foto_Producto FROM Producto WHERE Punto_Venta_ID_Punto_Venta = ?"
+        # Consulta para obtener los productos junto con el nombre de la categoría
+        query = """
+            SELECT 
+                p.ID_Producto, 
+                p.Punto_Venta_ID_Punto_Venta, 
+                p.Nombre_Producto, 
+                c.Nombre_Categoria,  -- Aquí obtenemos el nombre de la categoría
+                p.Precio, 
+                p.Stock, 
+                p.Disponible, 
+                p.Foto_Producto
+            FROM Producto p
+            JOIN Categoria_Producto c ON p.Categoria_ID_Categoria = c.ID_Categoria
+            WHERE p.Punto_Venta_ID_Punto_Venta = ?
+        """
         cursor.execute(query, (point_id,))
         
         results = cursor.fetchall()
-        
         # Convertir cada fila en un diccionario
         for row in results:
             product = {
                 'id': row[0],  # ID del producto
                 'point_id': row[1],  # ID del punto de venta
                 'name': row[2],  # Nombre del producto
-                'category': row[3], #Categoria
+                'category': row[3],  # Nombre de la categoría
                 'price': row[4],  # Precio
                 'stock': row[5],  # Stock
-                'disponible': row[6], #Disponibilidad
-                'img': row[7] #Imagen
+                'disponible': row[6],  # Disponibilidad
+                'img': row[7]  # Imagen
             }
             print(product)
             products.append(product)
@@ -86,6 +98,7 @@ def get_products_by_point_id(point_id):
         print(f"Error al recuperar productos: {e}")
 
     return products
+
 
 def editar_producto(product_id, nombre_producto, id_punto_venta, categoria_id, precio, stock, disponibilidad, imagen):
     conn = connection
