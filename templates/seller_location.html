@@ -91,15 +91,27 @@
                             <h4 class="card-title">Información del Vendedor</h4>
                             <p><strong>Nombre:</strong> {{ Producto.Vendedor }}</p>
                             <p><strong>Email:</strong> {{ Producto.Email }}</p>
-                            <button id="whatsappButton" class="btn btn-success">
+                            
+                            <button id="whatsappButton" class="btn btn-success" data-producto="{{ Producto.Producto }}">
                                 Contactar por WhatsApp
                             </button>
                             <script>
                                 const whatsappNumber = "{{ Producto.Telefono }}";
-                                document.getElementById("whatsappButton").addEventListener("click", () => {
-                                    window.location.href = `https://wa.me/${whatsappNumber}?text=Hola+me+gustaría+saber+más+información+sobre+el+producto:+{{ Producto[2] }}`;
+                                const productoNombre = document.getElementById("whatsappButton").getAttribute('data-producto');
+                                console.log(`Número de WhatsApp: ${whatsappNumber}`);
+                                console.log(`Nombre del producto: ${productoNombre}`);
+                            
+                                document.getElementById("whatsappButton").addEventListener("click", (event) => {
+                                    event.preventDefault();
+                                    
+                                    const whatsappURL = `https://wa.me/${whatsappNumber}?text=Hola+me+gustaría+saber+más+información+sobre+el+producto:+${productoNombre}`;
+                                    console.log(`URL de WhatsApp: ${whatsappURL}`);
+                                    
+                                    window.location.href = whatsappURL;
                                 });
                             </script>
+                            
+                            
                         </div>
                     </div>
                     <div class="card">

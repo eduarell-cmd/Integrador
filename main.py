@@ -261,8 +261,8 @@ from flask import Flask, render_template, request
 
 @app.route('/locationvp', methods=['GET'])
 def ubicacion_pv():
-    
-
+    user_id = session.get('user_id')
+    Sellerinfo = get_sellerinfo_by_user_id(user_id)
         # Obtener el índice del producto desde el parámetro de consulta
     result = exec_mostar_tienda()
     productid_str = request.args.get('productid')# Por defecto, 0
@@ -279,7 +279,7 @@ def ubicacion_pv():
     products = get_products_by_point_id(intpointid)
 
     # Pasar todos los productos y el producto seleccionado al template
-    return render_template('seller_location.html',Producto=producto_seleccionado,productseller=products)
+    return render_template('seller_location.html',Producto=producto_seleccionado,productseller=products,phone=Sellerinfo)
 
 
 
