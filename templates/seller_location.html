@@ -77,10 +77,11 @@
         <div class="container-fluid page-header py-5">
             <h1 class="text-center text-white display-6">Product Location</h1>
         </div>
-   
+        <form action="{{ url_for('ubicacion_pv') }}" method="GET">
         <div class="container mt-5 pt-5">
-            <input id="productid"name="productid" value="{{ productid }}" hidden>
-            <input id="productiact"name="productiact" value="{{ productiact }}" hidden>
+            <input id="productid"name="productid" value="{{ Producto.IDP }}" hidden>
+            <input id="pointid" name="pointid" value="{{ Producto.IDPV }}" hidden>
+        </form>
             <div class="row">
                 <!-- Columna izquierda: Información del vendedor -->
                 <div class="col-md-4">
@@ -88,13 +89,13 @@
                     <div class="card mb-4">
                         <div class="card-body">
                             <h4 class="card-title">Información del Vendedor</h4>
-                            <p><strong>Nombre:</strong> {{ Producto[3] }}</p>
-                            <p><strong>Email:</strong> {{ Producto[7] }}</p>
+                            <p><strong>Nombre:</strong> {{ Producto.Vendedor }}</p>
+                            <p><strong>Email:</strong> {{ Producto.Email }}</p>
                             <button id="whatsappButton" class="btn btn-success">
                                 Contactar por WhatsApp
                             </button>
                             <script>
-                                const whatsappNumber = "{{ Producto[8] }}";
+                                const whatsappNumber = "{{ Producto.Telefono }}";
                                 document.getElementById("whatsappButton").addEventListener("click", () => {
                                     window.location.href = `https://wa.me/${whatsappNumber}?text=Hola+me+gustaría+saber+más+información+sobre+el+producto:+{{ Producto[2] }}`;
                                 });
@@ -105,11 +106,11 @@
                         <div class="card-body">
                             <h4 class="card-title">Información del Producto</h4>
                             <div class="fruite-img text-center" >
-                                <img src="{{ Producto[0] }}" class="img-fluid product-img" alt=""></img>
+                                <img src="{{ Producto.Foto }}" class="img-fluid product-img" alt=""></img>
                             </div>
                             <p></p>
-                            <p><strong>Producto: </strong>{{ Producto[2] }}</p>
-                            <p><strong>Precio: </strong>{{ Producto[4] }}$</p>
+                            <p><strong>Producto: </strong>{{ Producto.Producto }}</p>
+                            <p><strong>Precio: </strong>{{ Producto.Precio }}$</p>
                         </div>
                     </div>
                 </div>
@@ -120,16 +121,16 @@
                     <div class="card mb-4">
                         <div class="card-body">
                             <h4 class="card-title">Información del Punto de Venta</h4>
-                            <p><strong>Descripción:</strong> {{ Producto[9] }}</p>
-                            <p><strong>Horario:</strong> {{ Producto[10] }}</p>
-                            <p><strong>Dirección exacta:</strong> {{ Producto[11] }}</p>
+                            <p><strong>Descripción:</strong> {{ Producto.Descripcion }}</p>
+                            <p><strong>Horario:</strong> {{ Producto.Horario }}</p>
+                            <p><strong>Dirección exacta:</strong> {{ Producto.Direccion }}</p>
                         </div>
                     </div>
         
                     <!-- Mapa -->
                     <div class="d-flex justify-content-center align-items-center">
                         <iframe 
-                            src="https://www.google.com/maps?q={{ Producto[5] }},{{ Producto[6] }}&z=15&output=embed"
+                            src="https://www.google.com/maps?q={{ Producto.Latitud }},{{ Producto.Longitud }}&z=15&output=embed"
                             width="850" 
                             height="375" 
                             style="border:0;" 
@@ -144,7 +145,7 @@
                 <div class="col-md-12">
                     <div class="card mb-4">
                         <div class="card-body">
-                            <h4 class="card-title">Productos a la Venta de {{ Producto[3]}}</h4>
+                            <h4 class="card-title">Productos a la Venta de {{ Producto.Vendedor}}</h4>
                             <table class="table">
                                 <thead>
                                     <tr>

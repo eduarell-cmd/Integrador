@@ -138,30 +138,77 @@
                                 
                                 {% if Productos %}
                                     {% for Producto in Productos %}
+                                    <input id="productid"name="productid" value="{{ Producto.IDP }}" hidden>
                                     <div class="col-md-6 col-lg-6 col-xl-4">
                                         <div class="rounded position-relative fruite-item">
                                             <div class="fruite-img">
-                                                <img src="{{ Producto[0] }}" class="img-fluid w-100 rounded-top" alt=""></img>
+                                                <img src="{{ Producto.Foto }}" class="img-fluid w-100 rounded-top" alt=""></img>
                                             </div>
-                                            <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">{{ Producto[1] }}</div>
+                                            <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">{{ Producto.Categoria }}</div>
                                             <div class="p-4 border border-secondary border-top-0 rounded-bottom">
-                                                <h4>{{ Producto[2] }}</h4>
-                                                <p>Vendido por: {{ Producto[3] }}</p>
+                                                <h4>{{ Producto.Producto }}</h4>
+                                                <p>Vendido por: {{ Producto.Vendedor }}</p>
                                                 <div class="d-flex justify-content-between flex-lg-wrap">
-                                                    <p class="text-dark fs-5 fw-bold mb-0">${{ Producto[4] }} / kg</p>                                
+                                                    <p class="text-dark fs-5 fw-bold mb-0">${{ Producto.Precio }} / kg</p>                                
                                                    
                                                 </div>
                                                 <br>
-                                                {% if productid %}
-                                                <a href="{{ url_for('ubicacion_pv') }}?productid={{ Producto[13] }}" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fas fa-map-marker-alt me-2 text-secondary"></i>Ubicación</a>
-                                                {% else %}
-                                                    <a href="{{ url_for('ubicacion_pv') }}?productid={{ Producto[13] }}" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fas fa-map-marker-alt me-2 text-secondary"></i>Ubicación</a>
-                                                {% endif%}
+                                
+                                                <a href="{{ url_for('ubicacion_pv') }}?productid={{ Producto.IDP }}" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fas fa-map-marker-alt me-2 text-secondary"></i>Ubicación</a>
+                                               
                                             </div>
                                         </div> 
                                     </div>
                                     {% endfor %}
-                                {% else %}
+                                    {% elif ProductosFRUIT %}
+                                    {% for Producto in ProductosFRUIT %}
+                                    <input id="productid"name="productid" value="{{ Producto.IDP }}" hidden>
+                                    <div class="col-md-6 col-lg-6 col-xl-4">
+                                        <div class="rounded position-relative fruite-item">
+                                            <div class="fruite-img">
+                                                <img src="{{ Producto.Foto }}" class="img-fluid w-100 rounded-top" alt=""></img>
+                                            </div>
+                                            <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">{{ Producto.Categoria }}</div>
+                                            <div class="p-4 border border-secondary border-top-0 rounded-bottom">
+                                                <h4>{{ Producto.Producto }}</h4>
+                                                <p>Vendido por: {{ Producto.Vendedor }}</p>
+                                                <div class="d-flex justify-content-between flex-lg-wrap">
+                                                    <p class="text-dark fs-5 fw-bold mb-0">${{ Producto.Precio }} / kg</p>                                
+                                                   
+                                                </div>
+                                                <br>
+                                
+                                                <a href="{{ url_for('ubicacion_pv') }}?productid={{ Producto.IDP }}" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fas fa-map-marker-alt me-2 text-secondary"></i>Ubicación</a>
+                                               
+                                            </div>
+                                        </div> 
+                                    </div>
+                                    {% endfor %}
+                                    {% elif ProductosVERDURAS %}
+                                    {% for Producto in ProductosVERDURAS %}
+                                    <input id="productid"name="productid" value="{{ Producto.IDP }}" hidden>
+                                    <div class="col-md-6 col-lg-6 col-xl-4">
+                                        <div class="rounded position-relative fruite-item">
+                                            <div class="fruite-img">
+                                                <img src="{{ Producto.Foto }}" class="img-fluid w-100 rounded-top" alt=""></img>
+                                            </div>
+                                            <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">{{ Producto.Categoria }}</div>
+                                            <div class="p-4 border border-secondary border-top-0 rounded-bottom">
+                                                <h4>{{ Producto.Producto }}</h4>
+                                                <p>Vendido por: {{ Producto.Vendedor }}</p>
+                                                <div class="d-flex justify-content-between flex-lg-wrap">
+                                                    <p class="text-dark fs-5 fw-bold mb-0">${{ Producto.Precio }} / kg</p>                                
+                                                   
+                                                </div>
+                                                <br>
+                                
+                                                <a href="{{ url_for('ubicacion_pv') }}?productid={{ Producto.IDP }}" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fas fa-map-marker-alt me-2 text-secondary"></i>Ubicación</a>
+                                               
+                                            </div>
+                                        </div> 
+                                    </div>
+                                    {% endfor %}
+                                    {% else %}
                                         <h1 class="display-4">No se encontraron resultados para tu busqueda</h1>
                                 {% endif %}
                                     </div>
