@@ -28,6 +28,8 @@ app = Flask(__name__)
 app.secret_key = "AvVoMrDAFRBiPNO8o9guscemWcgP"
 api_key=os.getenv("API_KEY")
 
+onlygoogleclient_id = os.getenv("GOOGLE_CLIENT_ID")
+
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
@@ -45,7 +47,7 @@ client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
 flow = Flow.from_client_config(
     client_config={
         "web": {
-            "client_id": client_id,
+            "client_id": onlygoogleclient_id,
             "client_secret": client_secret,
             "auth_uri": "https://accounts.google.com/o/oauth2/auth",
             "token_uri": "https://oauth2.googleapis.com/token",
@@ -65,11 +67,6 @@ flow = Flow.from_client_config(
     redirect_uri="http://localhost:5000/callback_google"  
 )
 
-@app.route("/signup_google")
-def signup_google():
-    authorization_url, state = flow.authorization_url(prompt='consent')
-    session["state"] = state
-    return redirect(authorization_url)
 
 @app.route("/callback_google")
 def callback_google():
@@ -151,7 +148,7 @@ def signup():
             return redirect(url_for('login'))
         else:
             flash("Ha habido un error durante el registro, el correo ya está en uso.","error")
-    return render_template('signup.html',)
+    return render_template('signup.html',google_id=onlygoogleclient_id)
     
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -226,11 +223,7 @@ def reset_password():
 
 @app.route('/')
 def index():
-    conn=connection
-    cursor = conn.cursor()
-    query = "Exec Vendedormuestra"
-    cursor.execute(query)
-    rows=cursor.fetchall()
+    rows = exec_sp()
     return render_template('index.html',Vendedores=rows)
 
 @app.route('/protectedarea')
@@ -269,23 +262,24 @@ from flask import Flask, render_template, request
 @app.route('/locationvp', methods=['GET'])
 def ubicacion_pv():
     
-    conn = connection
-    cursor = conn.cursor()
 
-    # Ejecutar el procedimiento almacenado
-    query = "EXEC MuestraTienda"
-    cursor.execute(query)
-    rows = cursor.fetchall()
-
-    # Obtener el índice del producto desde el parámetro de consulta
-    productid = int(request.args.get('productid', 0))  # Por defecto, 0
-    producto_seleccionado = rows[productid]
-    pointid = producto_seleccionado[12]
+        # Obtener el índice del producto desde el parámetro de consulta
+    result = exec_mostar_tienda()
+    productid_str = request.args.get('productid')# Por defecto, 0
+    print(f"str{productid_str}")
+    productid = int(productid_str)
+    print(F"productid{productid}")
+    producto_seleccionado = next((prod for prod in result if prod['IDP'] == productid), None)
+    print(f"Producto Seleccionado:{producto_seleccionado}")
+    pointid = producto_seleccionado['IDPV']
     print(f"Pointid:{pointid}")
-    products = get_products_by_point_id(pointid)
+    intpointid = int(pointid)
+    print(f"again:{productid}")
+    
+    products = get_products_by_point_id(intpointid)
 
     # Pasar todos los productos y el producto seleccionado al template
-    return render_template('seller_location.html', productos=rows, Producto=producto_seleccionado,productseller=products)
+    return render_template('seller_location.html',Producto=producto_seleccionado,productseller=products)
 
 
 
@@ -317,9 +311,10 @@ def perfilvend():
 
     # Obtener el índice del producto desde el parámetr
 
-    
+    pv = get_info_pv(seller_id)
+    print('Seleccion rows', pv)
 
-    return render_template('profile-vendedor.html', user=user, products=products,info=Sellerinfo,seller_point=point_id )
+    return render_template('profile-vendedor.html', user=user, products=products,info=Sellerinfo,seller_point=point_id, pv=pv )
 
 @app.route('/addproduct', methods=['GET', 'POST'])
 def add_product():
@@ -343,7 +338,7 @@ def add_product():
 
         extensionimg = get_extension_for_img(imagenpr)
         user = get_user_by_id(session['user_id'])
-        Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}/{"product[3]", "product[4]"}_Imgproduct.{extensionimg['product_extension']}")
+        Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}/{nombre_producto, categoria_id}_Imgproduct.{extensionimg['product_extension']}")
 
         id_punto_venta = get_point_by_id(seller_id)
         added_product = add_producto(nombre_producto, int(id_punto_venta), categoria_id, precio, int(stock), disponibilidad, Gimagen_file)
@@ -390,10 +385,11 @@ def edit_product():
         imagenpr = request.files.get('imagenpr')
         print(f"El valor de imagen{imagenpr}")
         
+        product_id_ex = get_product_by_id(product_id)
         if imagenpr and imagenpr.filename != '':
             # Obtener extensión y subir la nueva imagen
             extensionimg = get_extension_for_img(imagenpr)
-            Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}/{"product[3], product[4]"}_Imgproduct.{extensionimg['product_extension']}")
+            Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}/{product_id_ex['name'], product_id['category']}_Imgproduct.{extensionimg['product_extension']}")
         else:
             conn = connection
             cursor = conn.cursor()
@@ -483,35 +479,36 @@ def carro():
 
 @app.route('/shop', methods=['GET'])
 def shop():
-    conn=connection
-    cursor = conn.cursor()
+    
     consulta = request.args.get('q', None) or ''
-    query = "EXEC MuestraTienda @consulta = ?"
-    cursor.execute(query, (consulta,))
-    rows=cursor.fetchall()
-    print(f"Rows:{rows}")
-    return render_template('shop.html',Productos=rows,consulta=consulta)
+    
+    result = exec_mostar_tienda_consulta(consulta)
+    #productid_str = request.args.get('productid')# Por defecto, 0
+    #productid = int(productid_str)
+    #producto_seleccionado = result[productid]
+    #pointid = producto_seleccionado['IDP']
+    #print(f"Pointid:{pointid}")
+    #intpointid = int(pointid)
+    return render_template('shop.html',Productos=result,consulta=consulta)
 
-@app.route('/shop/frutas')
+@app.route('/shop/frutas', methods=['GET'])
 def shopfrutas():
-    conn=connection
-    cursor = conn.cursor()
+
     consulta = request.args.get('q', None) or ''
-    query = "EXEC OnlyFrutas @consulta = ?"
-    cursor.execute(query, (consulta,))
-    rows=cursor.fetchall()
-    print(f"Rows:{rows}")
-    return render_template('shop.html',Productos=rows,consulta=consulta)
+
+    result = exec_onlyfrutas(consulta)
+
+    print(f"onlyfruits{result}")
+
+    return render_template('shop.html',ProductosFRUIT=result,consulta=consulta)
 
 @app.route('/shop/verduras')
 def shopverduras():
-    conn=connection
-    cursor = conn.cursor()
+    
     consulta = request.args.get('q', None) or ''
-    query = "EXEC OnlyVerduras @consulta = ?"
-    cursor.execute(query, (consulta,))
-    rows=cursor.fetchall()
-    return render_template('shop.html',Productos=rows,consulta=consulta)
+
+    result = exec_onlyverduras(consulta)
+    return render_template('shop.html',ProductosVERDURAS=result,consulta=consulta)
 
 
 

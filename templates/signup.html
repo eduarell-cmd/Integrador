@@ -22,7 +22,9 @@
     <link rel="icon" href="{{ url_for('static', filename='img/LOGO.png')}}" type="image/x-icon">
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <meta name="google-signin-client_id" content="293860019099-hn8qqiuee0ar7s9b04ppf8eh3a2plvh6.apps.googleusercontent.com">
-    
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="https://apis.google.com/js/platform.js?onload=init" async defer></script>
+    <meta name="google-signin-client_id" content="{{ google_id }}">
     <script>
         function validatePassword() {
             var password = document.getElementById("Password").value;
@@ -46,12 +48,26 @@
         </ul>
     {% endif %}
   {% endwith %}
-  <div style="position: relative; height: 106vh;background: linear-gradient(to right, 
-rgb(254, 126, 0), 
-rgb(245, 179, 0), 
-rgb(186, 210, 0), 
-rgb(119, 230, 0), 
-rgb(3, 247, 0));">
+  <div style="position: relative; height: 106vh; display: flex; justify-content: space-between; align-items: center;">
+    <!-- Imagen con degradado verde -->
+    <div class="image-with-gradient green-gradient">
+        <img src="{{ url_for('static', filename='img/header_verdurasVerdes.jpeg')}}" alt="Green Gradient" class="image-content">
+    </div>
+
+    <!-- Formulario -->
+    <div style="flex-grow: 1; max-width: 500px; background-color: white; margin: 0 auto; border-radius: 15px; padding: 20px;">
+        <h1 class="text-center" style="color: #44C920;">Farm-to-Table</h1>
+        <h2 class="text-center">Sign up</h2>
+        <!-- Aquí va tu formulario -->
+    </div>
+
+    <!-- Imagen con degradado naranja -->
+    <div class="image-with-gradient orange-gradient">
+        <img src="{{ url_for('static', filename='img/variedades-de-naranjas.jpg')}}" alt="Orange Gradient" class="image-content">
+    </div>
+</div>
+
+
 <div style="position: absolute;top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 90%; width: 600px; background-color: white; padding: 30px; text-align: center; border-radius: 10px;">
 <form action="{{ url_for('signup') }}" method="POST" onsubmit="return validatePassword()">
     <a href="{{url_for('index')}}"><h1 class="text-primary mb-0" style="text-align: center;">Farm-to-Table </h1></a>
@@ -59,27 +75,21 @@ rgb(3, 247, 0));">
     <div class="container mt-5">
         <div id="divsignup" class="row g-3">
             <div class="col-md-6">
-                <label for="Email" class="form-label">Email</label>
                 <input type="email" class="form-control" id="Email" name="Email" placeholder="Email" required>
             </div>
             <div class="col-md-6">
-                <label for="Password" class="form-label">Password</label>
                 <input type="password" class="form-control" id="Password" name="Password" placeholder="Password" required>
             </div>
             <div class="col-md-6">
-                <label for="ConfirmPassword" class="form-label">Confirm Password</label>
                 <input type="password" class="form-control" id="ConfirmPassword" name="ConfirmPassword" placeholder="Confirm Password" required>
             </div>
             <div class="col-6">
-                <label for="Name" class="form-label">Name</label>
                 <input type="text" class="form-control" id="Name" name="Name" placeholder="Name" required>
             </div>
             <div class="col-6">
-                <label for="PrimerApellido" class="form-label">First Lastname</label>
                 <input type="text" class="form-control" id="PrimerApellido" name="PrimerApellido" placeholder="First LastName" required>
             </div> 
             <div class="col-6">
-                <label for="SegundoApellido" class="form-label">Second Lastname</label>
                 <input type="text" class="form-control" id="SegundoApellido" name="SegundoApellido" placeholder="Second LastName">
             </div>
             <div class="col-md-12 d-flex flex-column align-items-center" >
@@ -92,14 +102,33 @@ rgb(3, 247, 0));">
             <div class="col-lg-12 text-center mt-3">
                 <button type="submit" class="btn border border-secondary rounded-pill px-3 text-primary" href="{{url_for('signup')}}">Sign Up</button>
             </div>
+            <div class="container text-center mt-3">
+                <div style="text-align: center;"   class="g-signin2" data-onsuccess="onSignIn"></div>
+            </div>
         </div>
     </div>
 </form>
 <div class="container text-center mt-3">
-    <a href="{{ url_for('signup_google') }}" class="btn border border-secondary rounded-pill px-3 text-primary">Sign Up with Google</a>
+    
 </div>
 </div>
 </div>
+
+
 <script src="https://apis.google.com/js/platform.js" async defer></script>
 </body>
+<script>
+    function init() {
+  gapi.load('auth2', function() {
+    /* Ready. Make a call to gapi.auth2.init or some other API */
+  });
+}
+function onSignIn(googleUser) {
+  var profile = googleUser.getBasicProfile();
+  console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+  console.log('Name: ' + profile.getName());
+  console.log('Image URL: ' + profile.getImageUrl());
+  console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+}
+</script>
 </html>
