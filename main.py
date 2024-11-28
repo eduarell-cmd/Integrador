@@ -263,18 +263,17 @@ from flask import Flask, render_template, request
 def ubicacion_pv():
     user_id = session.get('user_id')
     Sellerinfo = get_sellerinfo_by_user_id(user_id)
-        # Obtener el índice del producto desde el parámetro de consulta
     result = exec_mostar_tienda()
     productid_str = request.args.get('productid')# Por defecto, 0
-    print(f"str{productid_str}")
+    #print(f"str{productid_str}")
     productid = int(productid_str)
-    print(F"productid{productid}")
+    #print(F"productid{productid}")
     producto_seleccionado = next((prod for prod in result if prod['IDP'] == productid), None)
-    print(f"Producto Seleccionado:{producto_seleccionado}")
+    #print(f"Producto Seleccionado:{producto_seleccionado}")
     pointid = producto_seleccionado['IDPV']
-    print(f"Pointid:{pointid}")
+    #print(f"Pointid:{pointid}")
     intpointid = int(pointid)
-    print(f"again:{productid}")
+    #print(f"again:{productid}")
     
     products = get_products_by_point_id(intpointid)
 
