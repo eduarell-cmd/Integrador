@@ -311,10 +311,10 @@ def perfilvend():
 
     # Obtener el índice del producto desde el parámetr
 
-    
-    
+    pv = get_info_pv(seller_id)
+    print('Seleccion rows', pv)
 
-    return render_template('profile-vendedor.html', user=user, products=products,info=Sellerinfo,seller_point=point_id )
+    return render_template('profile-vendedor.html', user=user, products=products,info=Sellerinfo,seller_point=point_id, pv=pv )
 
 @app.route('/addproduct', methods=['GET', 'POST'])
 def add_product():
