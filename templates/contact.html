@@ -84,15 +84,6 @@
 
         <!-- Contact Start -->
         <div class="container-fluid contact py-5">
-            {% with messages = get_flashed_messages(with_categories=True) %}
-            {% if messages %}
-                <ul>
-                    {% for category, message in messages %}
-                        <li class="{{ category }}">{{ message }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        {% endwith %}
             <div class="container py-5">
                 <div class="p-5 bg-light rounded">
                     <div class="row g-4">

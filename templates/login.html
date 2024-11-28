@@ -38,73 +38,67 @@
     <script src="https://www.google.com/recaptcha/api.js"></script>
 </head>
 <body style="background-color: white">
+  <!-- Mensajes de alerta -->
   {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
-      <ul class="alert alert-warning">
-          {% for category, message in messages %}
-              <li class="{{ category }}">{{ message }}</li>
-          {% endfor %}
-      </ul>
+  <ul class="alert alert-warning">
+    {% for category, message in messages %}
+    <li class="{{ category }}">{{ message }}</li>
+    {% endfor %}
+  </ul>
   {% endif %}
-{% endwith %}
-<div style="position: relative; height: 106vh; display: flex; justify-content: space-between; align-items: center;">
-  <!-- Imagen con degradado verde -->
-  <div class="image-with-gradient green-gradient">
-      <img src="{{ url_for('static', filename='img/header_verdurasVerdes.jpeg')}}" alt="Green Gradient" class="image-content">
-  </div>
+  {% endwith %}
 
-  <!-- Formulario -->
-  <div style="flex-grow: 1; max-width: 500px; background-color: white; margin: 0 auto; border-radius: 15px; padding: 20px;">
-      <h1 class="text-center" style="color: #44C920;">Farm-to-Table</h1>
-      <h2 class="text-center">Sign up</h2>
-      <!-- Aquí va tu formulario -->
-  </div>
+  <!-- Contenedor principal -->
+  <div style="position: relative; height: 100vh; display: flex; justify-content: space-between; align-items: center;">
 
-  <!-- Imagen con degradado naranja -->
-  <div class="image-with-gradient orange-gradient">
-      <img src="{{ url_for('static', filename='img/variedades-de-naranjas.jpg')}}" alt="Orange Gradient" class="image-content">
-  </div>
-</div>
-<div style="position: absolute;top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 90%; width: 600px; background-color: white; padding: 30px; text-align: center; border-radius: 10px;">
-<form action="{{ url_for('login') }}" method="post">
-  <div class="container min-vh-100 d-flex justify-content-center align-items-center">
-  <div id="alinear">
-   
-      <a href="{{url_for('index')}}"><h1 class="text-primary mb-0">Farm-to-table</h1></a>  
-      <div style="align-items: center; margin-top: 50px;">
-      <div class="caja">
-        <div class="col-md-12">
-          <input type="text" class="form-control" placeholder="Email" id="Email" name="Email">
-        </div> 
-      <br>
-      <div>
-        <div class="col-md-12">
-          <input type="password" class="form-control" placeholder="Password" id="Password" name="Password">
+    <!-- Imagen con degradado verde -->
+    <div class="image-with-gradient green-gradient">
+      <img src="{{ url_for('static', filename='img/header_verdurasVerdes.png') }}" alt="Green Gradient" class="image-content">
+    </div>
+    <div class="image-with-gradient orange-gradient">
+      <img src="{{ url_for('static', filename='img/variedades-de-naranjas.png') }}" alt="Orange Gradient" class="image-content">
+    </div>
+
+    <!-- Formulario (centrado y con diseño responsivo) -->
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 90%; width: 400px; background-color: white; padding: 30px; text-align: center; border-radius: 10px; box-shadow: 0px 4px 10px rgba(0,0,0,0.1);">
+      <form action="{{ url_for('login') }}" method="post">
+        <h1 class="text-primary mb-3">Farm-to-table</h1>
+        <div style="margin-top: 20px;">
+          <!-- Campo Email -->
+          <div class="mb-3">
+            <input type="text" class="form-control" placeholder="Email" id="Email" name="Email" required>
+          </div>
+
+          <!-- Campo Password -->
+          <div class="mb-3">
+            <input type="password" class="form-control" placeholder="Password" id="Password" name="Password" required>
+          </div>
+
+          <!-- Botón Login -->
+          <div class="mb-3">
+            <button type="submit" class="btn btn-primary w-100 rounded-pill">Log in</button>
+          </div>
+
+          <!-- Recaptcha -->
+          <div class="mb-3">
+            <div class="g-recaptcha" data-sitekey="6LdSIWwqAAAAAI4hs5hE33Y_-vH_aRy79pbX6xzo"></div>
+          </div>
+
+          <!-- Enlaces adicionales -->
+          <div>
+            <a href="{{ url_for('reset_request') }}" class="d-block">Forgot password?</a>
+            <a href="{{ url_for('signup') }}" class="d-block">Don't have an account? Click here & create one.</a>
+          </div>
         </div>
-      </div>
+      </form>
     </div>
-    <br>
-    <div>
-      <div class="col-md-12" style="text-align: center;">
-        <button type="submit" class="btn border border-secondary rounded-pill px-3 text-primary">Log in</button>
-      </div>
-      <br>  
-    </div>
-    <br>
-    <div class="col-md-4">
-      <div class="g-recaptcha" data-sitekey="6LdSIWwqAAAAAI4hs5hE33Y_-vH_aRy79pbX6xzo"></div>
-    </div>
-  
-    <br>
-    <a href="{{url_for('reset_request')}}">Forgot password?</a>
-    <br>
-    <a href="{{url_for('signup')}}">Don't have an account, click here & create one.</a>
+
+    <!-- Imagen con degradado naranja -->
+    
   </div>
-  </div>
-</form>   
-</div>
-</div>
 </body>
+
 <script src="https://apis.google.com/js/platform.js" async defer></script>
 
 </html>
