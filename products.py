@@ -1,7 +1,7 @@
 from conexionsql import get_db_connection, connection
 import logging
 
-def add_producto(nombre_producto, punto_venta, categoria_id, precio, stock, disponibilidad, imagen):    
+def add_producto(nombre_producto, punto_venta, categoria_id, precio, stock, disponibilidad, imagen, unidad):    
     conn = connection
     cursor = conn.cursor()
     try: 
@@ -17,9 +17,9 @@ def add_producto(nombre_producto, punto_venta, categoria_id, precio, stock, disp
         if categoria_id is not None:
             # Conexión a la base de datos (ajustar detalles de conexión)
 
-            update_user_query = "EXEC Agregar_Producto ?, ?, ?, ?, ?, ?, ?"
+            update_user_query = "EXEC Agregar_Producto ?, ?, ?, ?, ?, ?, ?, ?"
             # Llamada al procedimiento almacenado
-            cursor.execute(update_user_query,(nombre_producto, punto_venta, categoria_id, precio, stock, disponibilidad, imagen))
+            cursor.execute(update_user_query,(nombre_producto, punto_venta, categoria_id, precio, stock, disponibilidad, imagen, unidad))
             result = cursor.fetchone()
 
             if result and result[0] == 0:
@@ -72,7 +72,8 @@ def get_products_by_point_id(point_id):
                 p.Precio, 
                 p.Stock, 
                 p.Disponible, 
-                p.Foto_Producto
+                p.Foto_Producto,
+                p.Stock_Unidad
             FROM Producto p
             JOIN Categoria_Producto c ON p.Categoria_ID_Categoria = c.ID_Categoria
             WHERE p.Punto_Venta_ID_Punto_Venta = ?
@@ -90,7 +91,8 @@ def get_products_by_point_id(point_id):
                 'price': row[4],  # Precio
                 'stock': row[5],  # Stock
                 'disponible': row[6],  # Disponibilidad
-                'img': row[7]  # Imagen
+                'img': row[7],  # Imagen
+                'unidad': row[8] #Stock Unidad
             }
             print(product)
             products.append(product)
@@ -100,13 +102,13 @@ def get_products_by_point_id(point_id):
     return products
 
 
-def editar_producto(product_id, nombre_producto, id_punto_venta, categoria_id, precio, stock, disponibilidad, imagen):
+def editar_producto(product_id, nombre_producto, id_punto_venta, categoria_id, precio, stock, disponibilidad, imagen, unidad):
     conn = connection
     cursor = conn.cursor()
     try:
         if categoria_id and disponibilidad is not None:
-            update_product_query = "EXEC Editar_Producto ?, ?, ?, ?, ?, ?, ?, ?"
-            cursor.execute(update_product_query,(product_id, nombre_producto, id_punto_venta, categoria_id, precio, stock, disponibilidad, imagen))
+            update_product_query = "EXEC Editar_Producto ?, ?, ?, ?, ?, ?, ?, ?, ?"
+            cursor.execute(update_product_query,(product_id, nombre_producto, id_punto_venta, categoria_id, precio, stock, disponibilidad, imagen, unidad))
             result = cursor.fetchone()
             print(f"El resultado del SP:{result}")
             if result and result[0] == 0:

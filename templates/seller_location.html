@@ -123,7 +123,7 @@
                             </div>
                             <p></p>
                             <p><strong>Producto: </strong>{{ Producto.Producto }}</p>
-                            <p><strong>Precio: </strong>{{ Producto.Precio }}$</p>
+                            <p><strong>Precio: </strong>{{ Producto.Precio }}$ / {{ Producto.Unidad }}</p>
                         </div>
                     </div>
                 </div>
@@ -169,7 +169,7 @@
                                             <div class="position-absolute bottom-0 start-0 w-100 p-2" style="background: rgba(255, 255, 255, 0.85); font-size: 0.85rem;">
                                                 <h5 class="mb-1" style="font-size: 1rem;">{{ product['name'] }}</h5>
                                                 <p class="mb-1">Vendido por: {{ Producto.Vendedor }}</p>
-                                                <p class="fw-bold mb-1 text-dark">${{ product['price'] }} / kg</p>
+                                                <p class="fw-bold mb-1 text-dark">${{ product['price'] }} / {{ Producto.Unidad }}</p>
                                             </div>
                                         </div>
                                     </div>
