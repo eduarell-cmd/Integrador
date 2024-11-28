@@ -99,7 +99,7 @@
                     <br>
                     {% if not seller_point %}
                     <a href="{{url_for('add_point')}}" class="btn btn-secondary col-md-12">Agregar Punto de Venta</a>
-                    {% endif %}
+                    {% else %}
                     <div class="col-md-12">
                         <div class="card mb-4">
                             <div class="card-body">
@@ -120,10 +120,10 @@
                                 </div>
                             </div>
                         </div>
-        
+                    </div>
+                        {% endif %}
                         <!-- Historial de Ventas -->
-                        <div class="card">
-                        </div>
+                    
                     </div>
                 </div>
     
@@ -162,6 +162,7 @@
                             <a href="{{url_for('add_product')}}" class="btn btn-success">Agregar Nuevo Producto</a>
                         </div>
                     </div>
+                </div>
     
                     <!-- Historial de Ventas -->
                     <div class="card">
