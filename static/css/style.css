@@ -531,32 +531,14 @@
 /* Contenedor para las imágenes con degradado */
 .image-with-gradient {
     position: relative;
-    width: 25%; /* Ajusta el tamaño de las imágenes al 25% del ancho total */
+    width: 125%; /* Ajusta el tamaño de las imágenes al 25% del ancho total */
     height: 100%; /* Abarca todo el alto del contenedor */
     overflow: hidden;
 }
 
 .image-with-gradient img.image-content {
-    width: 100%;
+    width: 125%;
     height: 100%;
     object-fit: cover; /* Asegura que la imagen se ajuste completamente */
 }
 
-.image-with-gradient::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    opacity: 0.6; /* Controla la intensidad del degradado */
-}
-
-.green-gradient::before {
-    background: linear-gradient(to right, rgba(3, 247, 0, 0.8), rgba(186, 210, 0, 0.8));
-}
-
-.orange-gradient::before {
-    background: linear-gradient(to right, rgba(254, 126, 0, 0.8), rgba(245, 179, 0, 0.8));
-}
