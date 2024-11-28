@@ -333,6 +333,7 @@ def add_product():
         categoria_id = request.form['categoria']  # 'frutas' o 'verduras'
         precio = request.form['precio']
         stock = request.form['stock']
+        unidad = request.form['unidad']
         disponibilidad = request.form['disponible']
         imagenpr = request.files['imagenpr']
 
@@ -341,7 +342,7 @@ def add_product():
         Gimagen_file = upload_file_to_bucket(imagenpr, f"img/products/{user['name'], user['lastname'], user['slastname']}/{nombre_producto, categoria_id}_Imgproduct.{extensionimg['product_extension']}")
 
         id_punto_venta = get_point_by_id(seller_id)
-        added_product = add_producto(nombre_producto, int(id_punto_venta), categoria_id, precio, int(stock), disponibilidad, Gimagen_file)
+        added_product = add_producto(nombre_producto, int(id_punto_venta), categoria_id, precio, stock, disponibilidad, Gimagen_file, unidad)
         if added_product:
             print("Se ha añadido punto de venta")
             return redirect(url_for('perfilvend'))
@@ -377,6 +378,7 @@ def edit_product():
         categoria_id = request.form['categoria']
         precio = request.form['precio']
         stock = request.form['stock']
+        unidad = request.form['unidad']
         disponibilidad = request.form['disponible']
         if disponibilidad == 'True' or disponibilidad == '1':
             disponibilidad = 1
@@ -402,8 +404,8 @@ def edit_product():
                 Gimagen_file = ""
         # Actualizar producto
         id_punto_venta = get_point_by_id(seller_id)
-        print(f"estos son tus datos{int(product_id), id_punto_venta, nombre_producto, int(categoria_id), int(precio), int(stock), disponibilidad, Gimagen_file}")
-        updated = editar_producto(int(product_id), id_punto_venta, nombre_producto, int(categoria_id), int(precio), int(stock), disponibilidad, Gimagen_file)
+        print(f"estos son tus datos{int(product_id), id_punto_venta, nombre_producto, int(categoria_id), precio, stock, disponibilidad, Gimagen_file, unidad}")
+        updated = editar_producto(int(product_id), id_punto_venta, nombre_producto, int(categoria_id), precio, stock, disponibilidad, Gimagen_file, unidad)
         if updated:
             flash("Producto actualizado con éxito", "success")
             return redirect(url_for('perfilvend'))

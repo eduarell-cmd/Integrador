@@ -89,7 +89,8 @@ def exec_mostar_tienda():
             'Horario': row[10],
             'Direccion': row[11],
             'IDPV': row[12],
-            'IDP': row[13]
+            'IDP': row[13],
+            'Unidad': row[14]
 
         }
         productsar.append(product)
@@ -121,7 +122,8 @@ def exec_mostar_tienda_consulta(consulta):
             'Horario': row[10],
             'Direccion': row[11],
             'IDPV': row[12],
-            'IDP': row[13]
+            'IDP': row[13],
+            'Unidad': row[14]
 
         }
         productsar.append(product)

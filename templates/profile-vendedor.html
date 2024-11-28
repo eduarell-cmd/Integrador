@@ -139,6 +139,7 @@
                                         <th>Producto</th>
                                         <th>Precio</th>
                                         <th>Stock</th>
+                                        <th>Unidad</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
@@ -146,8 +147,9 @@
                                     {% for product in products %}
                                     <tr>
                                         <td>{{ product['name'] }}</td>
-                                        <td>${{ product['price'] }}</td>
+                                        <td>{{ product['price'] }}$</td>
                                         <td>{{ product['stock'] }}</td>
+                                        <td>{{ product['unidad'] }}</td>
                                         <td>
                                             <a href="{{ url_for('edit_product', product_id=product['id']) }}" class="btn btn-sm btn-warning">Editar</a>
                                             <form action="/delproduct" method="POST" style="display:inline;">
