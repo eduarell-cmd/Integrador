@@ -149,7 +149,8 @@ def exec_onlyfrutas(consulta):
             'Vendedor': row[3],
             'Precio': row[4],
             'IDPV': row[5],
-            'IDP': row[6]
+            'IDP': row[6],
+            'Unidad': row[7]
         }
         productsar.append(product)
     
@@ -174,7 +175,8 @@ def exec_onlyverduras(consulta):
             'Vendedor': row[3],
             'Precio': row[4],
             'IDPV': row[5],
-            'IDP': row[6]
+            'IDP': row[6],
+            'Unidad': row[7]
         }
         productsar.append(product)
     
