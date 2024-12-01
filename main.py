@@ -790,5 +790,5 @@ def get_cities():
     ciudades = get_all_cities_by_state(estado_id) 
     return jsonify(ciudades)
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(debug=True)
 
